@@ -1,0 +1,235 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 150px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #0077cc;
+}
+
+.nav-derecha {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #0077cc;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #0077cc;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.nav-links .activo {
+  color: #0077cc;
+  font-weight: 600;
+}
+
+.login-btn {
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #005fa3;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 60px 150px;
+  background-color: #ffffff;
+}
+
+.hero-text {
+  max-width: 50%;
+}
+
+.hero-text h1 {
+  font-size: 36px;
+  color: #152C5B;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 18px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.mostrar-mas {
+  background-color: #3252DF;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.mostrar-mas:hover {
+  background-color: #203698;
+}
+
+.stats {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.stats div {
+  text-align: center;
+}
+
+.stats strong {
+  font-size: 24px;
+  color: #0077cc;
+}
+
+.stats span {
+  display: block;
+  font-size: 14px;
+  color: #666;
+}
+
+.stats-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stats-images,
+.stats-texts {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: flex-start;
+}
+
+.stat-img {
+  width: 100px;
+  height: 100px;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.stat-text {
+  text-align: center;
+  width: 100px;
+}
+
+.stat-text strong {
+  font-size: 24px;
+  color: #0077cc;
+}
+
+.stat-text span {
+  display: block;
+  font-size: 14px;
+  color: #666;
+}
+
+.hero-imagen {
+  width: 40%;
+  height: 300px;
+  background-image: url('/img/hotel1.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.consultar-disponibilidad {
+  background-color: #eaf4fc;
+  padding: 40px 150px;
+  text-align: center;
+}
+
+.consultar-disponibilidad h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.consultar-form {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.consultar-form select,
+.consultar-form button {
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.consultar-form button {
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.consultar-form button:hover {
+  background-color: #005fa3;
+}
+
