@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\mvc\\Hotel_Chain\\Hotel-chain.csproj": {}
+    "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj": {}
   },
   "projects": {
-    "D:\\mvc\\Hotel_Chain\\Hotel-chain.csproj": {
+    "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\mvc\\Hotel_Chain\\Hotel-chain.csproj",
+        "projectUniqueName": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj",
         "projectName": "Hotel-chain",
-        "projectPath": "D:\\mvc\\Hotel_Chain\\Hotel-chain.csproj",
-        "packagesPath": "C:\\Users\\Windows\\.nuget\\packages\\",
-        "outputPath": "D:\\mvc\\Hotel_Chain\\obj\\",
+        "projectPath": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj",
+        "packagesPath": "C:\\Users\\monke\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Windows\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\monke\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -62,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
