@@ -1,8 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StayGo - Inicio</title>
+  <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+        <div class="logo">StayGo</div>
+        <div class="nav-derecha">
+            <ul class="nav-links">
+                <li><a href="#" class="activo">Home</a></li>
+                <li><a href="#">Hoteles</a></li>
+                <li><a href="#">Habitaciones</a></li>
+                <li><a href="#">Sobre Nosotros</a></li>
+                <li><a href="#">Contáctanos</a></li>
+            </ul>
+            <button class="login-btn">Ingresar</button>
+        </div>
+    </nav>
+  </header>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+  <main>
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Menos trabajo,<br>más vacaciones.</h1>
+            <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br>Es hora de crear momentos inolvidables.</p>
+            <button class="mostrar-mas">Mostrar más</button>
+            <div class="stats-stack">
+                <div class="stats-images">
+                    <div class="stat-img">📷</div>
+                    <div class="stat-img">📷</div>
+                    <div class="stat-img">📷</div>
+                </div>
+                <div class="stats-texts">
+                    <div class="stat-text"><strong>500</strong><span>Usuarios</span></div>
+                    <div class="stat-text"><strong>100</strong><span>Imagenes</span></div>
+                    <div class="stat-text"><strong>10</strong><span>Ciudades</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-imagen"></div>
+    </section>
+
+    <section class="consultar-disponibilidad">
+      <h2>Consultar disponibilidad</h2>
+      <form class="consultar-form">
+        <select>
+          <option>Seleccionar Ubicación</option>
+        </select>
+        <select>
+          <option>Clases</option>
+        </select>
+        <select>
+          <option>Precio</option>
+        </select>
+        <button type="submit">Buscar</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

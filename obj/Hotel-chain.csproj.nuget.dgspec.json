@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj": {}
+    "C:\\Users\\Usuario\\Downloads\\sistemas\\Hotel_Chain\\Hotel-chain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj": {
+    "C:\\Users\\Usuario\\Downloads\\sistemas\\Hotel_Chain\\Hotel-chain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj",
+        "projectUniqueName": "C:\\Users\\Usuario\\Downloads\\sistemas\\Hotel_Chain\\Hotel-chain.csproj",
         "projectName": "Hotel-chain",
-        "projectPath": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj",
-        "packagesPath": "C:\\Users\\monke\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\obj\\",
+        "projectPath": "C:\\Users\\Usuario\\Downloads\\sistemas\\Hotel_Chain\\Hotel-chain.csproj",
+        "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Usuario\\Downloads\\sistemas\\Hotel_Chain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\monke\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
