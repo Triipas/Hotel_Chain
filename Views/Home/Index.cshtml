@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -12,9 +16,9 @@
         <div class="logo">StayGo</div>
         <div class="nav-derecha">
             <ul class="nav-links">
-                <li><a href="#" class="activo">Home</a></li>
-                <li><a href="#">Hoteles</a></li>
-                <li><a href="#">Habitaciones</a></li>
+                <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+                <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
                 <li><a href="#">Sobre Nosotros</a></li>
                 <li><a href="#">Contáctanos</a></li>
             </ul>
@@ -47,19 +51,35 @@
 
     <section class="consultar-disponibilidad">
       <h2>Consultar disponibilidad</h2>
-      <form class="consultar-form">
-        <select>
-          <option>Seleccionar Ubicación</option>
+      <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
+        <select name="ubicacion">
+          <option value="">Seleccionar Ubicación</option>
+          <option value="Arequipa">Arequipa</option>
+          <option value="Cusco">Cusco</option>
+          <option value="Lima">Lima</option>
         </select>
-        <select>
-          <option>Clases</option>
+        <select name="clase">
+          <option value="">Clases</option>
+          <option value="Económica">Económica</option>
+          <option value="Premium">Premium</option>
         </select>
-        <select>
-          <option>Precio</option>
+        <select name="precio">
+          <option value="">Precio</option>
+          <option value="Menos de 100">Menos de 100</option>
+          <option value="100 a 300">100 a 300</option>
+          <option value="Más de 300">Más de 300</option>
         </select>
         <button type="submit">Buscar</button>
       </form>
+
+      @if (ViewBag.Resultado != null)
+      {
+          <div class="resultado-busqueda">
+              <p>@ViewBag.Resultado</p>
+          </div>
+      }
     </section>
+
   </main>
 </body>
 </html>
