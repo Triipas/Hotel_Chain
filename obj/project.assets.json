@@ -8,19 +8,19 @@
     "net9.0": []
   },
   "packageFolders": {
-    "C:\\Users\\monke\\.nuget\\packages\\": {}
+    "C:\\Users\\Herbert\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj",
+      "projectUniqueName": "D:\\Nueva carpeta (5)\\trabajaN1 Avanze\\Hotel_Chain\\Hotel-chain.csproj",
       "projectName": "Hotel-chain",
-      "projectPath": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\Hotel-chain.csproj",
-      "packagesPath": "C:\\Users\\monke\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\monke\\OneDrive\\Documentos\\waaa\\Hotel-chain\\obj\\",
+      "projectPath": "D:\\Nueva carpeta (5)\\trabajaN1 Avanze\\Hotel_Chain\\Hotel-chain.csproj",
+      "packagesPath": "C:\\Users\\Herbert\\.nuget\\packages\\",
+      "outputPath": "D:\\Nueva carpeta (5)\\trabajaN1 Avanze\\Hotel_Chain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\monke\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Herbert\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
@@ -68,7 +68,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.303/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

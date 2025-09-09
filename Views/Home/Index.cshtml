@@ -1,8 +1,85 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StayGo - Inicio</title>
+  <link rel="stylesheet" href="~/css/style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+        <div class="logo">StayGo</div>
+        <div class="nav-derecha">
+            <ul class="nav-links">
+                <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+                <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
+                <li><a href="#">Sobre Nosotros</a></li>
+                <li><a href="#">Contáctanos</a></li>
+            </ul>
+            <button class="login-btn">Ingresar</button>
+        </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Menos trabajo,<br>más vacaciones.</h1>
+            <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br>Es hora de crear momentos inolvidables.</p>
+            <button class="mostrar-mas">Mostrar más</button>
+            <div class="stats-stack">
+                <div class="stats-images">
+                    <div class="stat-img">📷</div>
+                    <div class="stat-img">📷</div>
+                    <div class="stat-img">📷</div>
+                </div>
+                <div class="stats-texts">
+                    <div class="stat-text"><strong>500</strong><span>Usuarios</span></div>
+                    <div class="stat-text"><strong>100</strong><span>Imagenes</span></div>
+                    <div class="stat-text"><strong>10</strong><span>Ciudades</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-imagen"></div>
+    </section>
+
+    <section class="consultar-disponibilidad">
+      <h2>Consultar disponibilidad</h2>
+      <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
+        <select name="ubicacion">
+          <option value="">Seleccionar Ubicación</option>
+          <option value="Arequipa">Arequipa</option>
+          <option value="Cusco">Cusco</option>
+          <option value="Lima">Lima</option>
+        </select>
+        <select name="clase">
+          <option value="">Clases</option>
+          <option value="Económica">Económica</option>
+          <option value="Premium">Premium</option>
+        </select>
+        <select name="precio">
+          <option value="">Precio</option>
+          <option value="Menos de 100">Menos de 100</option>
+          <option value="100 a 300">100 a 300</option>
+          <option value="Más de 300">Más de 300</option>
+        </select>
+        <button type="submit">Buscar</button>
+      </form>
+
+      @if (ViewBag.Resultado != null)
+      {
+          <div class="resultado-busqueda">
+              <p>@ViewBag.Resultado</p>
+          </div>
+      }
+    </section>
+
+  </main>
+</body>
+</html>
