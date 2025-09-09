@@ -1,85 +1,421 @@
-﻿@{
+﻿
+@model IEnumerable<Hotel_chain.Models.Hotel>
+@{
     ViewData["Title"] = "Inicio";
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StayGo - Inicio</title>
-  <link rel="stylesheet" href="~/css/style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayGo - Inicio</title>
+    <link rel="stylesheet" href="~/css/style.css" />
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-        <div class="logo">StayGo</div>
-        <div class="nav-derecha">
-            <ul class="nav-links">
-                <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
-                <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
-                <li><a href="#">Sobre Nosotros</a></li>
-                <li><a href="#">Contáctanos</a></li>
-            </ul>
-            <button class="login-btn">Ingresar</button>
-        </div>
-    </nav>
-  </header>
+    <!-- 🔹 Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Contáctanos</a></li>
+                </ul>
+                <button class="login-btn">Ingresar</button>
+            </div>
+        </nav>
+    </header>
 
-  <main>
-    <section class="hero">
-        <div class="hero-text">
-            <h1>Menos trabajo,<br>más vacaciones.</h1>
-            <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br>Es hora de crear momentos inolvidables.</p>
-            <button class="mostrar-mas">Mostrar más</button>
-            <div class="stats-stack">
-                <div class="stats-images">
-                    <div class="stat-img">📷</div>
-                    <div class="stat-img">📷</div>
-                    <div class="stat-img">📷</div>
+    <!-- 🔹 Hero -->
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Menos trabajo,<br>más vacaciones.</h1>
+                <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br />
+                Es hora de crear momentos inolvidables.</p>
+                <button class="mostrar-mas">Mostrar más</button>
+            </div>
+            <div class="hero-imagen"></div>
+        </section>
+
+        <!-- 🔹 Consultar disponibilidad -->
+        <section class="consultar-disponibilidad">
+            <h2>Consultar disponibilidad</h2>
+            <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
+                <select name="ubicacion">
+                    <option value="">Seleccionar Ubicación</option>
+                    <option value="Arequipa">Arequipa</option>
+                    <option value="Cusco">Cusco</option>
+                    <option value="Lima">Lima</option>
+                </select>
+                <select name="clase">
+                    <option value="">Clases</option>
+                    <option value="Económica">Económica</option>
+                    <option value="Premium">Premium</option>
+                </select>
+                <select name="precio">
+                    <option value="">Precio</option>
+                    <option value="Menos de 100">Menos de 100</option>
+                    <option value="100 a 300">100 a 300</option>
+                    <option value="Más de 300">Más de 300</option>
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
+
+            @if (ViewBag.Resultado != null)
+            {
+                <div class="resultado-busqueda">
+                    <p>@ViewBag.Resultado</p>
                 </div>
-                <div class="stats-texts">
-                    <div class="stat-text"><strong>500</strong><span>Usuarios</span></div>
-                    <div class="stat-text"><strong>100</strong><span>Imagenes</span></div>
-                    <div class="stat-text"><strong>10</strong><span>Ciudades</span></div>
-                </div>
+            }
+        </section>
+        <!-- 🔹 Hoteles destacados -->
+<section class="hoteles-destacados">
+    <h2>Los más elegidos</h2>
+    <div class="grid-hoteles">
+        <!-- Ejemplo estático -->
+        <div class="card-hotel">
+            <img src="~/images/hoteles/hotel1.jpg" alt="Blue Origin Fams" />
+            <span class="precio">150 PEN por noche</span>
+            <div class="info">
+                <h3>Blue Origin Fams</h3>
+                <p>Galle, Sri Lanka</p>
             </div>
         </div>
-        <div class="hero-imagen"></div>
-    </section>
 
-    <section class="consultar-disponibilidad">
-      <h2>Consultar disponibilidad</h2>
-      <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
-        <select name="ubicacion">
-          <option value="">Seleccionar Ubicación</option>
-          <option value="Arequipa">Arequipa</option>
-          <option value="Cusco">Cusco</option>
-          <option value="Lima">Lima</option>
-        </select>
-        <select name="clase">
-          <option value="">Clases</option>
-          <option value="Económica">Económica</option>
-          <option value="Premium">Premium</option>
-        </select>
-        <select name="precio">
-          <option value="">Precio</option>
-          <option value="Menos de 100">Menos de 100</option>
-          <option value="100 a 300">100 a 300</option>
-          <option value="Más de 300">Más de 300</option>
-        </select>
-        <button type="submit">Buscar</button>
-      </form>
+        <div class="card-hotel">
+            <img src="~/images/hoteles/hotel2.jpg" alt="Ocean Land" />
+            <span class="precio">72 PEN por noche</span>
+            <div class="info">
+                <h3>Ocean Land</h3>
+                <p>Trincomalee, Sri Lanka</p>
+            </div>
+        </div>
 
-      @if (ViewBag.Resultado != null)
-      {
-          <div class="resultado-busqueda">
-              <p>@ViewBag.Resultado</p>
-          </div>
-      }
-    </section>
+        <div class="card-hotel">
+            <img src="~/images/hoteles/hotel3.jpg" alt="Stark House" />
+            <span class="precio">2400 PEN por noche</span>
+            <div class="info">
+                <h3>Stark House</h3>
+                <p>Dehiwala, Sri Lanka</p>
+            </div>
+        </div>
 
-  </main>
+        <div class="card-hotel">
+            <img src="~/images/hoteles/hotel4.jpg" alt="Bobox" />
+            <span class="precio">220 PEN por noche</span>
+            <div class="info">
+                <h3>Bobox</h3>
+                <p>Kandy, Sri Lanka</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 🔹 Otros hoteles -->
+<section class="otros-hoteles">
+    <h2>Descubre más opciones</h2>
+    <div class="grid-otros-hoteles">
+
+        <div class="card-otro">
+            <span class="etiqueta">Elección Popular</span>
+            <img src="~/images/hoteles/hotel5.jpg" alt="Shangri-La" />
+            <div class="info">
+                <h3>Shangri-La</h3>
+                <p>Colombo, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <img src="~/images/hoteles/hotel6.jpg" alt="Top View" />
+            <div class="info">
+                <h3>Top View</h3>
+                <p>Hikkaduwa, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <img src="~/images/hoteles/hotel7.jpg" alt="Green Villa" />
+            <div class="info">
+                <h3>Green Villa</h3>
+                <p>Kandy, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <img src="~/images/hoteles/hotel8.jpg" alt="Woodden Pit" />
+            <div class="info">
+                <h3>Woodden Pit</h3>
+                <p>Ambalangoda, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <img src="~/images/hoteles/hotel9.jpg" alt="Boutique" />
+            <div class="info">
+                <h3>Boutique</h3>
+                <p>Kandy, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <img src="~/images/hoteles/hotel10.jpg" alt="Modern" />
+            <div class="info">
+                <h3>Modern</h3>
+                <p>Nuwara Eliya, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <img src="~/images/hoteles/hotel11.jpg" alt="Silver Rain" />
+            <div class="info">
+                <h3>Silver Rain</h3>
+                <p>Dehiwala, Sri Lanka</p>
+            </div>
+        </div>
+
+        <div class="card-otro">
+            <span class="etiqueta azul">Popular Choice</span>
+            <img src="~/images/hoteles/hotel12.jpg" alt="Cashville" />
+            <div class="info">
+                <h3>Cashville</h3>
+                <p>Ampara, Sri Lanka</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+        
+
+           
+        </section>
+    </main>
+
+    <!-- 🔹 Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Logo y frase -->
+            <div class="footer-left">
+                <h2 class="footer-logo">StayGo.</h2>
+                <p>Hacemos que tus vacaciones de belleza sean instantáneas y memorables.</p>
+            </div>
+
+            <!-- Botón de socio -->
+            <div class="footer-right">
+                <h4>¡Conviértete en nuestro socio!</h4>
+                <a href="#" class="btn-register">Regístrate Ahora</a>
+            </div>
+        </div>
+
+        <!-- Franja inferior -->
+        <div class="footer-bottom">
+            <p>Copyright 2024 - All rights reserved - Saltman Faris</p>
+        </div>
+    </footer>
+
 </body>
 </html>
+
+
+<style>
+.hoteles-destacados {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.hoteles-destacados h2 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.grid-hoteles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.card-hotel {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.card-hotel:hover {
+    transform: scale(1.03);
+}
+
+.card-hotel img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.card-hotel .precio {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(to right, #007bff, #00c6ff);
+    color: white;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.card-hotel .info {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+}
+
+.card-hotel .info h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.card-hotel .info p {
+    margin: 2px 0 0;
+    font-size: 14px;
+}
+.otros-hoteles {
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.otros-hoteles h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.grid-otros-hoteles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.card-otro {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background: #fff;
+    transition: transform 0.3s ease;
+}
+
+.card-otro:hover {
+    transform: translateY(-5px);
+}
+
+.card-otro img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+
+.card-otro .info {
+    padding: 12px;
+    text-align: left;
+}
+
+.card-otro .info h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.card-otro .info p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #777;
+}
+
+/* 🔹 Etiquetas */
+.card-otro .etiqueta {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ff6b6b;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.card-otro .etiqueta.azul {
+    background: #2e5fff;
+}
+
+.footer {
+    background: #fff;
+    border-top: 1px solid #eee;
+    margin-top: 40px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 30px 80px;
+    flex-wrap: wrap;
+}
+
+.footer-left {
+    max-width: 500px;
+}
+
+.footer-logo {
+    color: #2e5fff; /* azul del diseño */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.footer-right {
+    text-align: right;
+}
+
+.footer-right h4 {
+    margin-bottom: 10px;
+}
+
+.btn-register {
+    background: #2e5fff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-register:hover {
+    background: #1d3bcc;
+}
+
+.footer-bottom {
+    background: #2e5fff;
+    color: #fff;
+    text-align: center;
+    padding: 12px;
+    font-size: 14px;
+}
+
+</style>
