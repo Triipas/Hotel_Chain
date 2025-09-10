@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Hotel-chain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6c07fe5e53008960abd548b3c82e22b0749db4b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab63de8a26d6485a231055e224551a2092bf0e14")]
 [assembly: System.Reflection.AssemblyProductAttribute("Hotel-chain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Hotel-chain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
