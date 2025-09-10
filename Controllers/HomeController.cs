@@ -28,7 +28,10 @@ namespace Hotel_chain.Controllers
             return View(hoteles);
         }
 
-
+        public IActionResult LoginCliente()
+        {
+            return View();
+        }
         
         public IActionResult Habitaciones(int hotelId)
         {

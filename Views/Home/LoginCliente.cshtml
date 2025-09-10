@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Inicio de Sesión - Cliente";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/LoginCliente.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Columna izquierda: imagen del hotel -->
+        <div class="login-left">
+            
+        </div>
+
+        <!-- Columna derecha: formulario -->
+        <div class="login-right">
+            <h2>INICIAR SESIÓN</h2>
+            <form method="post" asp-action="LoginUser">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" placeholder="Ingrese su Correo Electrónico" required>
+                <br>
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Ingrese su Contraseña" required>
+
+                <p class="terms">Al iniciar sesión aceptas los términos y condiciones de StayGo.</p>
+
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                <button type="button" class="btn-register" onclick="location.href='RegisterUser'">Crear una cuenta</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
