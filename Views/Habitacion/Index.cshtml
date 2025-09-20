@@ -1,0 +1,152 @@
+@model List<Hotel_chain.Models.Habitacion>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Habitaciones";
+    var hotel = ViewBag.Hotel as Hotel_chain.Models.Hotel;
+}
+
+<header>
+    <nav class="navbar">
+        <div class="logo">StayGo</div>
+        <div class="nav-derecha">
+            <ul class="nav-links">
+                <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+                <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
+                <li><a href="#">Sobre Nosotros</a></li>
+                <li><a href="#">Contáctanos</a></li>
+            </ul>
+
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+            {
+                <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+            }
+            else
+            {
+                <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+            }
+        </div>
+    </nav>
+</header>
+
+<link rel="stylesheet" href="~/css/style.css" />
+
+<h2>Habitaciones de @hotel?.Nombre</h2>
+
+<!-- Filtro -->
+<section class="filtro-habitaciones">
+    <form method="get" class="filtro-form">
+        <input type="hidden" name="hotelId" value="@hotel?.HotelId" />
+
+        <select name="tipo">
+            <option value="">Tipo</option>
+            <option value="simple">Simple</option>
+            <option value="doble">Doble</option>
+            <option value="suite">Suite</option>
+        </select>
+
+        <select name="capacidad">
+            <option value="">Capacidad mínima</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+
+        <button type="submit">Filtrar</button>
+    </form>
+</section>
+
+
+<section class="listado-habitaciones">
+    <div class="habitaciones-container">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var hab in Model)
+            {
+                <div class="habitacion-card">
+                    <img src="~/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                         alt="@hab.NumeroHabitacion" class="habitacion-img" />
+
+                    <h3>@hab.NumeroHabitacion</h3>
+                    <p>Tipo: @hab.Tipo</p>
+                    <p>Capacidad: @hab.Capacidad personas</p>
+                    <p>@hab.Descripcion</p>
+
+                    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                    {
+                        
+                        <form asp-controller="Home" asp-action="Reservar" method="post">
+                            <input type="hidden" name="habitacionId" value="@hab.HabitacionId" />
+                            <input type="hidden" name="usuarioId" value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
+                            <button type="submit" class="btn-reservar">Reservar</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <!-- Usuario no logueado: enlace a login -->
+                        <a asp-controller="Login" asp-action="Index" class="btn-reservar">
+                            Inicia sesión para reservar
+                        </a>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p>No hay habitaciones disponibles para este hotel.</p>
+        }
+    </div>
+</section>
+
+<a href="/Hotel/Index" class="btn-ver-todos btn-volver">← Volver</a>
+
+<!-- CSS rápido para la lista horizontal -->
+<style>
+.habitaciones-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.habitacion-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    width: 250px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.habitacion-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.filtro-habitaciones {
+    margin-bottom: 20px;
+}
+
+.filtro-habitaciones select,
+.filtro-habitaciones button {
+    margin-right: 10px;
+    padding: 5px 10px;
+}
+
+.btn-reservar {
+    margin-top: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-volver {
+    margin-top: 20px;
+    display: inline-block;
+}
+</style>
