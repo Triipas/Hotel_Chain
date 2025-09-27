@@ -15,24 +15,15 @@ namespace Hotel_chain.Controllers
             _context = context;
         }
 
-    
         public IActionResult Index()
         {
             return View();
         }
 
-  
         [HttpPost]
         public IActionResult LoginUser(string email, string contra)
         {
-        
-            if (email == "test@gmail.com" && contra == "1234")
-            {
-                HttpContext.Session.SetString("UsuarioNombre", "Test");
-                return RedirectToAction("Index", "Home");
-            }
 
-      
             var usuario = _context.Usuarios
                                   .FirstOrDefault(u => u.Email.ToLower() == email.ToLower() && u.Contra == contra);
 
@@ -47,6 +38,36 @@ namespace Hotel_chain.Controllers
                 ViewBag.Mensaje = "Correo o contraseña incorrectos";
                 return View("Index");
             }
+        }
+
+        public IActionResult RegisterUser()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult RegisterUser(string nombre, string apellido, string email, string contra, string telefono)
+        {
+            if (_context.Usuarios.Any(u => u.Email.ToLower() == email.ToLower()))
+            {
+                ViewBag.Mensaje = "El correo ya está registrado";
+                return View();
+            }
+
+            var usuario = new Usuario
+            {
+                Nombre = nombre,
+                Apellido = apellido,
+                Email = email,
+                Contra = contra,
+                Telefono = telefono
+            };
+
+            _context.Usuarios.Add(usuario);
+            _context.SaveChanges();
+
+            TempData["Mensaje"] = "Cuenta creada exitosamente. Ingresa tus datos para iniciar sesión.";
+            return RedirectToAction("Index", "Login");
         }
 
         public IActionResult Logout()

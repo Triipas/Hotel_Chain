@@ -59,7 +59,6 @@
     </form>
 </section>
 
-
 <section class="listado-habitaciones">
     <div class="habitaciones-container">
         @if (Model != null && Model.Any())
@@ -75,9 +74,14 @@
                     <p>Capacidad: @hab.Capacidad personas</p>
                     <p>@hab.Descripcion</p>
 
+                    <!-- Botón para ver detalles -->
+                    <a asp-controller="Habitacion" asp-action="Detalles" 
+                       asp-route-id="@hab.HabitacionId" class="btn-detalles">
+                        Ver detalles
+                    </a>
+
                     @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
                     {
-                        
                         <form asp-controller="Home" asp-action="Reservar" method="post">
                             <input type="hidden" name="habitacionId" value="@hab.HabitacionId" />
                             <input type="hidden" name="usuarioId" value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
@@ -86,7 +90,6 @@
                     }
                     else
                     {
-                        <!-- Usuario no logueado: enlace a login -->
                         <a asp-controller="Login" asp-action="Index" class="btn-reservar">
                             Inicia sesión para reservar
                         </a>
@@ -103,7 +106,6 @@
 
 <a href="/Hotel/Index" class="btn-ver-todos btn-volver">← Volver</a>
 
-<!-- CSS rápido para la lista horizontal -->
 <style>
 .habitaciones-container {
     display: flex;
@@ -143,6 +145,20 @@
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+
+.btn-detalles {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .btn-volver {
