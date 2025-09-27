@@ -69,9 +69,28 @@ namespace Hotel_chain.Services.Implementation
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var hotel = await _context.Hoteles.FindAsync(id);
+            var hotel = await _context.Hoteles
+                .Include(h => h.Habitaciones)
+                .FirstOrDefaultAsync(h => h.HotelId == id);
+                
             if (hotel == null)
                 return false;
+
+            // Verificar si tiene habitaciones asociadas
+            if (hotel.Habitaciones.Any())
+            {
+                throw new InvalidOperationException($"No se puede eliminar el hotel '{hotel.Nombre}' porque tiene habitaciones asociadas. Elimina primero las habitaciones.");
+            }
+
+            // Eliminar imágenes asociadas al hotel
+            var imagenes = await _context.Imagenes
+                .Where(i => i.HotelId == id)
+                .ToListAsync();
+            
+            if (imagenes.Any())
+            {
+                _context.Imagenes.RemoveRange(imagenes);
+            }
 
             _context.Hoteles.Remove(hotel);
             await _context.SaveChangesAsync();

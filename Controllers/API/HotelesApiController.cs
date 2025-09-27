@@ -19,78 +19,188 @@ namespace Hotel_chain.Controllers.API
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Hotel>>> GetHoteles([FromQuery] string? ubicacion, [FromQuery] string? nombre)
         {
-            IEnumerable<Hotel> hoteles;
-            
-            if (!string.IsNullOrEmpty(ubicacion) || !string.IsNullOrEmpty(nombre))
+            try
             {
-                hoteles = await _hotelService.SearchAsync(ubicacion, nombre);
-            }
-            else
-            {
-                hoteles = await _hotelService.GetAllAsync();
-            }
+                IEnumerable<Hotel> hoteles;
+                
+                if (!string.IsNullOrEmpty(ubicacion) || !string.IsNullOrEmpty(nombre))
+                {
+                    hoteles = await _hotelService.SearchAsync(ubicacion, nombre);
+                }
+                else
+                {
+                    hoteles = await _hotelService.GetAllAsync();
+                }
 
-            return Ok(hoteles);
+                return Ok(hoteles);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+            }
         }
 
         // GET: api/hoteles/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Hotel>> GetHotel(int id)
         {
-            var hotel = await _hotelService.GetByIdAsync(id);
-
-            if (hotel == null)
+            try
             {
-                return NotFound(new { message = $"Hotel con ID {id} no encontrado" });
-            }
+                var hotel = await _hotelService.GetByIdAsync(id);
 
-            return Ok(hotel);
+                if (hotel == null)
+                {
+                    return NotFound(new { message = $"Hotel con ID {id} no encontrado" });
+                }
+
+                return Ok(hotel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+            }
         }
 
         // POST: api/hoteles
         [HttpPost]
-        public async Task<ActionResult<Hotel>> CreateHotel(Hotel hotel)
+        public async Task<ActionResult<Hotel>> CreateHotel([FromBody] HotelCreateDto hotelDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var createdHotel = await _hotelService.CreateAsync(hotel);
-            return CreatedAtAction(nameof(GetHotel), new { id = createdHotel.HotelId }, createdHotel);
+                var hotel = new Hotel
+                {
+                    Nombre = hotelDto.Nombre,
+                    Direccion = hotelDto.Direccion,
+                    Ciudad = hotelDto.Ciudad,
+                    Descripcion = hotelDto.Descripcion,
+                    TelefonoContacto = hotelDto.TelefonoContacto
+                };
+
+                var createdHotel = await _hotelService.CreateAsync(hotel);
+                return Ok(new { 
+                    success = true, 
+                    message = "Hotel creado exitosamente", 
+                    hotel = createdHotel 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Error al crear el hotel", 
+                    error = ex.Message 
+                });
+            }
         }
 
         // PUT: api/hoteles/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateHotel(int id, Hotel hotel)
+        public async Task<IActionResult> UpdateHotel(int id, [FromBody] HotelUpdateDto hotelDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var updatedHotel = await _hotelService.UpdateAsync(id, hotel);
-            
-            if (updatedHotel == null)
+                var hotel = new Hotel
+                {
+                    HotelId = id,
+                    Nombre = hotelDto.Nombre,
+                    Direccion = hotelDto.Direccion,
+                    Ciudad = hotelDto.Ciudad,
+                    Descripcion = hotelDto.Descripcion,
+                    TelefonoContacto = hotelDto.TelefonoContacto
+                };
+
+                var updatedHotel = await _hotelService.UpdateAsync(id, hotel);
+                
+                if (updatedHotel == null)
+                {
+                    return NotFound(new { 
+                        success = false, 
+                        message = $"Hotel con ID {id} no encontrado" 
+                    });
+                }
+
+                return Ok(new { 
+                    success = true, 
+                    message = "Hotel actualizado exitosamente", 
+                    hotel = updatedHotel 
+                });
+            }
+            catch (Exception ex)
             {
-                return NotFound(new { message = $"Hotel con ID {id} no encontrado" });
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Error al actualizar el hotel", 
+                    error = ex.Message 
+                });
             }
-
-            return Ok(updatedHotel);
         }
 
         // DELETE: api/hoteles/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            var deleted = await _hotelService.DeleteAsync(id);
-            
-            if (!deleted)
+            try
             {
-                return NotFound(new { message = $"Hotel con ID {id} no encontrado" });
-            }
+                var deleted = await _hotelService.DeleteAsync(id);
+                
+                if (!deleted)
+                {
+                    return NotFound(new { 
+                        success = false, 
+                        message = $"Hotel con ID {id} no encontrado" 
+                    });
+                }
 
-            return NoContent();
+                return Ok(new { 
+                    success = true, 
+                    message = "Hotel eliminado exitosamente" 
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Error de validación de negocio (ej. hotel con habitaciones)
+                return BadRequest(new { 
+                    success = false, 
+                    message = ex.Message 
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { 
+                    success = false, 
+                    message = "Error al eliminar el hotel", 
+                    error = ex.Message 
+                });
+            }
         }
+    }
+
+    // DTOs para las operaciones
+    public class HotelCreateDto
+    {
+        public string Nombre { get; set; } = null!;
+        public string Direccion { get; set; } = null!;
+        public string Ciudad { get; set; } = null!;
+        public string? Descripcion { get; set; }
+        public string? TelefonoContacto { get; set; }
+    }
+
+    public class HotelUpdateDto
+    {
+        public string Nombre { get; set; } = null!;
+        public string Direccion { get; set; } = null!;
+        public string Ciudad { get; set; } = null!;
+        public string? Descripcion { get; set; }
+        public string? TelefonoContacto { get; set; }
     }
 }
