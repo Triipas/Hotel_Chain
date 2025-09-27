@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StayGo - Panel de Administración</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+
     <style>
-        /* Estilos base para el SPA Admin */
+        
         * {
             margin: 0;
             padding: 0;
@@ -17,41 +20,110 @@
             background-color: #f5f5f5;
         }
 
+        
         .admin-header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
+            background-color: #ffffff;
+            color: #2c3e50;
+            padding: 1.5rem 1rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            width: 240px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            border-right: 1px solid #e0e0e0;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+            z-index: 100;
         }
-
         .admin-logo {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
         }
 
+        .admin-logo span {
+            color: #3498db; 
+        }
+       
         .admin-nav {
             display: flex;
-            gap: 2rem;
+            flex-direction: column;
+            gap: 0.5rem; 
+            width: 100%;
         }
 
         .admin-nav a {
-            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem 1rem;
+            color: #7f8c8d;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: color 0.3s, background 0.3s;
         }
 
         .admin-nav a:hover {
-            background-color: #34495e;
+            color: #3498db;
+        }
+
+        .admin-nav a.active {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+  
+        .submenu {
+            display: none;
+            flex-direction: column;
+            margin-left: 1.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .submenu.show {
+            display: flex;
+        }
+
+        .submenu a {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            transition: color 0.3s, background 0.3s;
+        }
+
+        .submenu a:hover {
+            color: #3498db;
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .submenu a.active {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        
+        .admin-nav a.has-submenu::after {
+            content: "▸";
+            margin-left: auto;
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .admin-nav a.active.has-submenu::after {
+            content: "▼";
+            color: #3498db;
         }
 
         .admin-user {
-            display: flex;
-            align-items: center;
+            margin-top: auto;
             font-size: 0.9rem;
+            width: 100%;
         }
 
         .admin-user a {
@@ -60,17 +132,22 @@
             padding: 0.3rem 0.8rem;
             border-radius: 4px;
             transition: background-color 0.3s;
+            display: inline-block;
+            margin-top: 0.5rem;
         }
 
         .admin-user a:hover {
             background-color: rgba(255, 107, 107, 0.1);
         }
 
+     
         .admin-content {
             padding: 2rem;
-            min-height: calc(100vh - 80px);
+            margin-left: 240px;
+            min-height: 100vh;
         }
 
+   
         .loading {
             text-align: center;
             padding: 2rem;
@@ -151,7 +228,7 @@
             font-weight: bold;
         }
 
-        /* Estilos para Modales */
+        
         .modal {
             display: none;
             position: fixed;
@@ -255,7 +332,7 @@
             background: #6c757d;
         }
 
-        /* Alertas */
+        
         .alert {
             padding: 0.75rem 1rem;
             margin-bottom: 1rem;
@@ -279,7 +356,7 @@
             color: #721c24;
         }
 
-        /* Animaciones */
+        
         @@keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -296,7 +373,11 @@
             }
         }
 
-        /* Loading spinner */
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #3498db;
@@ -306,11 +387,6 @@
             animation: spin 1s linear infinite;
             display: inline-block;
             margin-right: 10px;
-        }
-
-        @@keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .page-header {
@@ -324,31 +400,268 @@
             margin: 0;
             color: #2c3e50;
         }
+        .welcome-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            }
+
+            .welcome-greeting {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+            }
+
+            .greet-line {
+            font-size: 0.95rem;
+            color: #374151;           
+            font-weight: 500;
+            }
+
+            .welcome-name {
+            color: #2563eb;   
+            font-weight: 700;
+            }
+
+            .greet-sub {
+            font-size: 0.85rem;
+            color: #6b7280;             
+            margin-top: 2px;
+            }
+            .panel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0.35rem 0 0.6rem 0;
+            }
+
+            .search-bar-inline {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            max-width: 560px;
+            }
+
+            .search-bar-inline input[type="search"] {
+            flex: 1;
+            padding: 0.65rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid #e6e9ee;
+            font-size: 0.95rem;
+            outline: none;
+            transition: box-shadow 0.18s, border-color 0.18s;
+            background: #ffffff;
+            color: #1f2937;
+            box-shadow: 0 1px 4px rgba(16,24,40,0.03);
+            }
+
+            .search-bar-inline input[type="search"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 20px rgba(52,152,219,0.08);
+            }
+
+            .search-bar-inline .btn {
+            padding: 0.55rem 0.8rem;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            }
+
+            .search-bar-inline .btn i {
+            font-size: 0.95rem;
+            }
+
+
+            @@media (max-width: 640px) {
+            .search-bar-inline { width: 100%; }
+            .search-bar-inline input[type="search"] { width: 100%; }
+            .welcome-panel { gap: 0.75rem; }
+            }
+            .toolbar-inline {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 100%;
+            }
+
+            .toolbar-inline input[type="search"] {
+            flex: 1;
+            min-width: 220px;
+            padding: 0.65rem 0.9rem;
+            border-radius: 10px;
+            border: 1px solid #e6e9ee;
+            font-size: 0.95rem;
+            outline: none;
+            transition: box-shadow 0.18s, border-color 0.18s;
+            background: #ffffff;
+            color: #1f2937;
+            box-shadow: 0 1px 4px rgba(16,24,40,0.03);
+            }
+
+            .toolbar-inline input[type="search"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 20px rgba(52,152,219,0.08);
+            }
+
+
+            .toolbar-inline .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            }
+
+            .toolbar-inline .btn i {
+            font-size: 0.95rem;
+            }
+
+
+            .btn-success {
+            background: #1d84d3;
+            color: #fff;
+            }
+
+            .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+            }
+
+            .btn-success:hover { background: #219150; }
+            .btn-secondary:hover { background: #5a6268; }
+
+            @@media (max-width: 640px) {
+            .toolbar-inline {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            }
+/
+            .layout {
+            display: flex;
+            min-height: 100vh;
+            background: #f5f5f5;
+            }
+
+            .sidebar {
+            width: 250px;
+            background: #fff;
+            box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            }
+            .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            }
+
+            .admin-header {
+            background-color: #fff;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: flex-end; 
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            }
+
+            .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            }
     </style>
 </head>
 <body>
     <!-- Header del Panel Admin -->
     <header class="admin-header">
-        <div class="admin-logo">StayGo Admin</div>
+        <div class="admin-logo">
+            Stay<span>Go</span>
+        </div>
+        
+
         <nav class="admin-nav">
-            <a href="#" onclick="navigateTo('dashboard')">Dashboard</a>
-            <a href="#" onclick="navigateTo('hoteles')">Hoteles</a>
-            <a href="#" onclick="navigateTo('habitaciones')">Habitaciones</a>
-            <a href="#" onclick="navigateTo('reservas')">Reservas</a>
-            <a href="#" onclick="navigateTo('usuarios')">Usuarios</a>
-            <a href="/" target="_blank">Ver Sitio Cliente</a>
+            <a href="#" onclick="navigateTo('dashboard')" class="active">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+
+            <a href="#" onclick="navigateTo('usuarios')">
+                <i class="fas fa-users"></i> Usuarios
+            </a>
+            <div class="submenu">
+                <a href="#"><i class="fas fa-user-shield"></i> Superusuarios</a>
+                <a href="#"><i class="fas fa-user"></i> Huéspedes</a>
+            </div>
+
+            <a href="#" onclick="navigateTo('hoteles')">
+                <i class="fas fa-hotel"></i> Hoteles
+            </a>
+
+            <a href="#" onclick="navigateTo('habitaciones')">
+                <i class="fas fa-bed"></i> Habitaciones
+            </a>
+
+            <a href="#" onclick="navigateTo('reservas')">
+                <i class="fas fa-calendar-check"></i> Reservas 
+            </a>
+            <div class="submenu">
+                <a href="#"><i class="fas fa-list"></i> Lista de reservas</a>
+                <a href="#"><i class="fas fa-calendar"></i> Calendario</a>
+            </div>
+
+            <a href="#" onclick="navigateTo('financiero')">
+                <i class="fas fa-dollar-sign"></i> Financiero
+            </a>
+
+            <a href="/" target="_blank">
+                <i class="fas fa-globe"></i> Ver Sitio Cliente
+            </a>
         </nav>
+
         <div class="admin-user">
             <span>👤 @ViewBag.AdminName (@ViewBag.AdminPuesto)</span>
             <a href="/admin/logout" style="color: #ff6b6b; margin-left: 1rem;">Cerrar Sesión</a>
         </div>
     </header>
 
-    <!-- Contenido Principal del SPA -->
     <main class="admin-content">
+        <section class="welcome-panel">
+            <div class="welcome-greeting">
+                <div class="greet-line">Hola, <span class="welcome-name">Salma</span></div>
+                <div class="greet-sub">Que tengas un bonito día</div>
+            </div>
+
+            <div class="page-info">
+                <h1 class="panel-title">Panel de Administración</h1>
+
+                <div class="toolbar-inline">
+                <input id="adminSearch" type="search" placeholder="Buscar usuarios, hoteles, reservas..." aria-label="Buscar" />
+
+                <button id="addGuestBtn" class="btn btn-success">
+                    <i class="fas fa-user-plus"></i> Agregar Huésped
+                </button>
+
+                <button id="sortBtn" class="btn btn-secondary">
+                    <i class="fas fa-sort"></i> Ordenar por
+                </button>
+                </div>
+            </div>
+        </section>
         <!-- Alertas globales -->
         <div id="alert-container"></div>
-        
+    
+
         <div id="app">
             <div class="loading">Cargando panel de administración...</div>
         </div>
@@ -1203,6 +1516,52 @@
                 showAlert('Error al eliminar el hotel: ' + error.message, 'error');
             }
         }
+      // Agregar clase "has-submenu" automáticamente a los enlaces que tengan submenu
+            document.querySelectorAll('.admin-nav > a').forEach(link => {
+                if (link.nextElementSibling && link.nextElementSibling.classList.contains('submenu')) {
+                    link.classList.add('has-submenu');
+                }
+            });
+
+            // Menús principales
+            document.querySelectorAll('.admin-nav > a').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    const next = this.nextElementSibling;
+
+                    if (next && next.classList.contains('submenu')) {
+                        e.preventDefault(); // evita navegación
+
+                        const isOpen = next.classList.contains('show');
+
+                        // Cerrar todos los submenus
+                        document.querySelectorAll('.submenu').forEach(sm => sm.classList.remove('show'));
+                        document.querySelectorAll('.admin-nav > a').forEach(link => link.classList.remove('active'));
+
+                        if (!isOpen) {
+                            // Abrir submenu actual
+                            next.classList.add('show');
+                            this.classList.add('active');
+                        }
+                    } else {
+                        // Si no tiene submenu
+                        document.querySelectorAll('.admin-nav > a').forEach(link => link.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // Cerrar submenus abiertos
+                        document.querySelectorAll('.submenu').forEach(sm => sm.classList.remove('show'));
+                    }
+                });
+            });
+
+            // Subitems
+            document.querySelectorAll('.submenu a').forEach(subitem => {
+                subitem.addEventListener('click', function () {
+                    document.querySelectorAll('.submenu a').forEach(si => si.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+
 
         // Función para mostrar alertas
         function showAlert(message, type = 'success') {
@@ -1259,6 +1618,38 @@
         document.addEventListener('DOMContentLoaded', function() {
             window.adminApp = new AdminApp();
         });
+        // Buscar solo con ENTER
+            document.getElementById('adminSearch').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    const q = this.value.trim();
+                    if (q) {
+                        console.log('Buscar:', q);
+                        if (typeof window.adminApp !== 'undefined' && typeof window.adminApp.search === 'function') {
+                            window.adminApp.search(q);
+                        } else if (typeof showAlert === 'function') {
+                            showAlert('Búsqueda: ' + q, 'success');
+                        }
+                    }
+                }
+            });
+
+            // Botón agregar huésped
+            document.getElementById('addGuestBtn').addEventListener('click', function () {
+                console.log('Agregar huésped');
+                if (typeof showAlert === 'function') {
+                    showAlert('Acción: Agregar Huésped', 'success');
+                }
+            });
+
+            // Botón ordenar
+            document.getElementById('sortBtn').addEventListener('click', function () {
+                console.log('Ordenar por...');
+                if (typeof showAlert === 'function') {
+                    showAlert('Acción: Ordenar por...', 'success');
+                }
+            });
+
+
     </script>
 </body>
 </html>
