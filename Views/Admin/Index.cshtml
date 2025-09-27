@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StayGo - Panel de Administración</title>
+    <style>
+        /* Estilos base para el SPA Admin */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .admin-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .admin-nav a:hover {
+            background-color: #34495e;
+        }
+
+        .admin-content {
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .metric {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .metric.blue { color: #3498db; }
+        .metric.red { color: #e74c3c; }
+        .metric.green { color: #2ecc71; }
+        .metric.orange { color: #f39c12; }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .btn-edit {
+            background: #f39c12;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header del Panel Admin -->
+    <header class="admin-header">
+        <div class="admin-logo">StayGo Admin</div>
+        <nav class="admin-nav">
+            <a href="#" onclick="navigateTo('dashboard')">Dashboard</a>
+            <a href="#" onclick="navigateTo('hoteles')">Hoteles</a>
+            <a href="#" onclick="navigateTo('habitaciones')">Habitaciones</a>
+            <a href="#" onclick="navigateTo('reservas')">Reservas</a>
+            <a href="#" onclick="navigateTo('usuarios')">Usuarios</a>
+            <a href="/" target="_blank">Ver Sitio Cliente</a>
+        </nav>
+    </header>
+
+    <!-- Contenido Principal del SPA -->
+    <main class="admin-content">
+        <div id="app">
+            <div class="loading">Cargando panel de administración...</div>
+        </div>
+    </main>
+
+    <!-- Scripts del SPA -->
+    <script>
+        // Simple SPA Router para el admin
+        class AdminApp {
+            constructor() {
+                this.currentView = 'dashboard';
+                this.apiBase = '/api';
+                this.init();
+            }
+
+            init() {
+                this.loadView(this.currentView);
+            }
+
+            async loadView(view) {
+                const appElement = document.getElementById('app');
+                
+                switch(view) {
+                    case 'dashboard':
+                        appElement.innerHTML = await this.renderDashboard();
+                        break;
+                    case 'hoteles':
+                        appElement.innerHTML = await this.renderHoteles();
+                        break;
+                    case 'habitaciones':
+                        appElement.innerHTML = '<div class="card"><h1>Gestión de Habitaciones</h1><p>En desarrollo...</p></div>';
+                        break;
+                    case 'reservas':
+                        appElement.innerHTML = '<div class="card"><h1>Gestión de Reservas</h1><p>En desarrollo...</p></div>';
+                        break;
+                    case 'usuarios':
+                        appElement.innerHTML = '<div class="card"><h1>Gestión de Usuarios</h1><p>En desarrollo...</p></div>';
+                        break;
+                    default:
+                        appElement.innerHTML = '<div class="card"><h2>Vista no encontrada</h2></div>';
+                }
+            }
+
+            async renderDashboard() {
+                return `
+                    <div>
+                        <h1>Dashboard</h1>
+                        <div class="dashboard-grid">
+                            <div class="card">
+                                <h3>Total Hoteles</h3>
+                                <div class="metric blue" id="total-hoteles">-</div>
+                            </div>
+                            <div class="card">
+                                <h3>Total Habitaciones</h3>
+                                <div class="metric red">-</div>
+                            </div>
+                            <div class="card">
+                                <h3>Reservas Activas</h3>
+                                <div class="metric green">-</div>
+                            </div>
+                            <div class="card">
+                                <h3>Total Usuarios</h3>
+                                <div class="metric orange">-</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async renderHoteles() {
+                try {
+                    const response = await fetch(`${this.apiBase}/hotelesapi`);
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    const hoteles = await response.json();
+                    
+                    return `
+                        <div>
+                            <h1>Gestión de Hoteles</h1>
+                            <button class="btn" onclick="alert('Función de crear hotel - próximamente')">
+                                + Crear Hotel
+                            </button>
+                            <div class="card" style="margin-top: 1rem;">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Ciudad</th>
+                                            <th>Teléfono</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${hoteles.map(hotel => `
+                                            <tr>
+                                                <td>${hotel.hotelId || hotel.HotelId}</td>
+                                                <td>${hotel.nombre || hotel.Nombre}</td>
+                                                <td>${hotel.ciudad || hotel.Ciudad}</td>
+                                                <td>${hotel.telefonoContacto || hotel.TelefonoContacto || 'N/A'}</td>
+                                                <td>
+                                                    <button class="btn btn-edit" onclick="alert('Editar hotel ${hotel.hotelId || hotel.HotelId}')">Editar</button>
+                                                    <button class="btn btn-delete" onclick="alert('Eliminar hotel ${hotel.hotelId || hotel.HotelId}')">Eliminar</button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    return `
+                        <div class="card">
+                            <h1>Error al cargar hoteles</h1>
+                            <p>Error: ${error.message}</p>
+                            <p>Verifica que la API esté funcionando en <a href="/api/hotelesapi" target="_blank">/api/hotelesapi</a></p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Función global para navegación
+        function navigateTo(view) {
+            window.adminApp.currentView = view;
+            window.adminApp.loadView(view);
+        }
+
+        // Inicializar la app cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            window.adminApp = new AdminApp();
+        });
+    </script>
+</body>
+</html>

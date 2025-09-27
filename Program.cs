@@ -1,29 +1,61 @@
 using Hotel_chain.Data;
+using Hotel_chain.Services.Interfaces;
+using Hotel_chain.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Agregamos el DbContext con MySQL oficial
+// ✅ DbContext con MySQL (mantener igual)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+                     throw new InvalidOperationException("Connection string 'DefaultConnection' not found."))
 );
 
-// ✅ Servicios para controladores con vistas
+// ✅ Servicios MVC para el frontend cliente (mantener)
 builder.Services.AddControllersWithViews();
 
+// 🆕 Servicios API para los controladores API
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Configurar JSON para la API
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Mantener PascalCase
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
-// ✅ Servicios para sesiones
-builder.Services.AddDistributedMemoryCache(); // Necesario para almacenar la sesión en memoria
+// 🆕 Registrar servicios de lógica de negocio
+builder.Services.AddScoped<IHotelService, HotelService>();
+// TODO: Agregar otros servicios cuando los creemos
+// builder.Services.AddScoped<IHabitacionService, HabitacionService>();
+// builder.Services.AddScoped<IReservaService, ReservaService>();
+// builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+// ✅ Servicios para sesiones (mantener para cliente)
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Tiempo de expiración de la sesión
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
 builder.Services.AddHttpContextAccessor();
+
+// 🆕 CORS para permitir que el frontend admin consuma la API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AdminPanel", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// 🆕 Configurar Areas para el panel admin
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -32,15 +64,31 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
-// ✅ Middleware de sesión
+// 🆕 Usar CORS
+app.UseCors("AdminPanel");
+
+// ✅ Middleware de sesión (mantener para cliente)
 app.UseSession();
 
 app.UseAuthorization();
 
+// 🆕 Configurar rutas para API
+app.MapControllers(); // Esto mapea automáticamente los controladores API con [ApiController]
+
+// 🆕 Ruta específica para el panel admin
+app.MapControllerRoute(
+    name: "admin",
+    pattern: "admin/{action=Index}/{id?}",
+    defaults: new { controller = "Admin", action = "Index" }
+);
+
+// ✅ Ruta para controladores cliente (mantener funcionalidad existente)
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+);
 
 app.Run();
