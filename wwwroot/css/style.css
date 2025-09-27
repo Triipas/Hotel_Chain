@@ -201,13 +201,16 @@ body {
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.consultar-disponibilidad {
-  background-color: #eaf4fc;
-  padding: 40px 150px;
+.disponibilidad {
+  background-color: #EAF1FF;
+  padding: 40px 90px;
   text-align: center;
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 20px;
 }
 
-.consultar-disponibilidad h2 {
+.disponibilidad h2 {
   font-size: 24px;
   margin-bottom: 20px;
 }
@@ -219,7 +222,27 @@ body {
   flex-wrap: wrap;
 }
 
-.consultar-form select,
+.consultar-form select {
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  color: #333;
+}
+
+.consultar-form select:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
 .consultar-form button {
   padding: 10px 15px;
   border-radius: 6px;
@@ -233,6 +256,7 @@ body {
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 120px;
 }
 
 .consultar-form button:hover {
