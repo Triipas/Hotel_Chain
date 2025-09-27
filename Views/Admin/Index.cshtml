@@ -834,7 +834,7 @@
 
             async renderDashboard() {
                 try {
-                    // Obtener estadísticas básicas
+                    
                     const hotelesResponse = await fetch(`${this.apiBase}/hotelesapi`);
                     const hoteles = hotelesResponse.ok ? await hotelesResponse.json() : [];
 
