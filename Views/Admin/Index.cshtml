@@ -48,6 +48,24 @@
             background-color: #34495e;
         }
 
+        .admin-user {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .admin-user a {
+            color: #ff6b6b;
+            text-decoration: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .admin-user a:hover {
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
         .admin-content {
             padding: 2rem;
             min-height: calc(100vh - 80px);
@@ -92,10 +110,13 @@
             border-radius: 4px;
             cursor: pointer;
             margin: 0.5rem 0.5rem 0.5rem 0;
+            font-size: 0.9rem;
+            transition: all 0.3s;
         }
 
         .btn:hover {
             opacity: 0.8;
+            transform: translateY(-1px);
         }
 
         .btn-edit {
@@ -104,6 +125,10 @@
 
         .btn-delete {
             background: #e74c3c;
+        }
+
+        .btn-success {
+            background: #27ae60;
         }
 
         table {
@@ -124,6 +149,180 @@
         th {
             background: #f8f9fa;
             font-weight: bold;
+        }
+
+        /* Estilos para Modales */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        /* Alertas */
+        .alert {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Animaciones */
+        @@keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @@keyframes slideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-50px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #2c3e50;
         }
     </style>
 </head>
@@ -147,13 +346,76 @@
 
     <!-- Contenido Principal del SPA -->
     <main class="admin-content">
+        <!-- Alertas globales -->
+        <div id="alert-container"></div>
+        
         <div id="app">
             <div class="loading">Cargando panel de administración...</div>
         </div>
     </main>
 
+    <!-- Modal para Crear/Editar Hotel -->
+    <div id="hotelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="hotelModalTitle">Crear Hotel</h2>
+                <button class="close" onclick="closeHotelModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="hotelForm">
+                    <input type="hidden" id="hotelId" name="hotelId">
+                    
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Hotel *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="direccion">Dirección *</label>
+                        <input type="text" id="direccion" name="direccion" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad *</label>
+                        <select id="ciudad" name="ciudad" required>
+                            <option value="">Seleccionar ciudad</option>
+                            <option value="Lima">Lima</option>
+                            <option value="Cusco">Cusco</option>
+                            <option value="Arequipa">Arequipa</option>
+                            <option value="Trujillo">Trujillo</option>
+                            <option value="Piura">Piura</option>
+                            <option value="Iquitos">Iquitos</option>
+                            <option value="Huancayo">Huancayo</option>
+                            <option value="Tacna">Tacna</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" name="descripcion" placeholder="Describe las características del hotel..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefonoContacto">Teléfono de Contacto</label>
+                        <input type="tel" id="telefonoContacto" name="telefonoContacto" placeholder="Ej: +51 999 999 999">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeHotelModal()">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="saveHotel()" id="saveHotelBtn">
+                    <span id="saveHotelText">Guardar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts del SPA -->
     <script>
+        // Variables globales
+        let currentEditingHotelId = null;
+        let isEditMode = false;
+
         // Simple SPA Router para el admin
         class AdminApp {
             constructor() {
@@ -191,29 +453,44 @@
             }
 
             async renderDashboard() {
-                return `
-                    <div>
-                        <h1>Dashboard</h1>
-                        <div class="dashboard-grid">
-                            <div class="card">
-                                <h3>Total Hoteles</h3>
-                                <div class="metric blue" id="total-hoteles">-</div>
+                try {
+                    // Obtener estadísticas básicas
+                    const hotelesResponse = await fetch(`${this.apiBase}/hotelesapi`);
+                    const hoteles = hotelesResponse.ok ? await hotelesResponse.json() : [];
+
+                    return `
+                        <div>
+                            <div class="page-header">
+                                <h1>Dashboard</h1>
                             </div>
-                            <div class="card">
-                                <h3>Total Habitaciones</h3>
-                                <div class="metric red">-</div>
-                            </div>
-                            <div class="card">
-                                <h3>Reservas Activas</h3>
-                                <div class="metric green">-</div>
-                            </div>
-                            <div class="card">
-                                <h3>Total Usuarios</h3>
-                                <div class="metric orange">-</div>
+                            <div class="dashboard-grid">
+                                <div class="card">
+                                    <h3>Total Hoteles</h3>
+                                    <div class="metric blue">${hoteles.length}</div>
+                                </div>
+                                <div class="card">
+                                    <h3>Total Habitaciones</h3>
+                                    <div class="metric red">-</div>
+                                </div>
+                                <div class="card">
+                                    <h3>Reservas Activas</h3>
+                                    <div class="metric green">-</div>
+                                </div>
+                                <div class="card">
+                                    <h3>Total Usuarios</h3>
+                                    <div class="metric orange">-</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } catch (error) {
+                    return `
+                        <div class="card">
+                            <h1>Dashboard</h1>
+                            <p>Error al cargar estadísticas: ${error.message}</p>
+                        </div>
+                    `;
+                }
             }
 
             async renderHoteles() {
@@ -226,36 +503,48 @@
                     
                     return `
                         <div>
-                            <h1>Gestión de Hoteles</h1>
-                            <button class="btn" onclick="alert('Función de crear hotel - próximamente')">
-                                + Crear Hotel
-                            </button>
-                            <div class="card" style="margin-top: 1rem;">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Nombre</th>
-                                            <th>Ciudad</th>
-                                            <th>Teléfono</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${hoteles.map(hotel => `
+                            <div class="page-header">
+                                <h1>Gestión de Hoteles</h1>
+                                <button class="btn btn-success" onclick="openCreateHotelModal()">
+                                    + Crear Hotel
+                                </button>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="overflow-x: auto;">
+                                    <table id="hotelesTable">
+                                        <thead>
                                             <tr>
-                                                <td>${hotel.hotelId || hotel.HotelId}</td>
-                                                <td>${hotel.nombre || hotel.Nombre}</td>
-                                                <td>${hotel.ciudad || hotel.Ciudad}</td>
-                                                <td>${hotel.telefonoContacto || hotel.TelefonoContacto || 'N/A'}</td>
-                                                <td>
-                                                    <button class="btn btn-edit" onclick="alert('Editar hotel ${hotel.hotelId || hotel.HotelId}')">Editar</button>
-                                                    <button class="btn btn-delete" onclick="alert('Eliminar hotel ${hotel.hotelId || hotel.HotelId}')">Eliminar</button>
-                                                </td>
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>Ciudad</th>
+                                                <th>Dirección</th>
+                                                <th>Teléfono</th>
+                                                <th>Acciones</th>
                                             </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            ${hoteles.map(hotel => `
+                                                <tr>
+                                                    <td>${hotel.hotelId || hotel.HotelId}</td>
+                                                    <td><strong>${hotel.nombre || hotel.Nombre}</strong></td>
+                                                    <td>${hotel.ciudad || hotel.Ciudad}</td>
+                                                    <td>${hotel.direccion || hotel.Direccion}</td>
+                                                    <td>${hotel.telefonoContacto || hotel.TelefonoContacto || 'N/A'}</td>
+                                                    <td>
+                                                        <button class="btn btn-edit" onclick="editHotel(${hotel.hotelId || hotel.HotelId})">
+                                                            Editar
+                                                        </button>
+                                                        <button class="btn btn-delete" onclick="deleteHotel(${hotel.hotelId || hotel.HotelId}, '${hotel.nombre || hotel.Nombre}')">
+                                                            Eliminar
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                    ${hoteles.length === 0 ? '<p style="text-align: center; padding: 2rem; color: #666;">No hay hoteles registrados</p>' : ''}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -271,11 +560,189 @@
             }
         }
 
+        // Funciones para manejar modales
+        function openCreateHotelModal() {
+            isEditMode = false;
+            currentEditingHotelId = null;
+            document.getElementById('hotelModalTitle').textContent = 'Crear Hotel';
+            document.getElementById('saveHotelText').textContent = 'Crear Hotel';
+            document.getElementById('hotelForm').reset();
+            document.getElementById('hotelId').value = '';
+            document.getElementById('hotelModal').classList.add('show');
+        }
+
+        function closeHotelModal() {
+            document.getElementById('hotelModal').classList.remove('show');
+            document.getElementById('hotelForm').reset();
+            currentEditingHotelId = null;
+            isEditMode = false;
+        }
+
+        // Función para editar hotel
+        async function editHotel(hotelId) {
+            try {
+                const response = await fetch(`/api/hotelesapi/${hotelId}`);
+                if (!response.ok) {
+                    throw new Error('Hotel no encontrado');
+                }
+                
+                const hotel = await response.json();
+                
+                // Llenar el formulario con los datos del hotel
+                isEditMode = true;
+                currentEditingHotelId = hotelId;
+                document.getElementById('hotelModalTitle').textContent = 'Editar Hotel';
+                document.getElementById('saveHotelText').textContent = 'Actualizar Hotel';
+                
+                document.getElementById('hotelId').value = hotel.hotelId || hotel.HotelId;
+                document.getElementById('nombre').value = hotel.nombre || hotel.Nombre;
+                document.getElementById('direccion').value = hotel.direccion || hotel.Direccion;
+                document.getElementById('ciudad').value = hotel.ciudad || hotel.Ciudad;
+                document.getElementById('descripcion').value = hotel.descripcion || hotel.Descripcion || '';
+                document.getElementById('telefonoContacto').value = hotel.telefonoContacto || hotel.TelefonoContacto || '';
+                
+                document.getElementById('hotelModal').classList.add('show');
+            } catch (error) {
+                showAlert('Error al cargar los datos del hotel: ' + error.message, 'error');
+            }
+        }
+
+        // Función para guardar hotel (crear o actualizar)
+        async function saveHotel() {
+            const form = document.getElementById('hotelForm');
+            const saveBtn = document.getElementById('saveHotelBtn');
+            const saveText = document.getElementById('saveHotelText');
+            
+            // Validar formulario
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Mostrar loading
+            saveBtn.disabled = true;
+            saveText.innerHTML = '<span class="spinner"></span>Guardando...';
+
+            try {
+                const formData = new FormData(form);
+                const hotelData = {
+                    nombre: formData.get('nombre'),
+                    direccion: formData.get('direccion'),
+                    ciudad: formData.get('ciudad'),
+                    descripcion: formData.get('descripcion') || null,
+                    telefonoContacto: formData.get('telefonoContacto') || null
+                };
+
+                let response;
+                if (isEditMode && currentEditingHotelId) {
+                    // Actualizar hotel existente
+                    response = await fetch(`/api/hotelesapi/${currentEditingHotelId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(hotelData)
+                    });
+                } else {
+                    // Crear nuevo hotel
+                    response = await fetch('/api/hotelesapi', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(hotelData)
+                    });
+                }
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert(result.message, 'success');
+                    closeHotelModal();
+                    // Recargar la lista de hoteles
+                    await window.adminApp.loadView('hoteles');
+                } else {
+                    throw new Error(result.message || 'Error al guardar el hotel');
+                }
+            } catch (error) {
+                showAlert('Error al guardar el hotel: ' + error.message, 'error');
+            } finally {
+                // Restaurar botón
+                saveBtn.disabled = false;
+                saveText.textContent = isEditMode ? 'Actualizar Hotel' : 'Crear Hotel';
+            }
+        }
+
+        // Función para eliminar hotel
+        async function deleteHotel(hotelId, hotelName) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el hotel "${hotelName}"?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/hotelesapi/${hotelId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert(result.message, 'success');
+                    // Recargar la lista de hoteles
+                    await window.adminApp.loadView('hoteles');
+                } else {
+                    throw new Error(result.message || 'Error al eliminar el hotel');
+                }
+            } catch (error) {
+                showAlert('Error al eliminar el hotel: ' + error.message, 'error');
+            }
+        }
+
+        // Función para mostrar alertas
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alert-container');
+            const alertId = 'alert_' + Date.now();
+            
+            const alertHtml = `
+                <div id="${alertId}" class="alert alert-${type} show">
+                    ${message}
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHtml;
+            
+            // Auto-hide después de 5 segundos
+            setTimeout(() => {
+                const alertElement = document.getElementById(alertId);
+                if (alertElement) {
+                    alertElement.classList.remove('show');
+                    setTimeout(() => {
+                        alertContainer.innerHTML = '';
+                    }, 300);
+                }
+            }, 5000);
+        }
+
         // Función global para navegación
         function navigateTo(view) {
             window.adminApp.currentView = view;
             window.adminApp.loadView(view);
         }
+
+        // Cerrar modal al hacer clic fuera de él
+        window.onclick = function(event) {
+            const modal = document.getElementById('hotelModal');
+            if (event.target === modal) {
+                closeHotelModal();
+            }
+        }
+
+        // Cerrar modal con la tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeHotelModal();
+            }
+        });
 
         // Inicializar la app cuando la página cargue
         document.addEventListener('DOMContentLoaded', function() {
