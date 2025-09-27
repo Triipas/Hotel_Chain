@@ -1,11 +1,60 @@
+@{
+    ViewData["Title"] = "Inicio de Sesión - Administradores";
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/LoginAdmin.css">
 </head>
 <body>
-    
+    <div class="login-wrapper">
+        <!-- Columna izquierda: formulario -->
+        <div class="login-left">
+            <h2>INICIAR SESIÓN</h2>
+            <form method="post" asp-action="LoginAdmin">
+                <br>
+                <input type="text" id="usuario" name="usuario" placeholder="Usuario" required>
+                
+                <input type="password" id="password" name="password" placeholder="Contraseña" required>
+
+                <p class="terms">Solo personal autorizado puede acceder a esta sección.</p>
+
+                <button type="submit" class="btn-login">INGRESAR</button>
+            </form>
+        </div>
+
+        <!-- Columna derecha: div azul -->
+        <div class="login-right">
+            <div id="particles-js"></div>
+            <div class="admin-panel-info">
+                <h3>Panel Administrativo</h3>
+                <p>Accede al sistema de gestión para administrar hoteles, habitaciones y clientes.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": {
+                    "value": 80
+                },
+                "size": {
+                    "value": 3
+                },
+                "move": {
+                    "speed": 2
+                },
+                "line_linked": {
+                    "enable": true
+                }
+            }
+        });
+    </script>
+
 </body>
 </html>

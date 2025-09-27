@@ -32,7 +32,10 @@ namespace Hotel_chain.Controllers
         {
             return View();
         }
-        
+        public IActionResult LoginAdmin()
+        {
+            return View();
+        }
         public IActionResult Habitaciones(int hotelId)
         {
             var lista = habitaciones.Where(h => h.HotelId == hotelId).ToList();
