@@ -1,0 +1,45 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Inicio de Sesión - Cliente";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/LoginCliente.css" />
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-left">
+       
+        </div>
+
+        <div class="login-right">
+            <h2>INICIAR SESIÓN</h2>
+
+            @* Mensaje de error *@
+            @if (ViewBag.Mensaje != null)
+            {
+                <div class="error-message">@ViewBag.Mensaje</div>
+            }
+
+            <form method="post" asp-controller="Login" asp-action="LoginUser">
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" placeholder="Ingrese su Correo Electrónico" required>
+                <br>
+                <label for="contra">Contraseña</label>
+                <input type="password" id="contra" name="contra" placeholder="Ingrese su Contraseña" required>
+                <br>
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                <button type="button" class="btn-register" 
+                        onclick="location.href='@Url.Action("RegisterUser", "Login")'">
+                    Crear una cuenta
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+@model List<Hotel_chain.Models.Hotel>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Hoteles";
+}
+
+
+ <header>
+    <nav class="navbar">
+    <div class="logo">StayGo</div>
+    <div class="nav-derecha">
+        <ul class="nav-links">
+            <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+            <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+            <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
+            <li><a href="#">Sobre Nosotros</a></li>
+            <li><a href="#">Contáctanos</a></li>
+        </ul>
+
+        @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+        {
+            <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+            <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+        }
+        else
+        {
+            <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+        }
+    </div>
+</nav>
+</header>
+
+<link rel="stylesheet" href="~/css/hoteles.css" />
+<link rel="stylesheet" href="~/css/style.css" />
+
+<section class="filtro-hoteles">
+    <h2>Filtrar hoteles</h2>
+    <form method="get" class="filtro-form">
+        <select name="ubicacion">
+            <option value="">Ubicación</option>
+            <option value="Lima">Lima</option>
+            <option value="Cusco">Cusco</option>
+            <option value="Arequipa">Arequipa</option>
+        </select>
+
+        <input type="text" name="nombre" placeholder="Buscar hotel por nombre" />
+
+        <button type="submit">Buscar</button>
+    </form>
+</section>
+
+<section class="listado-hoteles">
+    <h2>Todos los hoteles</h2>
+    <div class="hoteles-container">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var hotel in Model)
+            {
+                <div class="hotel-card">
+                    <img src="~/imagenes/@hotel.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                         alt="@hotel.Nombre" class="hotel-img" />
+                    <h3>@hotel.Nombre</h3>
+                    <p>@hotel.Ciudad</p>
+                    <p>@hotel.Descripcion</p>
+                     <a href="/Habitacion/Index?hotelId=@hotel.HotelId" class="btn-reservar">
+    Ver habitaciones
+</a>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No hay hoteles registrados aún.</p>
+        }
+    </div>
+</section>
+
+<a href="/Home/Index" class="btn-volver">
+    Volver a Inicio
+</a>
+
