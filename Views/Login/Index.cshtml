@@ -18,27 +18,32 @@
         </div>
 
         <div class="login-right">
-            <h2>INICIAR SESIÓN</h2>
+            <div class="login-right-container">
+                <h2>Iniciar Sesión</h2>
 
-            @* Mensaje de error *@
-            @if (ViewBag.Mensaje != null)
-            {
-                <div class="error-message">@ViewBag.Mensaje</div>
-            }
+                @* Mensaje de error *@
+                @if (ViewBag.Mensaje != null)
+                {
+                    <div class="error-message">@ViewBag.Mensaje</div>
+                }
 
-            <form method="post" asp-controller="Login" asp-action="LoginUser">
-                <label for="email">Correo electrónico</label>
-                <input type="email" id="email" name="email" placeholder="Ingrese su Correo Electrónico" required>
-                <br>
-                <label for="contra">Contraseña</label>
-                <input type="password" id="contra" name="contra" placeholder="Ingrese su Contraseña" required>
-                <br>
-                <button type="submit" class="btn-login">Iniciar Sesión</button>
-                <button type="button" class="btn-register" 
-                        onclick="location.href='@Url.Action("RegisterUser", "Login")'">
-                    Crear una cuenta
-                </button>
-            </form>
+                <form method="post" asp-controller="Login" asp-action="LoginUser">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="Ingrese su E-mail" required>
+                    <br>
+                    <label for="contra">Contraseña</label>
+                    <input type="password" id="contra" name="contra" placeholder="Ingrese su Contraseña" required>
+                    <br>
+                    <button type="submit" class="btn-login">Iniciar Sesión</button>
+                    <button type="button" class="btn-register" 
+                            onclick="location.href='@Url.Action("RegisterUser", "Login")'">
+                        Crear una cuenta
+                    </button>
+                </form>
+                <div class="back-link">
+                    <a href="/">← Volver al sitio principal</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
