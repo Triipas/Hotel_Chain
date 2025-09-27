@@ -233,3 +233,60 @@ body {
   background-color: #005fa3;
 }
 
+.footer {
+  background-color: #ffffff;
+  padding: 40px 150px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.footer-contenido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  max-width: 50%;
+}
+
+.footer-logo .logo-text {
+  font-size: 22px;
+  font-weight: bold;
+  color: #152C5B;
+}
+
+.footer-logo .resaltado {
+  color: #3252DF; /* Azul principal */
+}
+
+.footer-logo p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #777;
+}
+
+.footer-panel {
+  text-align: right;
+}
+
+.footer-panel p {
+  font-size: 16px;
+  color: #152C5B;
+  margin-bottom: 10px;
+  font-weight: bold; /* Aplica negrita */ 
+}
+
+.btn-panel-admin {
+  background-color: #3252DF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-panel-admin:hover {
+  background-color: #203698;
+}

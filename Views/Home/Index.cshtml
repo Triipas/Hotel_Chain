@@ -15,120 +15,123 @@
   <link rel="stylesheet" href="~/css/recomendado.css" />
 </head>
 <body>
-  <header>
-    <nav class="navbar">
-    <div class="logo">StayGo</div>
-    <div class="nav-derecha">
-        <ul class="nav-links">
-            <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
-            <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-            <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
-            <li><a href="#">Sobre Nosotros</a></li>
-            <li><a href="#">Contáctanos</a></li>
-        </ul>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Contáctanos</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
 
-        @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-        {
-            <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-            <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-        }
-        else
-        {
-            <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
-        }
-    </div>
-</nav>
-</header>
-
-  <main>
-    <section class="hero">
-        <div class="hero-text">
-            <h1>Menos trabajo,<br>más vacaciones.</h1>
-            <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br>Es hora de crear momentos inolvidables.</p>
-            <button class="mostrar-mas">Mostrar más</button>
-            <div class="stats-stack">
-                <div class="stats-images">
-                    <div class="stat-img">📷</div>
-                    <div class="stat-img">📷</div>
-                    <div class="stat-img">📷</div>
-                </div>
-                <div class="stats-texts">
-                    <div class="stat-text"><strong>500</strong><span>Usuarios</span></div>
-                    <div class="stat-text"><strong>100</strong><span>Imagenes</span></div>
-                    <div class="stat-text"><strong>10</strong><span>Ciudades</span></div>
+    <main>
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Menos trabajo,<br>más vacaciones.</h1>
+                <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br>Es hora de crear momentos inolvidables.</p>
+                <button class="mostrar-mas">Mostrar más</button>
+                <div class="stats-stack">
+                    <div class="stats-images">
+                        <div class="stat-img">📷</div>
+                        <div class="stat-img">📷</div>
+                        <div class="stat-img">📷</div>
+                    </div>
+                    <div class="stats-texts">
+                        <div class="stat-text"><strong>500</strong><span>Usuarios</span></div>
+                        <div class="stat-text"><strong>100</strong><span>Imagenes</span></div>
+                        <div class="stat-text"><strong>10</strong><span>Ciudades</span></div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="hero-imagen"></div>
-    </section>
+            <div class="hero-imagen"></div>
+        </section>
 
-    <section class="consultar-disponibilidad">
-      <h2>Consultar disponibilidad</h2>
-      <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
-        <select name="ubicacion">
-          <option value="">Seleccionar Ubicación</option>
-          <option value="Arequipa">Arequipa</option>
-          <option value="Cusco">Cusco</option>
-          <option value="Lima">Lima</option>
-        </select>
-        <select name="clase">
-          <option value="">Clases</option>
-          <option value="Económica">Económica</option>
-          <option value="Premium">Premium</option>
-        </select>
-        <select name="precio">
-          <option value="">Precio</option>
-          <option value="Menos de 100">Menos de 100</option>
-          <option value="100 a 300">100 a 300</option>
-          <option value="Más de 300">Más de 300</option>
-        </select>
-        <button type="submit">Buscar</button>
-      </form>
-
-      @if (ViewBag.Resultado != null)
-      {
-          <div class="resultado-busqueda">
-              <p>@ViewBag.Resultado</p>
-          </div>
-      }
-    </section>
-
-
-
-    <section class="hoteles-recomendados">
-        <h2>Hoteles recomendados</h2>
-
-<a href="/Hotel/Index" class="btn-ver-todos">
-    Ver todos los hoteles
-</a>
-
-        <div class="hoteles-container">
-            @if (Model != null && Model.Any())
+        <section class="consultar-disponibilidad">
+            <h2>Consultar disponibilidad</h2>
+            <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
+                <select name="ubicacion">
+                    <option value="">Seleccionar Ubicación</option>
+                    <option value="Arequipa">Arequipa</option>
+                    <option value="Cusco">Cusco</option>
+                    <option value="Lima">Lima</option>
+                </select>
+                <select name="clase">
+                    <option value="">Clases</option>
+                    <option value="Económica">Económica</option>
+                    <option value="Premium">Premium</option>
+                </select>
+                <select name="precio">
+                    <option value="">Precio</option>
+                    <option value="Menos de 100">Menos de 100</option>
+                    <option value="100 a 300">100 a 300</option>
+                    <option value="Más de 300">Más de 300</option>
+                </select>
+                <button type="submit">Buscar</button>
+            </form>
+            @if (ViewBag.Resultado != null)
             {
-                var random = new Random();
-                var recomendados = Model.OrderBy(x => random.Next()).Take(6);
+                <div class="resultado-busqueda">
+                    <p>@ViewBag.Resultado</p>
+                </div>
+            }
+        </section>
 
-                foreach (var hotel in recomendados)
+        <section class="hoteles-recomendados">
+            <h2>Hoteles recomendados</h2>
+            <a href="/Hotel/Index" class="btn-ver-todos">Ver todos los hoteles</a>
+            <div class="hoteles-container">
+                @if (Model != null && Model.Any())
                 {
-                    <div class="hotel-card">
-                        <img src="~/imagenes/@hotel.Imagenes.FirstOrDefault()?.NombreArchivo" 
-                             alt="@hotel.Nombre" class="hotel-img" />
-                        <h3>@hotel.Nombre</h3>
-                        <p>@hotel.Ciudad</p>
-                        <p>@hotel.Descripcion</p>
-             <a href="/Habitacion/Index?hotelId=@hotel.HotelId" class="btn-reservar">
-    Ver habitaciones
-</a>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>No hay hoteles registrados aún.</p>
-            }
-        </div>
-    </section>
+                    var random = new Random();
+                    var recomendados = Model.OrderBy(x => random.Next()).Take(6);
 
-  </main>
+                    foreach (var hotel in recomendados)
+                    {
+                        <div class="hotel-card">
+                            <img src="~/imagenes/@hotel.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                                alt="@hotel.Nombre" class="hotel-img" />
+                            <h3>@hotel.Nombre</h3>
+                            <p>@hotel.Ciudad</p>
+                            <p>@hotel.Descripcion</p>
+                            <a href="/Habitacion/Index?hotelId=@hotel.HotelId" class="btn-reservar">Ver habitaciones</a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>No hay hoteles registrados aún.</p>
+                }
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <div class="footer-contenido">
+            <div class="footer-logo">
+                <span class="logo-text">Stay<span class="resaltado">Go.</span></span>
+                <p>Hacemos que tus vacaciones de belleza sean instantáneas y memorables.</p>
+            </div>
+            <div class="footer-panel">
+                <p>¿Eres nuestro socio? Entra a tu propio panel</p>
+                <a href="/Admin/Login">
+                <button class="btn-panel-admin">Iniciar Sesión</button>
+                </a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
