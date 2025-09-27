@@ -4,7 +4,7 @@ using Hotel_chain.Data;
 using Hotel_chain.Models;
 using System.Linq;
 
-namespace Hotel_chain.Controllers
+namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
 {
     public class LoginController : Controller
     {

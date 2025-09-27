@@ -4,7 +4,7 @@ using Hotel_chain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace Hotel_chain.Controllers
+namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
 {
     public class HabitacionController : Controller
     {
@@ -16,7 +16,7 @@ namespace Hotel_chain.Controllers
         }
 
        
-        public IActionResult Index(int hotelId, string tipo = null, int? capacidad = null)
+        public IActionResult Index(int hotelId, string? tipo = null, int? capacidad = null) // 🆕 Agregar ? para nullable
         {
             var query = _context.Habitaciones
                                 .Include(h => h.Imagenes)
