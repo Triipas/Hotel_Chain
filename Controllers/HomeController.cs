@@ -32,6 +32,7 @@ namespace Hotel_chain.Controllers
         {
             return View();
         }
+        
         public IActionResult LoginAdmin()
         {
             return View();
