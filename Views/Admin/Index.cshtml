@@ -410,11 +410,78 @@
         </div>
     </div>
 
+    <!-- Modal para Crear/Editar Habitación -->
+    <div id="habitacionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="habitacionModalTitle">Crear Habitación</h2>
+                <button class="close" onclick="closeHabitacionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="habitacionForm">
+                    <input type="hidden" id="habitacionId" name="habitacionId">
+                    
+                    <div class="form-group">
+                        <label for="habitacionHotelId">Hotel *</label>
+                        <select id="habitacionHotelId" name="hotelId" required>
+                            <option value="">Seleccionar hotel</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="numeroHabitacion">Número de Habitación *</label>
+                        <input type="text" id="numeroHabitacion" name="numeroHabitacion" required placeholder="Ej: 101, A-205, Suite Premium">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Habitación *</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="simple">Simple</option>
+                            <option value="doble">Doble</option>
+                            <option value="suite">Suite</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="capacidad">Capacidad (personas) *</label>
+                        <input type="number" id="capacidad" name="capacidad" required min="1" max="10" placeholder="Ej: 2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="precioNoche">Precio por Noche (S/) *</label>
+                        <input type="number" id="precioNoche" name="precioNoche" required min="0" step="0.01" placeholder="Ej: 150.00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descripcionHab">Descripción</label>
+                        <textarea id="descripcionHab" name="descripcionHab" placeholder="Describe las características de la habitación..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="disponible" name="disponible" checked>
+                            Habitación disponible
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeHabitacionModal()">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="saveHabitacion()" id="saveHabitacionBtn">
+                    <span id="saveHabitacionText">Guardar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts del SPA -->
     <script>
         // Variables globales
         let currentEditingHotelId = null;
+        let currentEditingHabitacionId = null;
         let isEditMode = false;
+        let isEditModeHabitacion = false;
 
         // Simple SPA Router para el admin
         class AdminApp {
@@ -439,7 +506,7 @@
                         appElement.innerHTML = await this.renderHoteles();
                         break;
                     case 'habitaciones':
-                        appElement.innerHTML = '<div class="card"><h1>Gestión de Habitaciones</h1><p>En desarrollo...</p></div>';
+                        appElement.innerHTML = await this.renderHabitaciones();
                         break;
                     case 'reservas':
                         appElement.innerHTML = '<div class="card"><h1>Gestión de Reservas</h1><p>En desarrollo...</p></div>';
@@ -458,6 +525,9 @@
                     const hotelesResponse = await fetch(`${this.apiBase}/hotelesapi`);
                     const hoteles = hotelesResponse.ok ? await hotelesResponse.json() : [];
 
+                    const habitacionesResponse = await fetch(`${this.apiBase}/habitacionesapi`);
+                    const habitaciones = habitacionesResponse.ok ? await habitacionesResponse.json() : [];
+
                     return `
                         <div>
                             <div class="page-header">
@@ -470,7 +540,7 @@
                                 </div>
                                 <div class="card">
                                     <h3>Total Habitaciones</h3>
-                                    <div class="metric red">-</div>
+                                    <div class="metric red">${habitaciones.length}</div>
                                 </div>
                                 <div class="card">
                                     <h3>Reservas Activas</h3>
@@ -558,9 +628,98 @@
                     `;
                 }
             }
+
+            async renderHabitaciones() {
+                try {
+                    const response = await fetch(`${this.apiBase}/habitacionesapi`);
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    const habitaciones = await response.json();
+                    
+                    return `
+                        <div>
+                            <div class="page-header">
+                                <h1>Gestión de Habitaciones</h1>
+                                <button class="btn btn-success" onclick="openCreateHabitacionModal()">
+                                    + Crear Habitación
+                                </button>
+                            </div>
+                            
+                            <div class="card">
+                                <div style="overflow-x: auto;">
+                                    <table id="habitacionesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Hotel</th>
+                                                <th>Número</th>
+                                                <th>Tipo</th>
+                                                <th>Capacidad</th>
+                                                <th>Precio/Noche</th>
+                                                <th>Disponible</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${habitaciones.map(hab => `
+                                                <tr>
+                                                    <td>${hab.habitacionId || hab.HabitacionId}</td>
+                                                    <td><strong>${(hab.hotel && hab.hotel.nombre) || (hab.Hotel && hab.Hotel.Nombre) || 'N/A'}</strong></td>
+                                                    <td>${hab.numeroHabitacion || hab.NumeroHabitacion}</td>
+                                                    <td>
+                                                        <span style="
+                                                            background: ${hab.tipo === 'suite' || hab.Tipo === 'suite' ? '#f39c12' : 
+                                                                        hab.tipo === 'doble' || hab.Tipo === 'doble' ? '#3498db' : '#27ae60'};
+                                                            color: white;
+                                                            padding: 2px 8px;
+                                                            border-radius: 12px;
+                                                            font-size: 0.8rem;
+                                                            text-transform: capitalize;
+                                                        ">
+                                                            ${hab.tipo || hab.Tipo}
+                                                        </span>
+                                                    </td>
+                                                    <td>${hab.capacidad || hab.Capacidad} personas</td>
+                                                    <td>S/ ${(hab.precioNoche || hab.PrecioNoche)?.toFixed(2)}</td>
+                                                    <td>
+                                                        <span style="
+                                                            color: ${hab.disponible !== false && hab.Disponible !== false ? '#27ae60' : '#e74c3c'};
+                                                            font-weight: bold;
+                                                        ">
+                                                            ${hab.disponible !== false && hab.Disponible !== false ? '✓ Sí' : '✗ No'}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-edit" onclick="editHabitacion(${hab.habitacionId || hab.HabitacionId})">
+                                                            Editar
+                                                        </button>
+                                                        <button class="btn btn-delete" onclick="deleteHabitacion(${hab.habitacionId || hab.HabitacionId}, '${hab.numeroHabitacion || hab.NumeroHabitacion}')">
+                                                            Eliminar
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                    ${habitaciones.length === 0 ? '<p style="text-align: center; padding: 2rem; color: #666;">No hay habitaciones registradas</p>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    return `
+                        <div class="card">
+                            <h1>Error al cargar habitaciones</h1>
+                            <p>Error: ${error.message}</p>
+                            <p>Verifica que la API esté funcionando en <a href="/api/habitacionesapi" target="_blank">/api/habitacionesapi</a></p>
+                        </div>
+                    `;
+                }
+            }
         }
 
-        // Funciones para manejar modales
+        // Funciones para manejar modales de hoteles
         function openCreateHotelModal() {
             isEditMode = false;
             currentEditingHotelId = null;
@@ -578,7 +737,354 @@
             isEditMode = false;
         }
 
+        // Funciones para manejar modales de habitaciones
+        async function openCreateHabitacionModal() {
+            console.log('🆕 Abriendo modal de crear habitación...'); // 🐛 Debug
+            
+            isEditModeHabitacion = false;
+            currentEditingHabitacionId = null;
+            document.getElementById('habitacionModalTitle').textContent = 'Crear Habitación';
+            document.getElementById('saveHabitacionText').textContent = 'Crear Habitación';
+            document.getElementById('habitacionForm').reset();
+            document.getElementById('habitacionId').value = '';
+            document.getElementById('disponible').checked = true;
+            
+            // Mostrar modal primero
+            document.getElementById('habitacionModal').classList.add('show');
+            console.log('✅ Modal mostrado'); // 🐛 Debug
+            
+            // Pequeño delay para asegurar que el DOM esté listo
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Cargar lista de hoteles DESPUÉS de mostrar el modal
+            console.log('🏨 Cargando hoteles en modal de crear...'); // 🐛 Debug
+            const hotelsCargados = await loadHotelesDropdown();
+            
+            if (hotelsCargados) {
+                console.log('✅ Hoteles cargados exitosamente en modal de crear'); // 🐛 Debug
+            } else {
+                console.log('❌ Error al cargar hoteles en modal de crear'); // 🐛 Debug
+            }
+        }
+
+        function closeHabitacionModal() {
+            console.log('❌ Cerrando modal de habitación...'); // 🐛 Debug
+            document.getElementById('habitacionModal').classList.remove('show');
+            document.getElementById('habitacionForm').reset();
+            currentEditingHabitacionId = null;
+            isEditModeHabitacion = false;
+        }
+
+        // Función para cargar hoteles en el dropdown
+        async function loadHotelesDropdown() {
+            try {
+                console.log('🏨 Iniciando carga de hoteles...'); // 🐛 Debug
+                const response = await fetch('/api/hotelesapi');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
+                }
+                
+                const hoteles = await response.json();
+                console.log('🏨 Hoteles cargados:', hoteles); // 🐛 Debug
+                
+                const select = document.getElementById('habitacionHotelId'); // 🆕 ID actualizado
+                console.log('🎯 Elemento select encontrado:', select); // 🐛 Debug
+                
+                if (!select) {
+                    throw new Error('Elemento select con ID "habitacionHotelId" no encontrado');
+                }
+
+                // Limpiar opciones existentes completamente
+                select.innerHTML = '';
+                console.log('🧹 Select limpiado'); // 🐛 Debug
+                
+                // Añadir opción por defecto
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Seleccionar hotel';
+                select.appendChild(defaultOption);
+                console.log('📋 Opción por defecto añadida'); // 🐛 Debug
+                
+                // Verificar si hoteles es un array
+                if (!Array.isArray(hoteles)) {
+                    throw new Error('La respuesta no es un array de hoteles');
+                }
+
+                // Añadir hoteles uno por uno
+                hoteles.forEach((hotel, index) => {
+                    const option = document.createElement('option');
+                    // Manejar tanto PascalCase como camelCase
+                    const hotelId = hotel.hotelId || hotel.HotelId;
+                    const hotelNombre = hotel.nombre || hotel.Nombre;
+                    
+                    option.value = hotelId;
+                    option.textContent = hotelNombre;
+                    select.appendChild(option);
+                    
+                    console.log(`✅ Hotel ${index + 1} añadido: ID=${hotelId}, Nombre="${hotelNombre}"`); // 🐛 Debug
+                });
+
+                // Verificar que las opciones están en el DOM
+                console.log(`🎯 Total opciones en select: ${select.options.length}`); // 🐛 Debug
+                console.log('🎯 Opciones en el select:'); // 🐛 Debug
+                for (let i = 0; i < select.options.length; i++) {
+                    console.log(`   ${i}: value="${select.options[i].value}" text="${select.options[i].textContent}"`);
+                }
+
+                return true; // Indicar que se cargó exitosamente
+                
+            } catch (error) {
+                console.error('❌ Error detallado al cargar hoteles:', error); // 🐛 Debug
+                showAlert('Error al cargar la lista de hoteles: ' + error.message, 'error');
+                return false; // Indicar que falló
+            }
+        }
+
         // Función para editar hotel
+        async function editHotel(hotelId) {
+            try {
+                const response = await fetch(`/api/hotelesapi/${hotelId}`);
+                if (!response.ok) {
+                    throw new Error('Hotel no encontrado');
+                }
+                
+                const hotel = await response.json();
+                
+                // Llenar el formulario con los datos del hotel
+                isEditMode = true;
+                currentEditingHotelId = hotelId;
+                document.getElementById('hotelModalTitle').textContent = 'Editar Hotel';
+                document.getElementById('saveHotelText').textContent = 'Actualizar Hotel';
+                
+                document.getElementById('hotelId').value = hotel.hotelId || hotel.HotelId;
+                document.getElementById('nombre').value = hotel.nombre || hotel.Nombre;
+                document.getElementById('direccion').value = hotel.direccion || hotel.Direccion;
+                document.getElementById('ciudad').value = hotel.ciudad || hotel.Ciudad;
+                document.getElementById('descripcion').value = hotel.descripcion || hotel.Descripcion || '';
+                document.getElementById('telefonoContacto').value = hotel.telefonoContacto || hotel.TelefonoContacto || '';
+                
+                document.getElementById('hotelModal').classList.add('show');
+            } catch (error) {
+                showAlert('Error al cargar los datos del hotel: ' + error.message, 'error');
+            }
+        }
+
+        // Función para guardar hotel (crear o actualizar)
+        async function saveHotel() {
+            const form = document.getElementById('hotelForm');
+            const saveBtn = document.getElementById('saveHotelBtn');
+            const saveText = document.getElementById('saveHotelText');
+            
+            // Validar formulario
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Mostrar loading
+            saveBtn.disabled = true;
+            saveText.innerHTML = '<span class="spinner"></span>Guardando...';
+
+            try {
+                const formData = new FormData(form);
+                const hotelData = {
+                    nombre: formData.get('nombre'),
+                    direccion: formData.get('direccion'),
+                    ciudad: formData.get('ciudad'),
+                    descripcion: formData.get('descripcion') || null,
+                    telefonoContacto: formData.get('telefonoContacto') || null
+                };
+
+                let response;
+                if (isEditMode && currentEditingHotelId) {
+                    // Actualizar hotel existente
+                    response = await fetch(`/api/hotelesapi/${currentEditingHotelId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(hotelData)
+                    });
+                } else {
+                    // Crear nuevo hotel
+                    response = await fetch('/api/hotelesapi', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(hotelData)
+                    });
+                }
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert(result.message, 'success');
+                    closeHotelModal();
+                    // Recargar la lista de hoteles
+                    await window.adminApp.loadView('hoteles');
+                } else {
+                    throw new Error(result.message || 'Error al guardar el hotel');
+                }
+            } catch (error) {
+                showAlert('Error al guardar el hotel: ' + error.message, 'error');
+            } finally {
+                // Restaurar botón
+                saveBtn.disabled = false;
+                saveText.textContent = isEditMode ? 'Actualizar Hotel' : 'Crear Hotel';
+            }
+        }
+
+        // Función para eliminar hotel
+        async function deleteHotel(hotelId, hotelName) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar el hotel "${hotelName}"?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/hotelesapi/${hotelId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert(result.message, 'success');
+                    // Recargar la lista de hoteles
+                    await window.adminApp.loadView('hoteles');
+                } else {
+                    throw new Error(result.message || 'Error al eliminar el hotel');
+                }
+            } catch (error) {
+                showAlert('Error al eliminar el hotel: ' + error.message, 'error');
+            }
+        }
+        async function editHabitacion(habitacionId) {
+            try {
+                const response = await fetch(`/api/habitacionesapi/${habitacionId}`);
+                if (!response.ok) {
+                    throw new Error('Habitación no encontrada');
+                }
+                
+                const habitacion = await response.json();
+                
+                // Cargar hoteles primero
+                await loadHotelesDropdown();
+                
+                // Llenar el formulario con los datos de la habitación
+                isEditModeHabitacion = true;
+                currentEditingHabitacionId = habitacionId;
+                document.getElementById('habitacionModalTitle').textContent = 'Editar Habitación';
+                document.getElementById('saveHabitacionText').textContent = 'Actualizar Habitación';
+                
+                document.getElementById('habitacionId').value = habitacion.habitacionId || habitacion.HabitacionId;
+                document.getElementById('hotelId').value = habitacion.hotelId || habitacion.HotelId;
+                document.getElementById('numeroHabitacion').value = habitacion.numeroHabitacion || habitacion.NumeroHabitacion;
+                document.getElementById('tipo').value = habitacion.tipo || habitacion.Tipo;
+                document.getElementById('capacidad').value = habitacion.capacidad || habitacion.Capacidad;
+                document.getElementById('precioNoche').value = habitacion.precioNoche || habitacion.PrecioNoche;
+                document.getElementById('descripcionHab').value = habitacion.descripcion || habitacion.Descripcion || '';
+                document.getElementById('disponible').checked = habitacion.disponible !== false && habitacion.Disponible !== false;
+                
+                document.getElementById('habitacionModal').classList.add('show');
+            } catch (error) {
+                showAlert('Error al cargar los datos de la habitación: ' + error.message, 'error');
+            }
+        }
+
+        // Función para guardar habitación (crear o actualizar)
+        async function saveHabitacion() {
+            const form = document.getElementById('habitacionForm');
+            const saveBtn = document.getElementById('saveHabitacionBtn');
+            const saveText = document.getElementById('saveHabitacionText');
+            
+            // Validar formulario
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Mostrar loading
+            saveBtn.disabled = true;
+            saveText.innerHTML = '<span class="spinner"></span>Guardando...';
+
+            try {
+                const formData = new FormData(form);
+                const habitacionData = {
+                    hotelId: parseInt(formData.get('hotelId')),
+                    numeroHabitacion: formData.get('numeroHabitacion'),
+                    tipo: formData.get('tipo'),
+                    capacidad: parseInt(formData.get('capacidad')),
+                    precioNoche: parseFloat(formData.get('precioNoche')),
+                    descripcion: formData.get('descripcionHab') || null,
+                    disponible: formData.get('disponible') === 'on'
+                };
+
+                let response;
+                if (isEditModeHabitacion && currentEditingHabitacionId) {
+                    // Actualizar habitación existente
+                    response = await fetch(`/api/habitacionesapi/${currentEditingHabitacionId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(habitacionData)
+                    });
+                } else {
+                    // Crear nueva habitación
+                    response = await fetch('/api/habitacionesapi', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(habitacionData)
+                    });
+                }
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert(result.message, 'success');
+                    closeHabitacionModal();
+                    // Recargar la lista de habitaciones
+                    await window.adminApp.loadView('habitaciones');
+                } else {
+                    throw new Error(result.message || 'Error al guardar la habitación');
+                }
+            } catch (error) {
+                showAlert('Error al guardar la habitación: ' + error.message, 'error');
+            } finally {
+                // Restaurar botón
+                saveBtn.disabled = false;
+                saveText.textContent = isEditModeHabitacion ? 'Actualizar Habitación' : 'Crear Habitación';
+            }
+        }
+
+        // Función para eliminar habitación
+        async function deleteHabitacion(habitacionId, numeroHabitacion) {
+            if (!confirm(`¿Estás seguro de que quieres eliminar la habitación "${numeroHabitacion}"?\n\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/habitacionesapi/${habitacionId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showAlert(result.message, 'success');
+                    // Recargar la lista de habitaciones
+                    await window.adminApp.loadView('habitaciones');
+                } else {
+                    throw new Error(result.message || 'Error al eliminar la habitación');
+                }
+            } catch (error) {
+                showAlert('Error al eliminar la habitación: ' + error.message, 'error');
+            }
+        }
         async function editHotel(hotelId) {
             try {
                 const response = await fetch(`/api/hotelesapi/${hotelId}`);
@@ -731,9 +1237,13 @@
 
         // Cerrar modal al hacer clic fuera de él
         window.onclick = function(event) {
-            const modal = document.getElementById('hotelModal');
-            if (event.target === modal) {
+            const hotelModal = document.getElementById('hotelModal');
+            const habitacionModal = document.getElementById('habitacionModal');
+            if (event.target === hotelModal) {
                 closeHotelModal();
+            }
+            if (event.target === habitacionModal) {
+                closeHabitacionModal();
             }
         }
 
@@ -741,6 +1251,7 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeHotelModal();
+                closeHabitacionModal();
             }
         });
 

@@ -26,14 +26,14 @@ builder.Services.AddControllers()
 
 // 🆕 Registrar servicios de lógica de negocio
 builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IHabitacionService, HabitacionService>(); // 🆕 Servicio de habitaciones
 builder.Services.AddScoped<IAdminAuthService, AdminAuthService>(); // 🆕 Servicio de autenticación admin
 // TODO: Agregar otros servicios cuando los creemos
-// builder.Services.AddScoped<IHabitacionService, HabitacionService>();
 // builder.Services.AddScoped<IReservaService, ReservaService>();
 // builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 // 🆕 Registrar filtros
-builder.Services.AddScoped<Hotel_chain.Filters.AdminAuthFilter>(); // 🆕 Filtro de autenticación admin
+builder.Services.AddScoped<AdminAuthFilter>(); // 🚫 Comentado temporalmente
 
 // ✅ Servicios para sesiones (mantener para cliente)
 builder.Services.AddDistributedMemoryCache();
