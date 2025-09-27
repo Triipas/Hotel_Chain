@@ -1,6 +1,7 @@
 using Hotel_chain.Data;
 using Hotel_chain.Services.Interfaces;
 using Hotel_chain.Services.Implementation;
+using Hotel_chain.Filters;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,10 +26,14 @@ builder.Services.AddControllers()
 
 // 🆕 Registrar servicios de lógica de negocio
 builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IAdminAuthService, AdminAuthService>(); // 🆕 Servicio de autenticación admin
 // TODO: Agregar otros servicios cuando los creemos
 // builder.Services.AddScoped<IHabitacionService, HabitacionService>();
 // builder.Services.AddScoped<IReservaService, ReservaService>();
 // builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
+// 🆕 Registrar filtros
+builder.Services.AddScoped<Hotel_chain.Filters.AdminAuthFilter>(); // 🆕 Filtro de autenticación admin
 
 // ✅ Servicios para sesiones (mantener para cliente)
 builder.Services.AddDistributedMemoryCache();
