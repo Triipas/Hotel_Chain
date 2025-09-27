@@ -61,9 +61,13 @@
             <div class="hero-imagen"></div>
         </section>
 
-        <section class="consultar-disponibilidad">
-            <h2>Consultar disponibilidad</h2>
+        <section class="disponibilidad">
+            <!--<h2>Consultar disponibilidad</h2>-->
             <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
+
+                <select name="consultar-disponibilidad">
+                    <option value="">Consultar Disponibilidad</option>
+                </select>
                 <select name="ubicacion">
                     <option value="">Seleccionar Ubicación</option>
                     <option value="Arequipa">Arequipa</option>
