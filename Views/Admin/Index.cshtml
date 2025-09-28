@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
     <style>
-        
+        /* RESET Y BASE */
         * {
             margin: 0;
             padding: 0;
@@ -17,161 +17,327 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
+            height: 100vh;
+            overflow: hidden; /* Evitar scroll doble */
         }
 
-        
-        .admin-header {
+        /* LAYOUT PRINCIPAL CORREGIDO */
+        .admin-layout {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* SIDEBAR FIJO */
+        .admin-sidebar {
+            width: 260px;
             background-color: #ffffff;
-            color: #2c3e50;
-            padding: 1.5rem 1rem;
+            border-right: 1px solid #e0e0e0;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            width: 240px;
-            height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            border-right: 1px solid #e0e0e0;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
-            z-index: 100;
+            height: 100vh;
+            z-index: 1000;
         }
+
+        /* CONTENIDO PRINCIPAL */
+        .admin-main {
+            flex: 1;
+            margin-left: 260px; /* Espacio para el sidebar */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* HEADER SUPERIOR */
+        .admin-header {
+            background-color: #fff;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            height: 70px;
+            flex-shrink: 0;
+        }
+
+        /* ÁREA DE CONTENIDO CON SCROLL */
+        .admin-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto; /* Scroll solo en el contenido */
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* LOGO Y NAVEGACIÓN EN SIDEBAR */
         .admin-logo {
             font-family: 'Poppins', sans-serif;
             font-size: 1.8rem;
             font-weight: 600;
             color: #2c3e50;
+            padding: 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .admin-logo span {
             color: #3498db; 
         }
-       
+
         .admin-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem; 
-            width: 100%;
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
         }
 
         .admin-nav a {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 0.75rem 1rem;
+            gap: 12px;
+            padding: 0.75rem 1.5rem;
             color: #7f8c8d;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s, background 0.3s;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
         }
 
-        .admin-nav a:hover {
-            color: #3498db;
-        }
-
+        .admin-nav a:hover,
         .admin-nav a.active {
             color: #3498db;
-            font-weight: 600;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left-color: #3498db;
         }
 
-  
-        .submenu {
-            display: none;
-            flex-direction: column;
-            margin-left: 1.5rem;
-            padding-left: 0.5rem;
+        .admin-nav a i {
+            width: 20px;
+            text-align: center;
         }
 
-        .submenu.show {
-            display: flex;
-        }
-
-        .submenu a {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            padding: 0.4rem 0.6rem;
-            border-radius: 4px;
-            transition: color 0.3s, background 0.3s;
-        }
-
-        .submenu a:hover {
-            color: #3498db;
-            background: rgba(52, 152, 219, 0.1);
-        }
-
-        .submenu a.active {
-            color: #3498db;
-            font-weight: 600;
-        }
-
-        
-        .admin-nav a.has-submenu::after {
-            content: "▸";
-            margin-left: auto;
-            transition: transform 0.3s;
-            font-size: 0.8rem;
-            color: #7f8c8d;
-        }
-
-        .admin-nav a.active.has-submenu::after {
-            content: "▼";
-            color: #3498db;
-        }
-
+        /* USUARIO EN SIDEBAR */
         .admin-user {
-            margin-top: auto;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #f0f0f0;
+            background-color: #f8f9fa;
+        }
+
+        .admin-user span {
+            display: block;
             font-size: 0.9rem;
-            width: 100%;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
         }
 
         .admin-user a {
             color: #ff6b6b;
             text-decoration: none;
+            font-size: 0.9rem;
             padding: 0.3rem 0.8rem;
             border-radius: 4px;
             transition: background-color 0.3s;
             display: inline-block;
-            margin-top: 0.5rem;
         }
 
         .admin-user a:hover {
             background-color: rgba(255, 107, 107, 0.1);
         }
 
-     
-        .admin-content {
-            padding: 2rem;
-            margin-left: 240px;
-            min-height: 100vh;
+        /* HEADER SUPERIOR DERECHO */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-   
-        .loading {
-            text-align: center;
-            padding: 2rem;
+        .user-info {
+            text-align: right;
+            margin-right: 1rem;
         }
 
-        .card {
+        .user-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        /* CONTENIDO Y CARDS MEJORADOS */
+        .welcome-panel {
+            margin-bottom: 2rem;
             background: white;
             padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .welcome-greeting {
             margin-bottom: 1rem;
         }
 
+        .greet-line {
+            font-size: 1.1rem;
+            color: #374151;           
+            font-weight: 500;
+        }
+
+        .welcome-name {
+            color: #3498db;   
+            font-weight: 700;
+        }
+
+        .greet-sub {
+            font-size: 0.9rem;
+            color: #6b7280;             
+            margin-top: 0.25rem;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .toolbar-inline {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-inline input[type="search"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #e6e9ee;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+            background: #ffffff;
+        }
+
+        .toolbar-inline input[type="search"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* BOTONES MEJORADOS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        /* CARDS Y CONTENIDO */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafbfc;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.75rem;
+        }
+
+        /* DASHBOARD GRID */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .metric-card h3 {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .metric {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            margin: 0.5rem 0;
+            margin: 0;
         }
 
         .metric.blue { color: #3498db; }
@@ -179,66 +345,69 @@
         .metric.green { color: #2ecc71; }
         .metric.orange { color: #f39c12; }
 
-        .btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 0.5rem 0.5rem 0.5rem 0;
-            font-size: 0.9rem;
-            transition: all 0.3s;
+        /* TABLAS MEJORADAS */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        .btn:hover {
-            opacity: 0.8;
-            transform: translateY(-1px);
-        }
-
-        .btn-edit {
-            background: #f39c12;
-        }
-
-        .btn-delete {
-            background: #e74c3c;
-        }
-
-        .btn-success {
-            background: #27ae60;
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 70vh; /* Altura máxima para el scroll */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
         }
 
         th {
             background: #f8f9fa;
-            font-weight: bold;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        td:last-child {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        td:last-child .btn {
+            width: 120px; /* o el valor que prefieras */
+            text-align: center;
+        }
+
+        /* MODALES MEJORADOS */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
-            animation: fadeIn 0.3s;
+            backdrop-filter: blur(4px);
         }
 
         .modal.show {
@@ -249,17 +418,28 @@
 
         .modal-content {
             background-color: #fff;
-            border-radius: 8px;
+            border-radius: 12px;
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            animation: slideIn 0.3s;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @@keyframes modalSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-50px) scale(0.95); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
 
         .modal-header {
             padding: 1.5rem;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid #e9ecef;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -268,6 +448,7 @@
         .modal-title {
             margin: 0;
             font-size: 1.25rem;
+            color: #2c3e50;
         }
 
         .close {
@@ -276,18 +457,28 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: #aaa;
+            transition: color 0.3s;
         }
 
         .close:hover {
-            color: #000;
+            color: #333;
         }
 
         .modal-body {
             padding: 1.5rem;
         }
 
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* FORMULARIOS */
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
@@ -303,7 +494,7 @@
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 0.9rem;
             transition: border-color 0.3s;
         }
@@ -313,71 +504,61 @@
         .form-group select:focus {
             outline: none;
             border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .modal-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #dee2e6;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        
+        /* ALERTAS */
         .alert {
             padding: 0.75rem 1rem;
             margin-bottom: 1rem;
-            border-radius: 4px;
+            border-radius: 8px;
             display: none;
         }
 
         .alert.show {
             display: block;
+            animation: alertSlideIn 0.3s ease;
+        }
+
+        @@keyframes alertSlideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .alert-success {
             background-color: #d4edda;
-            border-color: #c3e6cb;
+            border: 1px solid #c3e6cb;
             color: #155724;
         }
 
         .alert-error {
             background-color: #f8d7da;
-            border-color: #f5c6cb;
+            border: 1px solid #f5c6cb;
             color: #721c24;
         }
 
-        
-        @@keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @@keyframes slideIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(-50px); 
+        /* RESPONSIVE */
+        @@media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
             }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .toolbar-inline {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .toolbar-inline input[type="search"] {
+                min-width: 100%;
             }
         }
 
-        @@keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        /* LOADING SPINNER */
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #3498db;
@@ -389,283 +570,105 @@
             margin-right: 10px;
         }
 
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+        @@keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .page-header h1 {
-            margin: 0;
-            color: #2c3e50;
+        /* SCROLLBAR PERSONALIZADA */
+        .admin-content::-webkit-scrollbar,
+        .table-wrapper::-webkit-scrollbar {
+            width: 8px;
         }
-        .welcome-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            }
 
-            .welcome-greeting {
-            display: flex;
-            flex-direction: column;
-            gap: 0.125rem;
-            }
+        .admin-content::-webkit-scrollbar-track,
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
 
-            .greet-line {
-            font-size: 0.95rem;
-            color: #374151;           
-            font-weight: 500;
-            }
+        .admin-content::-webkit-scrollbar-thumb,
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
 
-            .welcome-name {
-            color: #2563eb;   
-            font-weight: 700;
-            }
-
-            .greet-sub {
-            font-size: 0.85rem;
-            color: #6b7280;             
-            margin-top: 2px;
-            }
-            .panel-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0.35rem 0 0.6rem 0;
-            }
-
-            .search-bar-inline {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            max-width: 560px;
-            }
-
-            .search-bar-inline input[type="search"] {
-            flex: 1;
-            padding: 0.65rem 0.9rem;
-            border-radius: 10px;
-            border: 1px solid #e6e9ee;
-            font-size: 0.95rem;
-            outline: none;
-            transition: box-shadow 0.18s, border-color 0.18s;
-            background: #ffffff;
-            color: #1f2937;
-            box-shadow: 0 1px 4px rgba(16,24,40,0.03);
-            }
-
-            .search-bar-inline input[type="search"]:focus {
-            border-color: #3498db;
-            box-shadow: 0 4px 20px rgba(52,152,219,0.08);
-            }
-
-            .search-bar-inline .btn {
-            padding: 0.55rem 0.8rem;
-            border-radius: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            }
-
-            .search-bar-inline .btn i {
-            font-size: 0.95rem;
-            }
-
-
-            @@media (max-width: 640px) {
-            .search-bar-inline { width: 100%; }
-            .search-bar-inline input[type="search"] { width: 100%; }
-            .welcome-panel { gap: 0.75rem; }
-            }
-            .toolbar-inline {
-            display: flex;
-            gap: 0.6rem;
-            align-items: center;
-            flex-wrap: wrap;
-            max-width: 100%;
-            }
-
-            .toolbar-inline input[type="search"] {
-            flex: 1;
-            min-width: 220px;
-            padding: 0.65rem 0.9rem;
-            border-radius: 10px;
-            border: 1px solid #e6e9ee;
-            font-size: 0.95rem;
-            outline: none;
-            transition: box-shadow 0.18s, border-color 0.18s;
-            background: #ffffff;
-            color: #1f2937;
-            box-shadow: 0 1px 4px rgba(16,24,40,0.03);
-            }
-
-            .toolbar-inline input[type="search"]:focus {
-            border-color: #3498db;
-            box-shadow: 0 4px 20px rgba(52,152,219,0.08);
-            }
-
-
-            .toolbar-inline .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.55rem 0.9rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            cursor: pointer;
-            }
-
-            .toolbar-inline .btn i {
-            font-size: 0.95rem;
-            }
-
-
-            .btn-success {
-            background: #1d84d3;
-            color: #fff;
-            }
-
-            .btn-secondary {
-            background: #6c757d;
-            color: #fff;
-            }
-
-            .btn-success:hover { background: #219150; }
-            .btn-secondary:hover { background: #5a6268; }
-
-            @@media (max-width: 640px) {
-            .toolbar-inline {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            }
-/
-            .layout {
-            display: flex;
-            min-height: 100vh;
-            background: #f5f5f5;
-            }
-
-            .sidebar {
-            width: 250px;
-            background: #fff;
-            box-shadow: 2px 0 6px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            }
-            .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            }
-
-            .admin-header {
-            background-color: #fff;
-            padding: 0.8rem 2rem;
-            display: flex;
-            justify-content: flex-end; 
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            }
-
-            .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            }
+        .admin-content::-webkit-scrollbar-thumb:hover,
+        .table-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
     </style>
 </head>
 <body>
-    <!-- Header del Panel Admin -->
-    <header class="admin-header">
-        <div class="admin-logo">
-            Stay<span>Go</span>
-        </div>
-        
-
-        <nav class="admin-nav">
-            <a href="#" onclick="navigateTo('dashboard')" class="active">
-                <i class="fas fa-chart-line"></i> Dashboard
-            </a>
-
-            <a href="#" onclick="navigateTo('usuarios')">
-                <i class="fas fa-users"></i> Usuarios
-            </a>
-            <div class="submenu">
-                <a href="#"><i class="fas fa-user-shield"></i> Superusuarios</a>
-                <a href="#"><i class="fas fa-user"></i> Huéspedes</a>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                Stay<span>Go</span>
             </div>
+            
+            <nav class="admin-nav">
+                <a href="#" onclick="navigateTo('dashboard')" class="active">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" onclick="navigateTo('usuarios')">
+                    <i class="fas fa-users"></i> Usuarios
+                </a>
+                <a href="#" onclick="navigateTo('hoteles')">
+                    <i class="fas fa-hotel"></i> Hoteles
+                </a>
+                <a href="#" onclick="navigateTo('habitaciones')">
+                    <i class="fas fa-bed"></i> Habitaciones
+                </a>
+                <a href="#" onclick="navigateTo('reservas')">
+                    <i class="fas fa-calendar-check"></i> Reservas 
+                </a>
+                <a href="#" onclick="navigateTo('financiero')">
+                    <i class="fas fa-dollar-sign"></i> Financiero
+                </a>
+                <a href="/" target="_blank">
+                    <i class="fas fa-globe"></i> Ver Sitio Cliente
+                </a>
+            </nav>
 
-            <a href="#" onclick="navigateTo('hoteles')">
-                <i class="fas fa-hotel"></i> Hoteles
-            </a>
-
-            <a href="#" onclick="navigateTo('habitaciones')">
-                <i class="fas fa-bed"></i> Habitaciones
-            </a>
-
-            <a href="#" onclick="navigateTo('reservas')">
-                <i class="fas fa-calendar-check"></i> Reservas 
-            </a>
-            <div class="submenu">
-                <a href="#"><i class="fas fa-list"></i> Lista de reservas</a>
-                <a href="#"><i class="fas fa-calendar"></i> Calendario</a>
+            <div class="admin-user">
+                <span>👤 @ViewBag.AdminName</span>
+                <span style="font-size: 0.8rem; color: #7f8c8d;">@ViewBag.AdminPuesto</span>
+                <a href="/admin/logout">Cerrar Sesión</a>
             </div>
+        </aside>
 
-            <a href="#" onclick="navigateTo('financiero')">
-                <i class="fas fa-dollar-sign"></i> Financiero
-            </a>
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="admin-main">
+            <!-- HEADER SUPERIOR -->
+            <header class="admin-header">
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-name">@ViewBag.AdminName</div>
+                        <div class="user-role">@ViewBag.AdminPuesto</div>
+                    </div>
+                </div>
+            </header>
 
-            <a href="/" target="_blank">
-                <i class="fas fa-globe"></i> Ver Sitio Cliente
-            </a>
-        </nav>
-
-        <div class="admin-user">
-            <span>👤 @ViewBag.AdminName (@ViewBag.AdminPuesto)</span>
-            <a href="/admin/logout" style="color: #ff6b6b; margin-left: 1rem;">Cerrar Sesión</a>
-        </div>
-    </header>
-
-    <main class="admin-content">
-        <section class="welcome-panel">
-            <div class="welcome-greeting">
-                <div class="greet-line">Hola, <span class="welcome-name">Salma</span></div>
-                <div class="greet-sub">Que tengas un bonito día</div>
-            </div>
-
-            <div class="page-info">
-                <h1 class="panel-title">Panel de Administración</h1>
-
-                <div class="toolbar-inline">
-                <input id="adminSearch" type="search" placeholder="Buscar usuarios, hoteles, reservas..." aria-label="Buscar" />
-
-                <button id="addGuestBtn" class="btn btn-success">
-                    <i class="fas fa-user-plus"></i> Agregar Huésped
-                </button>
-
-                <button id="sortBtn" class="btn btn-secondary">
-                    <i class="fas fa-sort"></i> Ordenar por
-                </button>
+            <!-- CONTENIDO CON SCROLL -->
+            <div class="admin-content">
+                <!-- ALERTAS GLOBALES -->
+                <div id="alert-container"></div>
+            
+                <!-- CONTENIDO DINÁMICO -->
+                <div id="app">
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div class="spinner"></div>
+                                Cargando panel de administración...
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
-        <!-- Alertas globales -->
-        <div id="alert-container"></div>
-    
-
-        <div id="app">
-            <div class="loading">Cargando panel de administración...</div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Modal para Crear/Editar Hotel -->
     <div id="hotelModal" class="modal">
@@ -811,6 +814,10 @@
             async loadView(view) {
                 const appElement = document.getElementById('app');
                 
+                // Actualizar navegación activa
+                document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+                document.querySelector(`[onclick="navigateTo('${view}')"]`)?.classList.add('active');
+                
                 switch(view) {
                     case 'dashboard':
                         appElement.innerHTML = await this.renderDashboard();
@@ -822,13 +829,16 @@
                         appElement.innerHTML = await this.renderHabitaciones();
                         break;
                     case 'reservas':
-                        appElement.innerHTML = '<div class="card"><h1>Gestión de Reservas</h1><p>En desarrollo...</p></div>';
+                        appElement.innerHTML = this.renderReservas();
                         break;
                     case 'usuarios':
-                        appElement.innerHTML = '<div class="card"><h1>Gestión de Usuarios</h1><p>En desarrollo...</p></div>';
+                        appElement.innerHTML = this.renderUsuarios();
+                        break;
+                    case 'financiero':
+                        appElement.innerHTML = this.renderFinanciero();
                         break;
                     default:
-                        appElement.innerHTML = '<div class="card"><h2>Vista no encontrada</h2></div>';
+                        appElement.innerHTML = '<div class="card"><div class="card-body"><h2>Vista no encontrada</h2></div></div>';
                 }
             }
 
@@ -842,26 +852,66 @@
                     const habitaciones = habitacionesResponse.ok ? await habitacionesResponse.json() : [];
 
                     return `
-                        <div>
-                            <div class="page-header">
-                                <h1>Dashboard</h1>
+                        <!-- HEADER CONTEXTUAL PARA DASHBOARD -->
+                        <section class="welcome-panel">
+                            <div class="welcome-greeting">
+                                <div class="greet-line">Hola, <span class="welcome-name">@ViewBag.AdminName</span></div>
+                                <div class="greet-sub">Que tengas un bonito día</div>
                             </div>
-                            <div class="dashboard-grid">
-                                <div class="card">
-                                    <h3>Total Hoteles</h3>
-                                    <div class="metric blue">${hoteles.length}</div>
+
+                            <div class="page-info">
+                                <h1 class="panel-title">Dashboard General</h1>
+                                <div class="toolbar-inline">
+                                    <input type="search" placeholder="Buscar en el sistema..." aria-label="Buscar" />
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-chart-bar"></i> Ver Reportes
+                                    </button>
+                                    <button class="btn btn-success">
+                                        <i class="fas fa-sync-alt"></i> Actualizar Datos
+                                    </button>
                                 </div>
-                                <div class="card">
-                                    <h3>Total Habitaciones</h3>
-                                    <div class="metric red">${habitaciones.length}</div>
-                                </div>
-                                <div class="card">
-                                    <h3>Reservas Activas</h3>
-                                    <div class="metric green">-</div>
-                                </div>
-                                <div class="card">
-                                    <h3>Total Usuarios</h3>
-                                    <div class="metric orange">-</div>
+                            </div>
+                        </section>
+
+                        <div class="dashboard-grid">
+                            <div class="metric-card">
+                                <h3>Total Hoteles</h3>
+                                <div class="metric blue">${hoteles.length}</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Total Habitaciones</h3>
+                                <div class="metric red">${habitaciones.length}</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Reservas Activas</h3>
+                                <div class="metric green">-</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Total Usuarios</h3>
+                                <div class="metric orange">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Accesos Rápidos</h3>
+                            </div>
+                            <div class="card-body">
+                                <p>Gestiona todos los aspectos de tu cadena hotelera desde aquí:</p>
+                                <br>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                    <button class="btn btn-success" onclick="navigateTo('hoteles')">
+                                        <i class="fas fa-hotel"></i> Gestionar Hoteles
+                                    </button>
+                                    <button class="btn btn-success" onclick="navigateTo('habitaciones')">
+                                        <i class="fas fa-bed"></i> Gestionar Habitaciones
+                                    </button>
+                                    <button class="btn btn-success" onclick="navigateTo('reservas')">
+                                        <i class="fas fa-calendar-check"></i> Ver Reservas
+                                    </button>
+                                    <button class="btn btn-success" onclick="navigateTo('usuarios')">
+                                        <i class="fas fa-users"></i> Gestionar Usuarios
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -869,8 +919,10 @@
                 } catch (error) {
                     return `
                         <div class="card">
-                            <h1>Dashboard</h1>
-                            <p>Error al cargar estadísticas: ${error.message}</p>
+                            <div class="card-body">
+                                <h1>Dashboard</h1>
+                                <p>Error al cargar estadísticas: ${error.message}</p>
+                            </div>
                         </div>
                     `;
                 }
@@ -885,58 +937,67 @@
                     const hoteles = await response.json();
                     
                     return `
-                        <div>
-                            <div class="page-header">
-                                <h1>Gestión de Hoteles</h1>
-                                <button class="btn btn-success" onclick="openCreateHotelModal()">
-                                    + Crear Hotel
-                                </button>
-                            </div>
-                            
-                            <div class="card">
-                                <div style="overflow-x: auto;">
-                                    <table id="hotelesTable">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Nombre</th>
-                                                <th>Ciudad</th>
-                                                <th>Dirección</th>
-                                                <th>Teléfono</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${hoteles.map(hotel => `
-                                                <tr>
-                                                    <td>${hotel.hotelId || hotel.HotelId}</td>
-                                                    <td><strong>${hotel.nombre || hotel.Nombre}</strong></td>
-                                                    <td>${hotel.ciudad || hotel.Ciudad}</td>
-                                                    <td>${hotel.direccion || hotel.Direccion}</td>
-                                                    <td>${hotel.telefonoContacto || hotel.TelefonoContacto || 'N/A'}</td>
-                                                    <td>
-                                                        <button class="btn btn-edit" onclick="editHotel(${hotel.hotelId || hotel.HotelId})">
-                                                            Editar
-                                                        </button>
-                                                        <button class="btn btn-delete" onclick="deleteHotel(${hotel.hotelId || hotel.HotelId}, '${hotel.nombre || hotel.Nombre}')">
-                                                            Eliminar
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                    ${hoteles.length === 0 ? '<p style="text-align: center; padding: 2rem; color: #666;">No hay hoteles registrados</p>' : ''}
+                        <!-- HEADER CONTEXTUAL PARA HOTELES -->
+                        <section class="welcome-panel">
+                            <div class="page-info">
+                                <h1 class="panel-title">Gestión de Hoteles</h1>
+                                <div class="toolbar-inline">
+                                    <input type="search" placeholder="Buscar hoteles por nombre o ciudad..." aria-label="Buscar hoteles" />
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-filter"></i> Filtrar por Ciudad
+                                    </button>
+                                    <button class="btn btn-success" onclick="openCreateHotelModal()">
+                                        <i class="fas fa-plus"></i> Agregar Hotel
+                                    </button>
                                 </div>
+                            </div>
+                        </section>
+                        
+                        <div class="table-container">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Ciudad</th>
+                                            <th>Dirección</th>
+                                            <th>Teléfono</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${hoteles.map(hotel => `
+                                            <tr>
+                                                <td>${hotel.hotelId || hotel.HotelId}</td>
+                                                <td><strong>${hotel.nombre || hotel.Nombre}</strong></td>
+                                                <td>${hotel.ciudad || hotel.Ciudad}</td>
+                                                <td>${hotel.direccion || hotel.Direccion}</td>
+                                                <td>${hotel.telefonoContacto || hotel.TelefonoContacto || 'N/A'}</td>
+                                                <td>
+                                                    <button class="btn btn-edit" onclick="editHotel(${hotel.hotelId || hotel.HotelId})">
+                                                        <i class="fas fa-edit"></i> Editar
+                                                    </button>
+                                                    <button class="btn btn-delete" onclick="deleteHotel(${hotel.hotelId || hotel.HotelId}, '${hotel.nombre || hotel.Nombre}')">
+                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                                ${hoteles.length === 0 ? '<div style="text-align: center; padding: 3rem; color: #666;"><i class="fas fa-hotel" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>No hay hoteles registrados</div>' : ''}
                             </div>
                         </div>
                     `;
                 } catch (error) {
                     return `
                         <div class="card">
-                            <h1>Error al cargar hoteles</h1>
-                            <p>Error: ${error.message}</p>
-                            <p>Verifica que la API esté funcionando en <a href="/api/hotelesapi" target="_blank">/api/hotelesapi</a></p>
+                            <div class="card-body">
+                                <h1>Error al cargar hoteles</h1>
+                                <p><strong>Error:</strong> ${error.message}</p>
+                                <p>Verifica que la API esté funcionando en <a href="/api/hotelesapi" target="_blank">/api/hotelesapi</a></p>
+                            </div>
                         </div>
                     `;
                 }
@@ -951,84 +1012,184 @@
                     const habitaciones = await response.json();
                     
                     return `
-                        <div>
-                            <div class="page-header">
-                                <h1>Gestión de Habitaciones</h1>
-                                <button class="btn btn-success" onclick="openCreateHabitacionModal()">
-                                    + Crear Habitación
-                                </button>
-                            </div>
-                            
-                            <div class="card">
-                                <div style="overflow-x: auto;">
-                                    <table id="habitacionesTable">
-                                        <thead>
-                                            <tr>
-                                                <th>ID</th>
-                                                <th>Hotel</th>
-                                                <th>Número</th>
-                                                <th>Tipo</th>
-                                                <th>Capacidad</th>
-                                                <th>Precio/Noche</th>
-                                                <th>Disponible</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${habitaciones.map(hab => `
-                                                <tr>
-                                                    <td>${hab.habitacionId || hab.HabitacionId}</td>
-                                                    <td><strong>${(hab.hotel && hab.hotel.nombre) || (hab.Hotel && hab.Hotel.Nombre) || 'N/A'}</strong></td>
-                                                    <td>${hab.numeroHabitacion || hab.NumeroHabitacion}</td>
-                                                    <td>
-                                                        <span style="
-                                                            background: ${hab.tipo === 'suite' || hab.Tipo === 'suite' ? '#f39c12' : 
-                                                                        hab.tipo === 'doble' || hab.Tipo === 'doble' ? '#3498db' : '#27ae60'};
-                                                            color: white;
-                                                            padding: 2px 8px;
-                                                            border-radius: 12px;
-                                                            font-size: 0.8rem;
-                                                            text-transform: capitalize;
-                                                        ">
-                                                            ${hab.tipo || hab.Tipo}
-                                                        </span>
-                                                    </td>
-                                                    <td>${hab.capacidad || hab.Capacidad} personas</td>
-                                                    <td>S/ ${(hab.precioNoche || hab.PrecioNoche)?.toFixed(2)}</td>
-                                                    <td>
-                                                        <span style="
-                                                            color: ${hab.disponible !== false && hab.Disponible !== false ? '#27ae60' : '#e74c3c'};
-                                                            font-weight: bold;
-                                                        ">
-                                                            ${hab.disponible !== false && hab.Disponible !== false ? '✓ Sí' : '✗ No'}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-edit" onclick="editHabitacion(${hab.habitacionId || hab.HabitacionId})">
-                                                            Editar
-                                                        </button>
-                                                        <button class="btn btn-delete" onclick="deleteHabitacion(${hab.habitacionId || hab.HabitacionId}, '${hab.numeroHabitacion || hab.NumeroHabitacion}')">
-                                                            Eliminar
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                    ${habitaciones.length === 0 ? '<p style="text-align: center; padding: 2rem; color: #666;">No hay habitaciones registradas</p>' : ''}
+                        <!-- HEADER CONTEXTUAL PARA HABITACIONES -->
+                        <section class="welcome-panel">
+                            <div class="page-info">
+                                <h1 class="panel-title">Gestión de Habitaciones</h1>
+                                <div class="toolbar-inline">
+                                    <input type="search" placeholder="Buscar habitaciones por número o hotel..." aria-label="Buscar habitaciones" />
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-filter"></i> Filtrar por Tipo
+                                    </button>
+                                    <button class="btn btn-success" onclick="openCreateHabitacionModal()">
+                                        <i class="fas fa-plus"></i> Agregar Habitación
+                                    </button>
                                 </div>
+                            </div>
+                        </section>
+                        
+                        <div class="table-container">
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Hotel</th>
+                                            <th>Número</th>
+                                            <th>Tipo</th>
+                                            <th>Capacidad</th>
+                                            <th>Precio/Noche</th>
+                                            <th>Disponible</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${habitaciones.map(hab => `
+                                            <tr>
+                                                <td>${hab.habitacionId || hab.HabitacionId}</td>
+                                                <td><strong>${(hab.hotel && hab.hotel.nombre) || (hab.Hotel && hab.Hotel.Nombre) || 'N/A'}</strong></td>
+                                                <td>${hab.numeroHabitacion || hab.NumeroHabitacion}</td>
+                                                <td>
+                                                    <span style="
+                                                        background: ${hab.tipo === 'suite' || hab.Tipo === 'suite' ? '#f39c12' : 
+                                                                    hab.tipo === 'doble' || hab.Tipo === 'doble' ? '#3498db' : '#27ae60'};
+                                                        color: white;
+                                                        padding: 4px 12px;
+                                                        border-radius: 16px;
+                                                        font-size: 0.8rem;
+                                                        font-weight: 500;
+                                                        text-transform: capitalize;
+                                                    ">
+                                                        ${hab.tipo || hab.Tipo}
+                                                    </span>
+                                                </td>
+                                                <td>${hab.capacidad || hab.Capacidad} personas</td>
+                                                <td><strong>S/ ${(hab.precioNoche || hab.PrecioNoche)?.toFixed(2)}</strong></td>
+                                                <td>
+                                                    <span style="
+                                                        color: ${hab.disponible !== false && hab.Disponible !== false ? '#27ae60' : '#e74c3c'};
+                                                        font-weight: bold;
+                                                    ">
+                                                        ${hab.disponible !== false && hab.Disponible !== false ? '✓ Sí' : '✗ No'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-edit" onclick="editHabitacion(${hab.habitacionId || hab.HabitacionId})">
+                                                        <i class="fas fa-edit"></i> Editar
+                                                    </button>
+                                                    <button class="btn btn-delete" onclick="deleteHabitacion(${hab.habitacionId || hab.HabitacionId}, '${hab.numeroHabitacion || hab.NumeroHabitacion}')">
+                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                                ${habitaciones.length === 0 ? '<div style="text-align: center; padding: 3rem; color: #666;"><i class="fas fa-bed" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>No hay habitaciones registradas</div>' : ''}
                             </div>
                         </div>
                     `;
                 } catch (error) {
                     return `
                         <div class="card">
-                            <h1>Error al cargar habitaciones</h1>
-                            <p>Error: ${error.message}</p>
-                            <p>Verifica que la API esté funcionando en <a href="/api/habitacionesapi" target="_blank">/api/habitacionesapi</a></p>
+                            <div class="card-body">
+                                <h1>Error al cargar habitaciones</h1>
+                                <p><strong>Error:</strong> ${error.message}</p>
+                                <p>Verifica que la API esté funcionando en <a href="/api/habitacionesapi" target="_blank">/api/habitacionesapi</a></p>
+                            </div>
                         </div>
                     `;
                 }
+            }
+
+            renderReservas() {
+                return `
+                    <!-- HEADER CONTEXTUAL PARA RESERVAS -->
+                    <section class="welcome-panel">
+                        <div class="page-info">
+                            <h1 class="panel-title">Gestión de Reservas</h1>
+                            <div class="toolbar-inline">
+                                <input type="search" placeholder="Buscar reservas por huésped o habitación..." aria-label="Buscar reservas" />
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-calendar"></i> Filtrar por Fecha
+                                </button>
+                                <button class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Nueva Reserva
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="text-align: center; padding: 3rem; color: #666;">
+                                <i class="fas fa-calendar-check" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #3498db;"></i>
+                                <h3>Módulo de Reservas</h3>
+                                <p>Vista de reservas en desarrollo...</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderUsuarios() {
+                return `
+                    <!-- HEADER CONTEXTUAL PARA USUARIOS -->
+                    <section class="welcome-panel">
+                        <div class="page-info">
+                            <h1 class="panel-title">Gestión de Usuarios</h1>
+                            <div class="toolbar-inline">
+                                <input type="search" placeholder="Buscar usuarios por nombre o email..." aria-label="Buscar usuarios" />
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-user-shield"></i> Filtrar por Rol
+                                </button>
+                                <button class="btn btn-success">
+                                    <i class="fas fa-user-plus"></i> Nuevo Usuario
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="text-align: center; padding: 3rem; color: #666;">
+                                <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #3498db;"></i>
+                                <h3>Módulo de Usuarios</h3>
+                                <p>Vista de usuarios en desarrollo...</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderFinanciero() {
+                return `
+                    <!-- HEADER CONTEXTUAL PARA FINANCIERO -->
+                    <section class="welcome-panel">
+                        <div class="page-info">
+                            <h1 class="panel-title">Panel Financiero</h1>
+                            <div class="toolbar-inline">
+                                <input type="search" placeholder="Buscar transacciones o reportes..." aria-label="Buscar financiero" />
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-chart-line"></i> Ver Gráficos
+                                </button>
+                                <button class="btn btn-success">
+                                    <i class="fas fa-file-export"></i> Exportar Reporte
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="text-align: center; padding: 3rem; color: #666;">
+                                <i class="fas fa-dollar-sign" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #3498db;"></i>
+                                <h3>Módulo Financiero</h3>
+                                <p>Vista financiera en desarrollo...</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         }
 
@@ -1052,8 +1213,6 @@
 
         // Funciones para manejar modales de habitaciones
         async function openCreateHabitacionModal() {
-            console.log('🆕 Abriendo modal de crear habitación...'); // 🐛 Debug
-            
             isEditModeHabitacion = false;
             currentEditingHabitacionId = null;
             document.getElementById('habitacionModalTitle').textContent = 'Crear Habitación';
@@ -1062,26 +1221,11 @@
             document.getElementById('habitacionId').value = '';
             document.getElementById('disponible').checked = true;
             
-            // Mostrar modal primero
             document.getElementById('habitacionModal').classList.add('show');
-            console.log('✅ Modal mostrado'); // 🐛 Debug
-            
-            // Pequeño delay para asegurar que el DOM esté listo
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // Cargar lista de hoteles DESPUÉS de mostrar el modal
-            console.log('🏨 Cargando hoteles en modal de crear...'); // 🐛 Debug
-            const hotelsCargados = await loadHotelesDropdown();
-            
-            if (hotelsCargados) {
-                console.log('✅ Hoteles cargados exitosamente en modal de crear'); // 🐛 Debug
-            } else {
-                console.log('❌ Error al cargar hoteles en modal de crear'); // 🐛 Debug
-            }
+            await loadHotelesDropdown();
         }
 
         function closeHabitacionModal() {
-            console.log('❌ Cerrando modal de habitación...'); // 🐛 Debug
             document.getElementById('habitacionModal').classList.remove('show');
             document.getElementById('habitacionForm').reset();
             currentEditingHabitacionId = null;
@@ -1091,66 +1235,35 @@
         // Función para cargar hoteles en el dropdown
         async function loadHotelesDropdown() {
             try {
-                console.log('🏨 Iniciando carga de hoteles...'); // 🐛 Debug
                 const response = await fetch('/api/hotelesapi');
-                
                 if (!response.ok) {
-                    throw new Error(`HTTP Error: ${response.status} - ${response.statusText}`);
+                    throw new Error(`HTTP Error: ${response.status}`);
                 }
                 
                 const hoteles = await response.json();
-                console.log('🏨 Hoteles cargados:', hoteles); // 🐛 Debug
-                
-                const select = document.getElementById('habitacionHotelId'); // 🆕 ID actualizado
-                console.log('🎯 Elemento select encontrado:', select); // 🐛 Debug
+                const select = document.getElementById('habitacionHotelId');
                 
                 if (!select) {
-                    throw new Error('Elemento select con ID "habitacionHotelId" no encontrado');
+                    throw new Error('Elemento select no encontrado');
                 }
 
-                // Limpiar opciones existentes completamente
-                select.innerHTML = '';
-                console.log('🧹 Select limpiado'); // 🐛 Debug
+                select.innerHTML = '<option value="">Seleccionar hotel</option>';
                 
-                // Añadir opción por defecto
-                const defaultOption = document.createElement('option');
-                defaultOption.value = '';
-                defaultOption.textContent = 'Seleccionar hotel';
-                select.appendChild(defaultOption);
-                console.log('📋 Opción por defecto añadida'); // 🐛 Debug
-                
-                // Verificar si hoteles es un array
-                if (!Array.isArray(hoteles)) {
-                    throw new Error('La respuesta no es un array de hoteles');
-                }
-
-                // Añadir hoteles uno por uno
-                hoteles.forEach((hotel, index) => {
+                hoteles.forEach(hotel => {
                     const option = document.createElement('option');
-                    // Manejar tanto PascalCase como camelCase
                     const hotelId = hotel.hotelId || hotel.HotelId;
                     const hotelNombre = hotel.nombre || hotel.Nombre;
                     
                     option.value = hotelId;
                     option.textContent = hotelNombre;
                     select.appendChild(option);
-                    
-                    console.log(`✅ Hotel ${index + 1} añadido: ID=${hotelId}, Nombre="${hotelNombre}"`); // 🐛 Debug
                 });
 
-                // Verificar que las opciones están en el DOM
-                console.log(`🎯 Total opciones en select: ${select.options.length}`); // 🐛 Debug
-                console.log('🎯 Opciones en el select:'); // 🐛 Debug
-                for (let i = 0; i < select.options.length; i++) {
-                    console.log(`   ${i}: value="${select.options[i].value}" text="${select.options[i].textContent}"`);
-                }
-
-                return true; // Indicar que se cargó exitosamente
-                
+                return true;
             } catch (error) {
-                console.error('❌ Error detallado al cargar hoteles:', error); // 🐛 Debug
+                console.error('Error al cargar hoteles:', error);
                 showAlert('Error al cargar la lista de hoteles: ' + error.message, 'error');
-                return false; // Indicar que falló
+                return false;
             }
         }
 
@@ -1164,7 +1277,6 @@
                 
                 const hotel = await response.json();
                 
-                // Llenar el formulario con los datos del hotel
                 isEditMode = true;
                 currentEditingHotelId = hotelId;
                 document.getElementById('hotelModalTitle').textContent = 'Editar Hotel';
@@ -1183,19 +1295,17 @@
             }
         }
 
-        // Función para guardar hotel (crear o actualizar)
+        // Función para guardar hotel
         async function saveHotel() {
             const form = document.getElementById('hotelForm');
             const saveBtn = document.getElementById('saveHotelBtn');
             const saveText = document.getElementById('saveHotelText');
             
-            // Validar formulario
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
             }
 
-            // Mostrar loading
             saveBtn.disabled = true;
             saveText.innerHTML = '<span class="spinner"></span>Guardando...';
 
@@ -1211,21 +1321,15 @@
 
                 let response;
                 if (isEditMode && currentEditingHotelId) {
-                    // Actualizar hotel existente
                     response = await fetch(`/api/hotelesapi/${currentEditingHotelId}`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(hotelData)
                     });
                 } else {
-                    // Crear nuevo hotel
                     response = await fetch('/api/hotelesapi', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(hotelData)
                     });
                 }
@@ -1235,7 +1339,6 @@
                 if (response.ok && result.success) {
                     showAlert(result.message, 'success');
                     closeHotelModal();
-                    // Recargar la lista de hoteles
                     await window.adminApp.loadView('hoteles');
                 } else {
                     throw new Error(result.message || 'Error al guardar el hotel');
@@ -1243,7 +1346,6 @@
             } catch (error) {
                 showAlert('Error al guardar el hotel: ' + error.message, 'error');
             } finally {
-                // Restaurar botón
                 saveBtn.disabled = false;
                 saveText.textContent = isEditMode ? 'Actualizar Hotel' : 'Crear Hotel';
             }
@@ -1264,7 +1366,6 @@
 
                 if (response.ok && result.success) {
                     showAlert(result.message, 'success');
-                    // Recargar la lista de hoteles
                     await window.adminApp.loadView('hoteles');
                 } else {
                     throw new Error(result.message || 'Error al eliminar el hotel');
@@ -1273,6 +1374,8 @@
                 showAlert('Error al eliminar el hotel: ' + error.message, 'error');
             }
         }
+
+        // Funciones similares para habitaciones...
         async function editHabitacion(habitacionId) {
             try {
                 const response = await fetch(`/api/habitacionesapi/${habitacionId}`);
@@ -1281,18 +1384,15 @@
                 }
                 
                 const habitacion = await response.json();
-                
-                // Cargar hoteles primero
                 await loadHotelesDropdown();
                 
-                // Llenar el formulario con los datos de la habitación
                 isEditModeHabitacion = true;
                 currentEditingHabitacionId = habitacionId;
                 document.getElementById('habitacionModalTitle').textContent = 'Editar Habitación';
                 document.getElementById('saveHabitacionText').textContent = 'Actualizar Habitación';
                 
                 document.getElementById('habitacionId').value = habitacion.habitacionId || habitacion.HabitacionId;
-                document.getElementById('hotelId').value = habitacion.hotelId || habitacion.HotelId;
+                document.getElementById('habitacionHotelId').value = habitacion.hotelId || habitacion.HotelId;
                 document.getElementById('numeroHabitacion').value = habitacion.numeroHabitacion || habitacion.NumeroHabitacion;
                 document.getElementById('tipo').value = habitacion.tipo || habitacion.Tipo;
                 document.getElementById('capacidad').value = habitacion.capacidad || habitacion.Capacidad;
@@ -1306,19 +1406,16 @@
             }
         }
 
-        // Función para guardar habitación (crear o actualizar)
         async function saveHabitacion() {
             const form = document.getElementById('habitacionForm');
             const saveBtn = document.getElementById('saveHabitacionBtn');
             const saveText = document.getElementById('saveHabitacionText');
             
-            // Validar formulario
             if (!form.checkValidity()) {
                 form.reportValidity();
                 return;
             }
 
-            // Mostrar loading
             saveBtn.disabled = true;
             saveText.innerHTML = '<span class="spinner"></span>Guardando...';
 
@@ -1336,21 +1433,15 @@
 
                 let response;
                 if (isEditModeHabitacion && currentEditingHabitacionId) {
-                    // Actualizar habitación existente
                     response = await fetch(`/api/habitacionesapi/${currentEditingHabitacionId}`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(habitacionData)
                     });
                 } else {
-                    // Crear nueva habitación
                     response = await fetch('/api/habitacionesapi', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(habitacionData)
                     });
                 }
@@ -1360,7 +1451,6 @@
                 if (response.ok && result.success) {
                     showAlert(result.message, 'success');
                     closeHabitacionModal();
-                    // Recargar la lista de habitaciones
                     await window.adminApp.loadView('habitaciones');
                 } else {
                     throw new Error(result.message || 'Error al guardar la habitación');
@@ -1368,13 +1458,11 @@
             } catch (error) {
                 showAlert('Error al guardar la habitación: ' + error.message, 'error');
             } finally {
-                // Restaurar botón
                 saveBtn.disabled = false;
                 saveText.textContent = isEditModeHabitacion ? 'Actualizar Habitación' : 'Crear Habitación';
             }
         }
 
-        // Función para eliminar habitación
         async function deleteHabitacion(habitacionId, numeroHabitacion) {
             if (!confirm(`¿Estás seguro de que quieres eliminar la habitación "${numeroHabitacion}"?\n\nEsta acción no se puede deshacer.`)) {
                 return;
@@ -1389,7 +1477,6 @@
 
                 if (response.ok && result.success) {
                     showAlert(result.message, 'success');
-                    // Recargar la lista de habitaciones
                     await window.adminApp.loadView('habitaciones');
                 } else {
                     throw new Error(result.message || 'Error al eliminar la habitación');
@@ -1398,170 +1485,6 @@
                 showAlert('Error al eliminar la habitación: ' + error.message, 'error');
             }
         }
-        async function editHotel(hotelId) {
-            try {
-                const response = await fetch(`/api/hotelesapi/${hotelId}`);
-                if (!response.ok) {
-                    throw new Error('Hotel no encontrado');
-                }
-                
-                const hotel = await response.json();
-                
-                // Llenar el formulario con los datos del hotel
-                isEditMode = true;
-                currentEditingHotelId = hotelId;
-                document.getElementById('hotelModalTitle').textContent = 'Editar Hotel';
-                document.getElementById('saveHotelText').textContent = 'Actualizar Hotel';
-                
-                document.getElementById('hotelId').value = hotel.hotelId || hotel.HotelId;
-                document.getElementById('nombre').value = hotel.nombre || hotel.Nombre;
-                document.getElementById('direccion').value = hotel.direccion || hotel.Direccion;
-                document.getElementById('ciudad').value = hotel.ciudad || hotel.Ciudad;
-                document.getElementById('descripcion').value = hotel.descripcion || hotel.Descripcion || '';
-                document.getElementById('telefonoContacto').value = hotel.telefonoContacto || hotel.TelefonoContacto || '';
-                
-                document.getElementById('hotelModal').classList.add('show');
-            } catch (error) {
-                showAlert('Error al cargar los datos del hotel: ' + error.message, 'error');
-            }
-        }
-
-        // Función para guardar hotel (crear o actualizar)
-        async function saveHotel() {
-            const form = document.getElementById('hotelForm');
-            const saveBtn = document.getElementById('saveHotelBtn');
-            const saveText = document.getElementById('saveHotelText');
-            
-            // Validar formulario
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            // Mostrar loading
-            saveBtn.disabled = true;
-            saveText.innerHTML = '<span class="spinner"></span>Guardando...';
-
-            try {
-                const formData = new FormData(form);
-                const hotelData = {
-                    nombre: formData.get('nombre'),
-                    direccion: formData.get('direccion'),
-                    ciudad: formData.get('ciudad'),
-                    descripcion: formData.get('descripcion') || null,
-                    telefonoContacto: formData.get('telefonoContacto') || null
-                };
-
-                let response;
-                if (isEditMode && currentEditingHotelId) {
-                    // Actualizar hotel existente
-                    response = await fetch(`/api/hotelesapi/${currentEditingHotelId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(hotelData)
-                    });
-                } else {
-                    // Crear nuevo hotel
-                    response = await fetch('/api/hotelesapi', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(hotelData)
-                    });
-                }
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    showAlert(result.message, 'success');
-                    closeHotelModal();
-                    // Recargar la lista de hoteles
-                    await window.adminApp.loadView('hoteles');
-                } else {
-                    throw new Error(result.message || 'Error al guardar el hotel');
-                }
-            } catch (error) {
-                showAlert('Error al guardar el hotel: ' + error.message, 'error');
-            } finally {
-                // Restaurar botón
-                saveBtn.disabled = false;
-                saveText.textContent = isEditMode ? 'Actualizar Hotel' : 'Crear Hotel';
-            }
-        }
-
-        // Función para eliminar hotel
-        async function deleteHotel(hotelId, hotelName) {
-            if (!confirm(`¿Estás seguro de que quieres eliminar el hotel "${hotelName}"?\n\nEsta acción no se puede deshacer.`)) {
-                return;
-            }
-
-            try {
-                const response = await fetch(`/api/hotelesapi/${hotelId}`, {
-                    method: 'DELETE'
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.success) {
-                    showAlert(result.message, 'success');
-                    // Recargar la lista de hoteles
-                    await window.adminApp.loadView('hoteles');
-                } else {
-                    throw new Error(result.message || 'Error al eliminar el hotel');
-                }
-            } catch (error) {
-                showAlert('Error al eliminar el hotel: ' + error.message, 'error');
-            }
-        }
-      // Agregar clase "has-submenu" automáticamente a los enlaces que tengan submenu
-            document.querySelectorAll('.admin-nav > a').forEach(link => {
-                if (link.nextElementSibling && link.nextElementSibling.classList.contains('submenu')) {
-                    link.classList.add('has-submenu');
-                }
-            });
-
-            // Menús principales
-            document.querySelectorAll('.admin-nav > a').forEach(item => {
-                item.addEventListener('click', function (e) {
-                    const next = this.nextElementSibling;
-
-                    if (next && next.classList.contains('submenu')) {
-                        e.preventDefault(); // evita navegación
-
-                        const isOpen = next.classList.contains('show');
-
-                        // Cerrar todos los submenus
-                        document.querySelectorAll('.submenu').forEach(sm => sm.classList.remove('show'));
-                        document.querySelectorAll('.admin-nav > a').forEach(link => link.classList.remove('active'));
-
-                        if (!isOpen) {
-                            // Abrir submenu actual
-                            next.classList.add('show');
-                            this.classList.add('active');
-                        }
-                    } else {
-                        // Si no tiene submenu
-                        document.querySelectorAll('.admin-nav > a').forEach(link => link.classList.remove('active'));
-                        this.classList.add('active');
-
-                        // Cerrar submenus abiertos
-                        document.querySelectorAll('.submenu').forEach(sm => sm.classList.remove('show'));
-                    }
-                });
-            });
-
-            // Subitems
-            document.querySelectorAll('.submenu a').forEach(subitem => {
-                subitem.addEventListener('click', function () {
-                    document.querySelectorAll('.submenu a').forEach(si => si.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-
-
 
         // Función para mostrar alertas
         function showAlert(message, type = 'success') {
@@ -1576,7 +1499,6 @@
             
             alertContainer.innerHTML = alertHtml;
             
-            // Auto-hide después de 5 segundos
             setTimeout(() => {
                 const alertElement = document.getElementById(alertId);
                 if (alertElement) {
@@ -1594,7 +1516,7 @@
             window.adminApp.loadView(view);
         }
 
-        // Cerrar modal al hacer clic fuera de él
+        // Event listeners
         window.onclick = function(event) {
             const hotelModal = document.getElementById('hotelModal');
             const habitacionModal = document.getElementById('habitacionModal');
@@ -1606,7 +1528,6 @@
             }
         }
 
-        // Cerrar modal con la tecla Escape
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeHotelModal();
@@ -1614,42 +1535,10 @@
             }
         });
 
-        // Inicializar la app cuando la página cargue
+        // Inicializar la app
         document.addEventListener('DOMContentLoaded', function() {
             window.adminApp = new AdminApp();
         });
-        // Buscar solo con ENTER
-            document.getElementById('adminSearch').addEventListener('keydown', function (e) {
-                if (e.key === 'Enter') {
-                    const q = this.value.trim();
-                    if (q) {
-                        console.log('Buscar:', q);
-                        if (typeof window.adminApp !== 'undefined' && typeof window.adminApp.search === 'function') {
-                            window.adminApp.search(q);
-                        } else if (typeof showAlert === 'function') {
-                            showAlert('Búsqueda: ' + q, 'success');
-                        }
-                    }
-                }
-            });
-
-            // Botón agregar huésped
-            document.getElementById('addGuestBtn').addEventListener('click', function () {
-                console.log('Agregar huésped');
-                if (typeof showAlert === 'function') {
-                    showAlert('Acción: Agregar Huésped', 'success');
-                }
-            });
-
-            // Botón ordenar
-            document.getElementById('sortBtn').addEventListener('click', function () {
-                console.log('Ordenar por...');
-                if (typeof showAlert === 'function') {
-                    showAlert('Acción: Ordenar por...', 'success');
-                }
-            });
-
-
     </script>
 </body>
 </html>
