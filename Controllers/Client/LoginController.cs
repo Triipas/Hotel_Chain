@@ -17,7 +17,7 @@ namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
 
         public IActionResult Index()
         {
-            return View();
+            return View("/Views/User/Login.cshtml");
         }
 
         [HttpPost]
@@ -36,7 +36,7 @@ namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
             else
             {
                 ViewBag.Mensaje = "Correo o contraseña incorrectos";
-                return View("Index");
+                return View("/Views/User/Login.cshtml");
             }
         }
 
