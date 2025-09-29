@@ -1,8 +1,11 @@
+// Controllers/Api/HotelesApiController.cs
 using Microsoft.AspNetCore.Mvc;
-using Hotel_chain.Models;
+using Hotel_chain.Models.Entities;
+using Hotel_chain.Models.DTOs.Hotel;
+using Hotel_chain.Models.DTOs.Common;
 using Hotel_chain.Services.Interfaces;
 
-namespace Hotel_chain.Controllers.API
+namespace Hotel_chain.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -17,7 +20,9 @@ namespace Hotel_chain.Controllers.API
 
         // GET: api/hoteles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Hotel>>> GetHoteles([FromQuery] string? ubicacion, [FromQuery] string? nombre)
+        public async Task<ActionResult<ApiResponse<IEnumerable<Hotel>>>> GetHoteles(
+            [FromQuery] string? ubicacion, 
+            [FromQuery] string? nombre)
         {
             try
             {
@@ -32,17 +37,20 @@ namespace Hotel_chain.Controllers.API
                     hoteles = await _hotelService.GetAllAsync();
                 }
 
-                return Ok(hoteles);
+                return Ok(ApiResponse<IEnumerable<Hotel>>.SuccessResult(hoteles, "Hoteles obtenidos exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+                return StatusCode(500, ApiResponse<IEnumerable<Hotel>>.ErrorResult(
+                    "Error interno del servidor", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
         // GET: api/hoteles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Hotel>> GetHotel(int id)
+        public async Task<ActionResult<ApiResponse<Hotel>>> GetHotel(int id)
         {
             try
             {
@@ -50,26 +58,34 @@ namespace Hotel_chain.Controllers.API
 
                 if (hotel == null)
                 {
-                    return NotFound(new { message = $"Hotel con ID {id} no encontrado" });
+                    return NotFound(ApiResponse<Hotel>.ErrorResult($"Hotel con ID {id} no encontrado"));
                 }
 
-                return Ok(hotel);
+                return Ok(ApiResponse<Hotel>.SuccessResult(hotel, "Hotel obtenido exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+                return StatusCode(500, ApiResponse<Hotel>.ErrorResult(
+                    "Error interno del servidor", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
         // POST: api/hoteles
         [HttpPost]
-        public async Task<ActionResult<Hotel>> CreateHotel([FromBody] HotelCreateDto hotelDto)
+        public async Task<ActionResult<ApiResponse<Hotel>>> CreateHotel([FromBody] HotelCreateDto hotelDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(ApiResponse<Hotel>.ErrorResult("Datos de entrada inválidos", errors));
                 }
 
                 var hotel = new Hotel
@@ -82,19 +98,14 @@ namespace Hotel_chain.Controllers.API
                 };
 
                 var createdHotel = await _hotelService.CreateAsync(hotel);
-                return Ok(new { 
-                    success = true, 
-                    message = "Hotel creado exitosamente", 
-                    hotel = createdHotel 
-                });
+                return Ok(ApiResponse<Hotel>.SuccessResult(createdHotel, "Hotel creado exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = "Error al crear el hotel", 
-                    error = ex.Message 
-                });
+                return StatusCode(500, ApiResponse<Hotel>.ErrorResult(
+                    "Error al crear el hotel", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
@@ -106,7 +117,12 @@ namespace Hotel_chain.Controllers.API
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(ApiResponse.ErrorResult("Datos de entrada inválidos", errors));
                 }
 
                 var hotel = new Hotel
@@ -123,25 +139,17 @@ namespace Hotel_chain.Controllers.API
                 
                 if (updatedHotel == null)
                 {
-                    return NotFound(new { 
-                        success = false, 
-                        message = $"Hotel con ID {id} no encontrado" 
-                    });
+                    return NotFound(ApiResponse.ErrorResult($"Hotel con ID {id} no encontrado"));
                 }
 
-                return Ok(new { 
-                    success = true, 
-                    message = "Hotel actualizado exitosamente", 
-                    hotel = updatedHotel 
-                });
+                return Ok(ApiResponse<Hotel>.SuccessResult(updatedHotel, "Hotel actualizado exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = "Error al actualizar el hotel", 
-                    error = ex.Message 
-                });
+                return StatusCode(500, ApiResponse.ErrorResult(
+                    "Error al actualizar el hotel", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
@@ -155,52 +163,23 @@ namespace Hotel_chain.Controllers.API
                 
                 if (!deleted)
                 {
-                    return NotFound(new { 
-                        success = false, 
-                        message = $"Hotel con ID {id} no encontrado" 
-                    });
+                    return NotFound(ApiResponse.ErrorResult($"Hotel con ID {id} no encontrado"));
                 }
 
-                return Ok(new { 
-                    success = true, 
-                    message = "Hotel eliminado exitosamente" 
-                });
+                return Ok(ApiResponse.SuccessResult("Hotel eliminado exitosamente"));
             }
             catch (InvalidOperationException ex)
             {
                 // Error de validación de negocio (ej. hotel con habitaciones)
-                return BadRequest(new { 
-                    success = false, 
-                    message = ex.Message 
-                });
+                return BadRequest(ApiResponse.ErrorResult(ex.Message));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = "Error al eliminar el hotel", 
-                    error = ex.Message 
-                });
+                return StatusCode(500, ApiResponse.ErrorResult(
+                    "Error al eliminar el hotel", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
-    }
-
-    // DTOs para las operaciones
-    public class HotelCreateDto
-    {
-        public string Nombre { get; set; } = null!;
-        public string Direccion { get; set; } = null!;
-        public string Ciudad { get; set; } = null!;
-        public string? Descripcion { get; set; }
-        public string? TelefonoContacto { get; set; }
-    }
-
-    public class HotelUpdateDto
-    {
-        public string Nombre { get; set; } = null!;
-        public string Direccion { get; set; } = null!;
-        public string Ciudad { get; set; } = null!;
-        public string? Descripcion { get; set; }
-        public string? TelefonoContacto { get; set; }
     }
 }

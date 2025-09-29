@@ -1,3 +1,4 @@
+// Controllers/Admin/AdminController.cs - Actualizado
 using Microsoft.AspNetCore.Mvc;
 using Hotel_chain.Services.Interfaces;
 
