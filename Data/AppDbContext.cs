@@ -1,5 +1,6 @@
+// Data/AppDbContext.cs - Actualizado para usar nuevas entidades
 using Microsoft.EntityFrameworkCore;
-using Hotel_chain.Models;
+using Hotel_chain.Models.Entities;
 
 namespace Hotel_chain.Data
 {
@@ -22,13 +23,16 @@ namespace Hotel_chain.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Mapear tablas
+            // Mapear tablas (igual que antes, solo cambiar el namespace)
             modelBuilder.Entity<Hotel>().ToTable("Hoteles");
             modelBuilder.Entity<Habitacion>().ToTable("Habitaciones");
             modelBuilder.Entity<Reserva>().ToTable("Reservas");
             modelBuilder.Entity<Usuario>().ToTable("Usuarios");
             modelBuilder.Entity<Imagen>().ToTable("Imagenes");
             modelBuilder.Entity<Rol>().ToTable("Roles");
+
+            // TODO: Mover toda la configuración de mapeo a archivos separados de configuración
+            // para mejor organización (IEntityTypeConfiguration<T>)
 
             // ===== MAPEAR COLUMNAS DE HOTELES =====
             modelBuilder.Entity<Hotel>().Property(h => h.HotelId).HasColumnName("hotel_id");
@@ -52,10 +56,10 @@ namespace Hotel_chain.Data
             modelBuilder.Entity<Reserva>().Property(r => r.ReservaId).HasColumnName("reserva_id");
             modelBuilder.Entity<Reserva>().Property(r => r.HabitacionId).HasColumnName("habitacion_id");
             modelBuilder.Entity<Reserva>().Property(r => r.UsuarioId).HasColumnName("usuario_id");
-            modelBuilder.Entity<Reserva>().Property(r => r.FechaInicio).HasColumnName("fecha_inicio"); // 🆕 MAPEO FALTANTE
-            modelBuilder.Entity<Reserva>().Property(r => r.FechaFin).HasColumnName("fecha_fin"); // 🆕 MAPEO FALTANTE
-            modelBuilder.Entity<Reserva>().Property(r => r.PrecioTotal).HasColumnName("precio_total"); // 🆕 MAPEO FALTANTE
-            modelBuilder.Entity<Reserva>().Property(r => r.Estado).HasColumnName("estado"); // 🆕 MAPEO FALTANTE
+            modelBuilder.Entity<Reserva>().Property(r => r.FechaInicio).HasColumnName("fecha_inicio");
+            modelBuilder.Entity<Reserva>().Property(r => r.FechaFin).HasColumnName("fecha_fin");
+            modelBuilder.Entity<Reserva>().Property(r => r.PrecioTotal).HasColumnName("precio_total");
+            modelBuilder.Entity<Reserva>().Property(r => r.Estado).HasColumnName("estado");
 
             // ===== MAPEAR COLUMNAS DE USUARIOS =====
             modelBuilder.Entity<Usuario>().Property(u => u.UsuarioId).HasColumnName("usuario_id");
@@ -81,15 +85,6 @@ namespace Hotel_chain.Data
             modelBuilder.Entity<Imagen>().Property(i => i.HabitacionId).HasColumnName("HabitacionId");
 
             // ===== CONFIGURAR TIPOS DE DATOS =====
-            // Guardar enums como string
-            modelBuilder.Entity<Habitacion>()
-                .Property(h => h.Tipo)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<Reserva>()
-                .Property(r => r.Estado)
-                .HasConversion<string>();
-
             // Configurar decimales
             modelBuilder.Entity<Habitacion>()
                 .Property(h => h.PrecioNoche)

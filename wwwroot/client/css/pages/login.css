@@ -19,7 +19,7 @@ body {
 
 .login-left {
     width: 50%;
-    background-image: url('/img/InicioCliente.jpeg');
+    background-image: url('/client/img/InicioCliente.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -36,8 +36,9 @@ body {
     width: 50%;
     background-color: #fff;
     min-height: 100vh;
-    height: 100vh; 
-    padding: 20px; /* menos espacio en blanco */
+    height: 100vh;
+    padding: 20px;
+    /* menos espacio en blanco */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -62,14 +63,15 @@ body {
     transform: rotateY(180deg);
 }
 
-.front, .back {
+.front,
+.back {
     position: absolute;
     width: 100%;
     backface-visibility: hidden;
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-    padding: 40px ;
+    padding: 40px;
 }
 
 .front {
@@ -80,7 +82,8 @@ body {
     transform: rotateY(180deg);
 }
 
-.front h2, .back h2 {
+.front h2,
+.back h2 {
     text-align: center;
     margin-bottom: 30px;
     color: #2c3e50;
@@ -101,7 +104,7 @@ body {
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    width: 100%;  
+    width: 100%;
     box-sizing: border-box;
     display: block;
 }
@@ -114,7 +117,7 @@ body {
     border-radius: 8px;
     font-size: 16px;
     background: #f8f9fa;
-    transition: all 0.3s ease   ;
+    transition: all 0.3s ease;
 }
 
 .form-group input:focus {
@@ -184,7 +187,7 @@ body {
     width: 100%;
     display: block;
     text-align: center;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 .front .btn-register:hover {
@@ -198,7 +201,7 @@ body {
 }
 
 .back {
-    background-color: white; 
+    background-color: white;
     padding: 40px 30px;
 }
 
@@ -208,14 +211,14 @@ body {
     font-weight: bold;
 }
 
-.back input {   
+.back input {
     width: 100%;
-    padding: 12px 15px;         
-    border-radius: 8px;         
-    border: 2px solid #ccc;    
-    font-size: 16px;     
-    background: #f8f9fa;   
-    transition: all 0.3s ease; 
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: 16px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
 }
 
 .back button {
@@ -259,10 +262,10 @@ body {
     width: 100%;
     display: block;
     text-align: center;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
-.back .back1 .btn-login:hover{
+.back .back1 .btn-login:hover {
     color: #333;
 }
 
@@ -271,13 +274,15 @@ body {
     margin-top: 1rem;
 }
 
-.back-link a, .login-link {
+.back-link a,
+.login-link {
     color: #667eea;
     text-decoration: none;
     font-size: 0.9rem;
 }
 
-.back-link a:hover, .login-link:hover {
+.back-link a:hover,
+.login-link:hover {
     text-decoration: underline;
 }
 
@@ -286,123 +291,133 @@ body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
-        /* ESTILOS CRÍTICOS PARA EL MENSAJE DE ÉXITO */
-        .card.success .back1 {
-            display: none !important;
-        }
 
-        .card.success .back2 {
-            display: block !important;
-            animation: slideUpSuccess 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
+/* ESTILOS CRÍTICOS PARA EL MENSAJE DE ÉXITO */
+.card.success .back1 {
+    display: none !important;
+}
 
-        .back2 {
-            display: none;
-            text-align: center;
-            padding: 40px;
-            transform: translateY(50px);
-            opacity: 0;
-        }
+.card.success .back2 {
+    display: block !important;
+    animation: slideUpSuccess 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
 
-        .success-icon {
-            font-size: 60px;
-            color: #28a745;
-            margin-bottom: 20px;
-            animation: bounceIn 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards;
-            opacity: 0;
-            transform: scale(0.3);
-        }
+.back2 {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    transform: translateY(50px);
+    opacity: 0;
+}
 
-        .back2 h2 {
-            animation: fadeInUp 1s ease 0.8s forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
+.success-icon {
+    font-size: 60px;
+    color: #28a745;
+    margin-bottom: 20px;
+    animation: bounceIn 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards;
+    opacity: 0;
+    transform: scale(0.3);
+}
 
-        .back2 p {
-            animation: fadeInUp 1s ease 1s forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
+.back2 h2 {
+    animation: fadeInUp 1s ease 0.8s forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
 
-        .return-login {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
-            background-color: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            animation: fadeInUp 1s ease 1.2s forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
+.back2 p {
+    animation: fadeInUp 1s ease 1s forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
 
-        .return-login:hover {
-            background-color: #0056b3;
-            text-decoration: none;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
-        }
+.return-login {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    animation: fadeInUp 1s ease 1.2s forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
 
-        /* ANIMACIONES */
-        @keyframes slideUpSuccess {
-            0% {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.return-login:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+}
 
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.1);
-            }
-            70% {
-                transform: scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+/* ANIMACIONES */
+@keyframes slideUpSuccess {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
 
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        /* ANIMACIÓN DE PULSO SUTIL PARA EL ÍCONO */
-        .card.success .success-icon {
-            animation: bounceIn 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards,
-                       pulse 2s infinite 2s;
-        }
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
 
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ANIMACIÓN DE PULSO SUTIL PARA EL ÍCONO */
+.card.success .success-icon {
+    animation: bounceIn 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s forwards,
+        pulse 2s infinite 2s;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}

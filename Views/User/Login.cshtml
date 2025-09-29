@@ -9,7 +9,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="~/css/LoginCliente.css" />
+    <link rel="stylesheet" href="~/client/css/pages/login.css">
 </head>
 <body>
     <div class="login-wrapper">
@@ -36,11 +36,6 @@
                     </div>
                     <br>
                     <button type="submit" class="btn-login">Iniciar Sesión</button>
-
-                        <!--    <button type="button" class="btn-register" 
-                                        onclick="location.href='@Url.Action("RegisterUser", "Login")'">
-                                    Crear una cuenta
-                                </button>           -->
                     <a href="#" id="showRegister" class="btn-register">Crear una cuenta</a>
                 </form>
                 <div class="back-link">
@@ -52,25 +47,25 @@
                 <div class="back1">
                     <h2>Registro de Usuario</h2>
 
-                        @if(ViewBag.Mensaje != null)
-                        {
-                            <div class="error-message">@ViewBag.Mensaje</div>
-                        }
+                    @if(ViewBag.Mensaje != null)
+                    {
+                        <div class="error-message">@ViewBag.Mensaje</div>
+                    }
+                    
                     <form id="registerForm" method="post" asp-controller="Login" asp-action="RegisterUser">
                         <label>Nombre</label>
-                        <input type="text" name="nombre" required>
+                        <input type="text" name="nombre" id="regNombre" required>
                         <label>Apellido</label>
-                        <input type="text" name="apellido" required>
+                        <input type="text" name="apellido" id="regApellido" required>
                         <label>E-mail</label>
-                        <input type="email" name="email" required>
+                        <input type="email" name="email" id="regEmail" required>
                         <label>Contraseña</label>
-                        <input type="password" name="contra" required>
+                        <input type="password" name="contra" id="regContra" required>
                         <label>Teléfono</label>
-                        <input type="text" name="telefono" required>
-                        <button type="button" id="registerBtn">Registrar</button>
+                        <input type="text" name="telefono" id="regTelefono" required>
+                        <button type="submit" id="registerBtn">Registrar</button>
                     </form>
                     <a href="#" id="showLogin" class="btn-login">Ya tengo una Cuenta</a>
-                    <!--<a href="@Url.Action("Index", "Login")" class="login-link">Ya tienes cuenta? Inicia sesión</a> -->
                 </div>
                 <div class="back2">
                     <div class="success-icon">✓</div>
@@ -82,62 +77,8 @@
         </div>
         </div>
     </div>
-    <script>
-        const mainCard = document.getElementById('mainCard');
-        const showRegister = document.getElementById('showRegister');
-        const showLogin = document.getElementById('showLogin');
-        const returnToLogin = document.getElementById('returnToLogin');
-        const registerForm = document.getElementById('registerForm');
-        const registerBtn = document.getElementById('registerBtn');
 
-        // Mostrar formulario de registro
-        showRegister.addEventListener('click', function(e) {
-            e.preventDefault();
-            mainCard.classList.add('flipped');
-            mainCard.classList.remove('success');
-        });
+    <script src="~/client/js/client-login.js"></script>
 
-        // Mostrar formulario de login desde registro
-        showLogin.addEventListener('click', function(e) {
-            e.preventDefault();
-            mainCard.classList.remove('flipped', 'success');
-        });
-
-        // Manejar click del botón registrar
-        registerBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Validar formulario
-            const inputs = registerForm.querySelectorAll('input[required]');
-            let valid = true;
-            
-            inputs.forEach(input => {
-                if (!input.value.trim()) {
-                    valid = false;
-                    input.focus();
-                    return;
-                }
-            });
-            
-            if (valid) {
-                // Mostrar mensaje de éxito
-                mainCard.classList.add('success');
-                
-                // Aquí puedes agregar la lógica para enviar los datos al servidor
-                // submitRegistrationData();
-            }
-        });
-
-
-        // Regresar al login desde mensaje de éxito
-        returnToLogin.addEventListener('click', function(e) {
-            e.preventDefault();
-            mainCard.classList.remove('flipped', 'success');
-            
-            // Limpiar formularios
-            registerForm.reset();
-            document.getElementById('loginForm').reset();
-        });
-    </script>
 </body>
 </html>

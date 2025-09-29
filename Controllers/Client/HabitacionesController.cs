@@ -1,51 +1,43 @@
+// Controllers/Client/HabitacionController.cs
 using Microsoft.AspNetCore.Mvc;
-using Hotel_chain.Data;
-using Hotel_chain.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Hotel_chain.Models.Entities;
+using Hotel_chain.Services.Interfaces;
 
-namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
+namespace Hotel_chain.Controllers.Client
 {
     public class HabitacionController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IHabitacionService _habitacionService;
+        private readonly IHotelService _hotelService;
 
-        public HabitacionController(AppDbContext context)
+        public HabitacionController(IHabitacionService habitacionService, IHotelService hotelService)
         {
-            _context = context;
+            _habitacionService = habitacionService;
+            _hotelService = hotelService;
         }
 
-       
-        public IActionResult Index(int hotelId, string? tipo = null, int? capacidad = null) // 🆕 Agregar ? para nullable
+        public async Task<IActionResult> Index(int hotelId, string? tipo = null, int? capacidad = null)
         {
-            var query = _context.Habitaciones
-                                .Include(h => h.Imagenes)
-                                .Where(h => h.HotelId == hotelId)
-                                .AsQueryable();
+            IEnumerable<Habitacion> habitaciones;
 
-            if (!string.IsNullOrEmpty(tipo))
-                query = query.Where(h => h.Tipo == tipo);
+            if (!string.IsNullOrEmpty(tipo) || capacidad.HasValue)
+            {
+                habitaciones = await _habitacionService.SearchAsync(hotelId, tipo, capacidad);
+            }
+            else
+            {
+                habitaciones = await _habitacionService.GetByHotelIdAsync(hotelId);
+            }
 
-            if (capacidad.HasValue)
-                query = query.Where(h => h.Capacidad >= capacidad.Value);
-
-            var habitaciones = query.OrderBy(h => h.NumeroHabitacion).ToList();
-
-            ViewBag.Hotel = _context.Hoteles
-                                    .Include(h => h.Imagenes) 
-                                    .FirstOrDefault(h => h.HotelId == hotelId);
+            var hotel = await _hotelService.GetByIdAsync(hotelId);
+            ViewBag.Hotel = hotel;
 
             return View(habitaciones);
         }
 
-        
-        public IActionResult Detalles(int id)
+        public async Task<IActionResult> Detalles(int id)
         {
-            var habitacion = _context.Habitaciones
-                                     .Include(h => h.Imagenes)  
-                                     .Include(h => h.Hotel)   
-                                     .ThenInclude(h => h.Imagenes) 
-                                     .FirstOrDefault(h => h.HabitacionId == id);
+            var habitacion = await _habitacionService.GetByIdAsync(id);
 
             if (habitacion == null)
                 return NotFound();

@@ -1,4 +1,5 @@
-using Hotel_chain.Models;
+// Services/Interfaces/IAdminAuthService.cs
+using Hotel_chain.Models.Entities;
 
 namespace Hotel_chain.Services.Interfaces
 {

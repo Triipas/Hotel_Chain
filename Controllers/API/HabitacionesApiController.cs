@@ -1,5 +1,8 @@
+// Controllers/Api/HabitacionesApiController.cs
 using Microsoft.AspNetCore.Mvc;
-using Hotel_chain.Models;
+using Hotel_chain.Models.Entities;
+using Hotel_chain.Models.DTOs.Habitacion;
+using Hotel_chain.Models.DTOs.Common;
 using Hotel_chain.Services.Interfaces;
 
 namespace Hotel_chain.Controllers.API
@@ -17,7 +20,7 @@ namespace Hotel_chain.Controllers.API
 
         // GET: api/habitaciones
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Habitacion>>> GetHabitaciones(
+        public async Task<ActionResult<ApiResponse<IEnumerable<Habitacion>>>> GetHabitaciones(
             [FromQuery] int? hotelId, 
             [FromQuery] string? tipo, 
             [FromQuery] int? capacidadMinima)
@@ -35,17 +38,20 @@ namespace Hotel_chain.Controllers.API
                     habitaciones = await _habitacionService.GetAllAsync();
                 }
 
-                return Ok(habitaciones);
+                return Ok(ApiResponse<IEnumerable<Habitacion>>.SuccessResult(habitaciones, "Habitaciones obtenidas exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+                return StatusCode(500, ApiResponse<IEnumerable<Habitacion>>.ErrorResult(
+                    "Error interno del servidor", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
         // GET: api/habitaciones/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Habitacion>> GetHabitacion(int id)
+        public async Task<ActionResult<ApiResponse<Habitacion>>> GetHabitacion(int id)
         {
             try
             {
@@ -53,41 +59,55 @@ namespace Hotel_chain.Controllers.API
 
                 if (habitacion == null)
                 {
-                    return NotFound(new { message = $"Habitación con ID {id} no encontrada" });
+                    return NotFound(ApiResponse<Habitacion>.ErrorResult($"Habitación con ID {id} no encontrada"));
                 }
 
-                return Ok(habitacion);
+                return Ok(ApiResponse<Habitacion>.SuccessResult(habitacion, "Habitación obtenida exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+                return StatusCode(500, ApiResponse<Habitacion>.ErrorResult(
+                    "Error interno del servidor", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
         // GET: api/habitaciones/hotel/5
         [HttpGet("hotel/{hotelId}")]
-        public async Task<ActionResult<IEnumerable<Habitacion>>> GetHabitacionesByHotel(int hotelId)
+        public async Task<ActionResult<ApiResponse<IEnumerable<Habitacion>>>> GetHabitacionesByHotel(int hotelId)
         {
             try
             {
                 var habitaciones = await _habitacionService.GetByHotelIdAsync(hotelId);
-                return Ok(habitaciones);
+                return Ok(ApiResponse<IEnumerable<Habitacion>>.SuccessResult(
+                    habitaciones, 
+                    "Habitaciones del hotel obtenidas exitosamente"
+                ));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno del servidor", error = ex.Message });
+                return StatusCode(500, ApiResponse<IEnumerable<Habitacion>>.ErrorResult(
+                    "Error interno del servidor", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
         // POST: api/habitaciones
         [HttpPost]
-        public async Task<ActionResult<Habitacion>> CreateHabitacion([FromBody] HabitacionCreateDto habitacionDto)
+        public async Task<ActionResult<ApiResponse<Habitacion>>> CreateHabitacion([FromBody] HabitacionCreateDto habitacionDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(ApiResponse<Habitacion>.ErrorResult("Datos de entrada inválidos", errors));
                 }
 
                 var habitacion = new Habitacion
@@ -102,19 +122,14 @@ namespace Hotel_chain.Controllers.API
                 };
 
                 var createdHabitacion = await _habitacionService.CreateAsync(habitacion);
-                return Ok(new { 
-                    success = true, 
-                    message = "Habitación creada exitosamente", 
-                    habitacion = createdHabitacion 
-                });
+                return Ok(ApiResponse<Habitacion>.SuccessResult(createdHabitacion, "Habitación creada exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = "Error al crear la habitación", 
-                    error = ex.Message 
-                });
+                return StatusCode(500, ApiResponse<Habitacion>.ErrorResult(
+                    "Error al crear la habitación", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
@@ -126,7 +141,12 @@ namespace Hotel_chain.Controllers.API
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    
+                    return BadRequest(ApiResponse.ErrorResult("Datos de entrada inválidos", errors));
                 }
 
                 var habitacion = new Habitacion
@@ -145,25 +165,17 @@ namespace Hotel_chain.Controllers.API
                 
                 if (updatedHabitacion == null)
                 {
-                    return NotFound(new { 
-                        success = false, 
-                        message = $"Habitación con ID {id} no encontrada" 
-                    });
+                    return NotFound(ApiResponse.ErrorResult($"Habitación con ID {id} no encontrada"));
                 }
 
-                return Ok(new { 
-                    success = true, 
-                    message = "Habitación actualizada exitosamente", 
-                    habitacion = updatedHabitacion 
-                });
+                return Ok(ApiResponse<Habitacion>.SuccessResult(updatedHabitacion, "Habitación actualizada exitosamente"));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = "Error al actualizar la habitación", 
-                    error = ex.Message 
-                });
+                return StatusCode(500, ApiResponse.ErrorResult(
+                    "Error al actualizar la habitación", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
 
@@ -177,56 +189,23 @@ namespace Hotel_chain.Controllers.API
                 
                 if (!deleted)
                 {
-                    return NotFound(new { 
-                        success = false, 
-                        message = $"Habitación con ID {id} no encontrada" 
-                    });
+                    return NotFound(ApiResponse.ErrorResult($"Habitación con ID {id} no encontrada"));
                 }
 
-                return Ok(new { 
-                    success = true, 
-                    message = "Habitación eliminada exitosamente" 
-                });
+                return Ok(ApiResponse.SuccessResult("Habitación eliminada exitosamente"));
             }
             catch (InvalidOperationException ex)
             {
                 // Error de validación de negocio (ej. habitación con reservas)
-                return BadRequest(new { 
-                    success = false, 
-                    message = ex.Message 
-                });
+                return BadRequest(ApiResponse.ErrorResult(ex.Message));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { 
-                    success = false, 
-                    message = "Error al eliminar la habitación", 
-                    error = ex.Message 
-                });
+                return StatusCode(500, ApiResponse.ErrorResult(
+                    "Error al eliminar la habitación", 
+                    new List<string> { ex.Message }
+                ));
             }
         }
-    }
-
-    // DTOs para las operaciones
-    public class HabitacionCreateDto
-    {
-        public int HotelId { get; set; }
-        public string NumeroHabitacion { get; set; } = null!;
-        public string Tipo { get; set; } = null!;
-        public int Capacidad { get; set; }
-        public decimal PrecioNoche { get; set; }
-        public string? Descripcion { get; set; }
-        public bool Disponible { get; set; } = true;
-    }
-
-    public class HabitacionUpdateDto
-    {
-        public int HotelId { get; set; }
-        public string NumeroHabitacion { get; set; } = null!;
-        public string Tipo { get; set; } = null!;
-        public int Capacidad { get; set; }
-        public decimal PrecioNoche { get; set; }
-        public string? Descripcion { get; set; }
-        public bool Disponible { get; set; } = true;
     }
 }

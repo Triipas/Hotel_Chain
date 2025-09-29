@@ -1,21 +1,22 @@
+// Controllers/Client/HomeController.cs
 using Microsoft.AspNetCore.Mvc;
-using Hotel_chain.Models;
-using Hotel_chain.Services.Interfaces; // 🆕 Usar servicios en lugar de DbContext directo
+using Hotel_chain.Models.Entities;
+using Hotel_chain.Services.Interfaces;
 
-namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
+namespace Hotel_chain.Controllers.Client
 {
     public class HomeController : Controller
     {
-        private readonly IHotelService _hotelService; // 🆕 Usar servicio
+        private readonly IHotelService _hotelService;
 
-        public HomeController(IHotelService hotelService) // 🆕 Inyectar servicio
+        public HomeController(IHotelService hotelService)
         {
             _hotelService = hotelService;
         }
 
-        public async Task<IActionResult> Index() // 🆕 Hacer async
+        public async Task<IActionResult> Index()
         {
-            var hoteles = await _hotelService.GetHotelesConImagenesAsync(); // 🆕 Usar servicio
+            var hoteles = await _hotelService.GetHotelesConImagenesAsync();
             return View(hoteles);
         }
 
@@ -24,18 +25,18 @@ namespace Hotel_chain.Controllers.Client // 🆕 Namespace actualizado
             return View();
         }
 
-        // 🔄 Mantener el resto de métodos exactamente igual por ahora
-        // TODO: Migrar gradualmente a usar servicios
-        
+        // TODO: Este método se migrará a usar ReservaService en el futuro
         [HttpPost]
         public IActionResult Reservar(int habitacionId, int usuarioId)
         {
-            // TODO: Este método se migrará a usar ReservaService en el futuro
-            // Por ahora mantener la lógica existente para no romper funcionalidad
-            
             // Redirigir temporalmente hasta implementar ReservaService
             TempData["Mensaje"] = "Función de reservas en mantenimiento - será migrada a la nueva arquitectura";
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }

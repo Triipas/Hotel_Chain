@@ -1,0 +1,126 @@
+/* wwwroot/client/css/components/forms.css */
+.disponibilidad {
+  background-color: var(--background-section);
+  padding: var(--spacing-xxl) 90px;
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 20px;
+  margin-bottom: var(--spacing-xxl);
+}
+
+.disponibilidad h2 {
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  color: var(--accent-color);
+}
+
+.consultar-form {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.consultar-form select {
+  padding: var(--spacing-lg) var(--spacing-lg);
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: var(--transition);
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  color: var(--text-dark);
+  min-width: 180px;
+}
+
+.consultar-form select:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.consultar-form select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.1);
+}
+
+.consultar-form button {
+  padding: var(--spacing-lg) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  border: none;
+  font-size: 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 120px;
+  font-weight: 500;
+}
+
+.consultar-form button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.filtro-hoteles,
+.filtro-habitaciones {
+  margin: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--background-section);
+  border-radius: 12px;
+}
+
+.filtro-form {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filtro-form select,
+.filtro-form input,
+.filtro-form button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+}
+
+.filtro-form button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filtro-form button:hover {
+  background-color: var(--primary-hover);
+}
+
+@media (max-width: 768px) {
+  .disponibilidad {
+    padding: var(--spacing-lg);
+    width: 95%;
+  }
+  
+  .consultar-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .consultar-form select,
+  .consultar-form button {
+    width: 100%;
+  }
+  
+  .filtro-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

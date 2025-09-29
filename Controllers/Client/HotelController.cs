@@ -1,37 +1,39 @@
+// Controllers/Client/HotelController.cs
 using Microsoft.AspNetCore.Mvc;
-using Hotel_chain.Models;
-using Hotel_chain.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Hotel_chain.Models.Entities;
+using Hotel_chain.Services.Interfaces;
 
-namespace Hotel_chain.Controllers
+namespace Hotel_chain.Controllers.Client
 {
     public class HotelController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IHotelService _hotelService;
 
-        public HotelController(AppDbContext context)
+        public HotelController(IHotelService hotelService)
         {
-            _context = context;
+            _hotelService = hotelService;
         }
 
-       
-        public IActionResult Index(string ubicacion, string nombre)
-{
-    var query = _context.Hoteles.Include(h => h.Imagenes).AsQueryable();
+        public async Task<IActionResult> Index(string? ubicacion, string? nombre)
+        {
+            IEnumerable<Hotel> hoteles;
 
- 
-    if (!string.IsNullOrEmpty(ubicacion))
-        query = query.Where(h => h.Ciudad == ubicacion);
+            if (!string.IsNullOrEmpty(ubicacion) || !string.IsNullOrEmpty(nombre))
+            {
+                hoteles = await _hotelService.SearchAsync(ubicacion, nombre);
+            }
+            else
+            {
+                hoteles = await _hotelService.GetAllAsync();
+            }
 
-  
-    if (!string.IsNullOrEmpty(nombre))
-        query = query.Where(h => h.Nombre.Contains(nombre));
+            return View(hoteles);
+        }
 
-   
-    var hoteles = query.OrderBy(h => h.Nombre).ToList();
-
-    return View(hoteles);
-}
+        [HttpPost]
+        public async Task<IActionResult> Buscar(string? ubicacion, string? nombre)
+        {
+            return await Index(ubicacion, nombre);
+        }
     }
 }

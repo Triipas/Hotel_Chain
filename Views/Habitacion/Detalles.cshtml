@@ -1,10 +1,12 @@
-@model Hotel_chain.Models.Habitacion
+@model Hotel_chain.Models.Entities.Habitacion
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     ViewData["Title"] = "Detalle de Habitación";
 }
+
+<link rel="stylesheet" href="~/client/css/main.css">
 
 <header>
     <nav class="navbar">
@@ -31,8 +33,6 @@
     </nav>
 </header>
 
-<link rel="stylesheet" href="~/css/style.css" />
-
 <main class="container">
     <h2>Habitación @Model.NumeroHabitacion</h2>
 
@@ -42,7 +42,7 @@
             {
                 foreach(var img in Model.Imagenes)
                 {
-                    <img src="~/imagenes/@img.NombreArchivo" alt="@Model.NumeroHabitacion" class="habitacion-img" />
+                    <img src="~/client/imagenes/@img.NombreArchivo" alt="@Model.NumeroHabitacion" class="habitacion-img" />
                 }
             }
             else
@@ -76,54 +76,3 @@
 
     <a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@Model.HotelId" class="btn-volver">← Volver a Habitaciones</a>
 </main>
-
-<style>
-.habitacion-detalle {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.imagenes-habitacion {
-    flex: 2;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.imagenes-habitacion img {
-    width: calc(33% - 10px);
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.info-habitacion {
-    flex: 1;
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-}
-
-.info-habitacion p {
-    margin: 10px 0;
-}
-
-.btn-reservar {
-    margin-top: 15px;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: inline-block;
-    text-decoration: none;
-}
-
-.btn-volver {
-    margin-top: 20px;
-    display: inline-block;
-}
-</style>

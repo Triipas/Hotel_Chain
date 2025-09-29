@@ -1,6 +1,7 @@
+// Services/Implementation/HotelService.cs
 using Microsoft.EntityFrameworkCore;
 using Hotel_chain.Data;
-using Hotel_chain.Models;
+using Hotel_chain.Models.Entities;
 using Hotel_chain.Services.Interfaces;
 
 namespace Hotel_chain.Services.Implementation

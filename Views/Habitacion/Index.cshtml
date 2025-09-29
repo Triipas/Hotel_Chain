@@ -1,17 +1,19 @@
-@model List<Hotel_chain.Models.Habitacion>
+@model List<Hotel_chain.Models.Entities.Habitacion>
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Habitaciones";
-    var hotel = ViewBag.Hotel as Hotel_chain.Models.Hotel;
+    var hotel = ViewBag.Hotel as Hotel_chain.Models.Entities.Hotel;
 }
+
+<link rel="stylesheet" href="~/client/css/main.css">
 
 <header>
     <nav class="navbar">
         <div class="logo">StayGo</div>
         <div class="nav-derecha">
             <ul class="nav-links">
-                <li><a asp-controller="Hotel" asp-action="Index" class="activo">Home</a></li>
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                 <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
                 <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
                 <li><a href="#">Sobre Nosotros</a></li>
@@ -30,8 +32,6 @@
         </div>
     </nav>
 </header>
-
-<link rel="stylesheet" href="~/css/style.css" />
 
 <h2>Habitaciones de @hotel?.Nombre</h2>
 
@@ -66,8 +66,8 @@
             foreach (var hab in Model)
             {
                 <div class="habitacion-card">
-                    <img src="~/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" 
-                         alt="@hab.NumeroHabitacion" class="habitacion-img" />
+                    <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" alt="@hab.NumeroHabitacion"
+                        class="habitacion-img" />
 
                     <h3>@hab.NumeroHabitacion</h3>
                     <p>Tipo: @hab.Tipo</p>
@@ -75,8 +75,7 @@
                     <p>@hab.Descripcion</p>
 
                     <!-- Botón para ver detalles -->
-                    <a asp-controller="Habitacion" asp-action="Detalles" 
-                       asp-route-id="@hab.HabitacionId" class="btn-detalles">
+                    <a asp-controller="Habitacion" asp-action="Detalles" asp-route-id="@hab.HabitacionId" class="btn-detalles">
                         Ver detalles
                     </a>
 
@@ -84,7 +83,8 @@
                     {
                         <form asp-controller="Home" asp-action="Reservar" method="post">
                             <input type="hidden" name="habitacionId" value="@hab.HabitacionId" />
-                            <input type="hidden" name="usuarioId" value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
+                            <input type="hidden" name="usuarioId"
+                                value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
                             <button type="submit" class="btn-reservar">Reservar</button>
                         </form>
                     }
@@ -105,64 +105,3 @@
 </section>
 
 <a href="/Hotel/Index" class="btn-ver-todos btn-volver">← Volver</a>
-
-<style>
-.habitaciones-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.habitacion-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    width: 250px;
-    text-align: center;
-    background-color: #f9f9f9;
-}
-
-.habitacion-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.filtro-habitaciones {
-    margin-bottom: 20px;
-}
-
-.filtro-habitaciones select,
-.filtro-habitaciones button {
-    margin-right: 10px;
-    padding: 5px 10px;
-}
-
-.btn-reservar {
-    margin-top: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-}
-
-.btn-detalles {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #28a745;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.btn-volver {
-    margin-top: 20px;
-    display: inline-block;
-}
-</style>
