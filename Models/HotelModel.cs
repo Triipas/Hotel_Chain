@@ -76,6 +76,7 @@ namespace Hotel_chain.Models
         // Navegación
         public virtual ICollection<Habitacion> Habitaciones { get; set; } = new List<Habitacion>();
         public virtual ICollection<Imagen> Imagenes { get; set; } = new List<Imagen>();
+    
     }
 
     public class Habitacion
