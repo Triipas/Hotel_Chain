@@ -119,6 +119,11 @@ namespace Hotel_chain.Data
             // ===== CONFIGURACIÓN DE IMÁGENES =====
             modelBuilder.Entity<Imagen>().Property(i => i.Id).HasColumnName("Id");
             modelBuilder.Entity<Imagen>().Property(i => i.NombreArchivo).HasColumnName("NombreArchivo");
+            modelBuilder.Entity<Imagen>().Property(i => i.UrlS3).HasColumnName("UrlS3");
+            modelBuilder.Entity<Imagen>().Property(i => i.TipoMime).HasColumnName("TipoMime");
+            modelBuilder.Entity<Imagen>().Property(i => i.Tamano).HasColumnName("Tamano");
+            modelBuilder.Entity<Imagen>().Property(i => i.FechaSubida).HasColumnName("FechaSubida");
+            modelBuilder.Entity<Imagen>().Property(i => i.SubidoPor).HasColumnName("SubidoPor");
             modelBuilder.Entity<Imagen>().Property(i => i.HotelId).HasColumnName("HotelId");
             modelBuilder.Entity<Imagen>().Property(i => i.HabitacionId).HasColumnName("HabitacionId");
 
