@@ -5,10 +5,10 @@ namespace Hotel_chain.Services.Interfaces
 {
     public interface IAdminAuthService
     {
-        Task<Rol?> ValidateAdminAsync(string email, string password);
+        Task<Usuario?> ValidateAdminAsync(string email, string password);
         Task<bool> IsAdminAuthenticatedAsync(HttpContext context);
-        Task LoginAdminAsync(HttpContext context, Rol admin);
+        Task LoginAdminAsync(HttpContext context, Usuario admin);
         Task LogoutAdminAsync(HttpContext context);
-        Task<Rol?> GetCurrentAdminAsync(HttpContext context);
+        Task<Usuario?> GetCurrentAdminAsync(HttpContext context);
     }
 }

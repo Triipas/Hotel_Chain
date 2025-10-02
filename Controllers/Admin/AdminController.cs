@@ -17,7 +17,6 @@ namespace Hotel_chain.Controllers.Admin
         // GET: /admin
         public async Task<IActionResult> Index()
         {
-            // Verificación manual de autenticación (temporal)
             var isAuthenticated = await _adminAuthService.IsAdminAuthenticatedAsync(HttpContext);
             if (!isAuthenticated)
             {
@@ -26,7 +25,10 @@ namespace Hotel_chain.Controllers.Admin
 
             var currentAdmin = await _adminAuthService.GetCurrentAdminAsync(HttpContext);
             ViewBag.AdminName = currentAdmin?.Nombre ?? "Admin";
-            ViewBag.AdminPuesto = currentAdmin?.Puesto ?? "Administrador";
+            
+            // Obtener el rol detallado del staff si existe
+            var rolDetallado = currentAdmin?.Staff?.RolDetallado ?? currentAdmin?.Rol ?? "Administrador";
+            ViewBag.AdminPuesto = rolDetallado;
 
             return View();
         }
@@ -53,14 +55,13 @@ namespace Hotel_chain.Controllers.Admin
 
             if (admin == null)
             {
-                ViewBag.Error = "Email o contraseña incorrectos";
+                ViewBag.Error = "Credenciales incorrectas o no tienes permisos de administrador. Si eres cliente, ingresa desde el panel de clientes.";
                 ViewBag.ReturnUrl = returnUrl;
                 return View();
             }
 
             await _adminAuthService.LoginAdminAsync(HttpContext, admin);
 
-            // Redirigir a la URL solicitada o al panel admin
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
@@ -88,10 +89,11 @@ namespace Hotel_chain.Controllers.Admin
                 authenticated = isAuthenticated,
                 admin = isAuthenticated ? new
                 {
-                    id = currentAdmin?.RolId,
+                    id = currentAdmin?.UsuarioId,
                     nombre = currentAdmin?.Nombre,
                     apellido = currentAdmin?.Apellido,
-                    puesto = currentAdmin?.Puesto
+                    rol = currentAdmin?.Rol,
+                    rolDetallado = currentAdmin?.Staff?.RolDetallado
                 } : null
             });
         }
