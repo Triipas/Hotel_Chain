@@ -13,10 +13,10 @@ namespace Hotel_chain.Configuration
             services.AddScoped<IHotelService, HotelService>();
             services.AddScoped<IHabitacionService, HabitacionService>();
             services.AddScoped<IAdminAuthService, AdminAuthService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
             
             // TODO: Agregar otros servicios cuando los creemos
             // services.AddScoped<IReservaService, ReservaService>();
-            // services.AddScoped<IUsuarioService, UsuarioService>();
 
             // Registrar filtros
             services.AddScoped<AdminAuthFilter>();

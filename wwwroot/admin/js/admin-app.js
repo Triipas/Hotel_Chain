@@ -35,7 +35,7 @@ class AdminApp {
                 appElement.innerHTML = this.renderReservas();
                 break;
             case 'usuarios':
-                appElement.innerHTML = this.renderUsuarios();
+                appElement.innerHTML = await window.UsuariosModule.render();
                 break;
             case 'financiero':
                 appElement.innerHTML = this.renderFinanciero();
@@ -161,34 +161,6 @@ class AdminApp {
         `;
     }
 
-    renderUsuarios() {
-        return `
-            <section class="welcome-panel">
-                <div class="page-info">
-                    <h1 class="panel-title">Gestión de Usuarios</h1>
-                    <div class="toolbar-inline">
-                        <input type="search" placeholder="Buscar usuarios por nombre o email..." aria-label="Buscar usuarios" />
-                        <button class="btn btn-secondary">
-                            <i class="fas fa-user-shield"></i> Filtrar por Rol
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-user-plus"></i> Nuevo Usuario
-                        </button>
-                    </div>
-                </div>
-            </section>
-            <div class="card">
-                <div class="card-body">
-                    <div style="text-align: center; padding: 3rem; color: #666;">
-                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #3498db;"></i>
-                        <h3>Módulo de Usuarios</h3>
-                        <p>Vista de usuarios en desarrollo...</p>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
     renderFinanciero() {
         return `
             <section class="welcome-panel">
@@ -252,11 +224,15 @@ function showAlert(message, type = 'success') {
 window.onclick = function(event) {
     const hotelModal = document.getElementById('hotelModal');
     const habitacionModal = document.getElementById('habitacionModal');
+    const usuarioModal = document.getElementById('usuarioModal');
     if (event.target === hotelModal && window.HotelesModule) {
         window.HotelesModule.closeModal();
     }
     if (event.target === habitacionModal && window.HabitacionesModule) {
         window.HabitacionesModule.closeModal();
+    }
+    if (event.target === usuarioModal && window.UsuariosModule) {
+        window.UsuariosModule.closeModal();
     }
 }
 
@@ -264,6 +240,7 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         if (window.HotelesModule) window.HotelesModule.closeModal();
         if (window.HabitacionesModule) window.HabitacionesModule.closeModal();
+        if (window.UsuariosModule) window.UsuariosModule.closeModal();
     }
 });
 
