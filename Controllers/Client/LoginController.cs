@@ -1,8 +1,9 @@
-// Controllers/Client/LoginController.cs
+// Controllers/Client/LoginController.cs - Actualizado
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Hotel_chain.Data;
 using Hotel_chain.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Hotel_chain.Controllers.Client
@@ -24,18 +25,36 @@ namespace Hotel_chain.Controllers.Client
         }
 
         [HttpPost]
-        public IActionResult LoginUser(string email, string contra)
+        public async Task<IActionResult> LoginUser(string email, string contra)
         {
             try
             {
-                var usuario = _context.Usuarios
-                                      .FirstOrDefault(u => u.Email.ToLower() == email.ToLower() && u.Contra == contra);
+                var usuario = await _context.Usuarios
+                    .FirstOrDefaultAsync(u => 
+                        u.Email.ToLower() == email.ToLower() && 
+                        u.Contraseña == contra &&
+                        u.Estado == "activo");
 
                 if (usuario != null)
                 {
+                    // VALIDACIÓN: Solo permitir acceso a usuarios con rol "huesped"
+                    if (usuario.Rol != "huesped")
+                    {
+                        _logger.LogWarning($"Intento de acceso al panel de cliente con rol '{usuario.Rol}' por {email}");
+                        ViewBag.Mensaje = "Este usuario no tiene acceso al panel de clientes. Por favor, usa el panel de administración.";
+                        return View("/Views/User/Login.cshtml");
+                    }
+
+                    // Actualizar último acceso
+                    usuario.UltimoAcceso = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+
+                    // Guardar en sesión
                     HttpContext.Session.SetString("UsuarioNombre", usuario.Nombre);
                     HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
                     HttpContext.Session.SetString("UsuarioId", usuario.UsuarioId.ToString());
+                    HttpContext.Session.SetString("UsuarioRol", usuario.Rol);
+                    
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -58,7 +77,8 @@ namespace Hotel_chain.Controllers.Client
         }
 
         [HttpPost]
-        public IActionResult RegisterUser(string nombre, string apellido, string email, string contra, string telefono)
+        public async Task<IActionResult> RegisterUser(string nombre, string apellido, string email, 
+            string contra, string telefono, string documento)
         {
             try
             {
@@ -69,39 +89,50 @@ namespace Hotel_chain.Controllers.Client
                     string.IsNullOrWhiteSpace(apellido) || 
                     string.IsNullOrWhiteSpace(email) || 
                     string.IsNullOrWhiteSpace(contra) || 
-                    string.IsNullOrWhiteSpace(telefono))
+                    string.IsNullOrWhiteSpace(telefono) ||
+                    string.IsNullOrWhiteSpace(documento))
                 {
                     ViewBag.Mensaje = "Todos los campos son obligatorios";
                     return View("/Views/User/Login.cshtml");
                 }
 
                 // Verificar si el email ya existe
-                if (_context.Usuarios.Any(u => u.Email.ToLower() == email.ToLower()))
+                if (await _context.Usuarios.AnyAsync(u => u.Email.ToLower() == email.ToLower()))
                 {
                     ViewBag.Mensaje = "El correo ya está registrado";
                     return View("/Views/User/Login.cshtml");
                 }
 
-                // Crear nuevo usuario
+                // Crear nuevo usuario como huésped
                 var usuario = new Usuario
                 {
                     Nombre = nombre.Trim(),
                     Apellido = apellido.Trim(),
                     Email = email.Trim().ToLower(),
-                    Contra = contra,
-                    Telefono = telefono.Trim()
+                    Contraseña = contra,
+                    Telefono = telefono.Trim(),
+                    Documento = documento.Trim(),
+                    Rol = "huesped",
+                    Estado = "activo",
+                    FechaCreacion = DateTime.UtcNow
                 };
 
                 _context.Usuarios.Add(usuario);
+                await _context.SaveChangesAsync();
+
+                // Crear registro de huésped asociado
+                var huesped = new Huesped
+                {
+                    UsuarioId = usuario.UsuarioId
+                };
                 
-                // Guardar cambios en la base de datos
-                var result = _context.SaveChanges();
+                _context.Huespedes.Add(huesped);
+                await _context.SaveChangesAsync();
                 
-                _logger.LogInformation($"Usuario registrado exitosamente. ID: {usuario.UsuarioId}, Filas afectadas: {result}");
+                _logger.LogInformation($"Usuario registrado exitosamente. ID: {usuario.UsuarioId}");
 
                 TempData["Mensaje"] = "Cuenta creada exitosamente. Ingresa tus datos para iniciar sesión.";
                 
-                // Retornar un mensaje de éxito
                 return Content("Cuenta creada exitosamente");
             }
             catch (Exception ex)
