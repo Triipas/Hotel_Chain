@@ -62,28 +62,38 @@
                     }
                     
                     <form id="registerForm" method="post" asp-controller="Login" asp-action="RegisterUser">
-                        <label>Nombre</label>
-                        <input type="text" name="nombre" id="regNombre" required>
-                        
-                        <label>Apellido</label>
-                        <input type="text" name="apellido" id="regApellido" required>
-                        
-                        <label>E-mail</label>
-                        <input type="email" name="email" id="regEmail" required>
-                        
-                        <label>Documento (DNI/Pasaporte)</label>
-                        <input type="text" name="documento" id="regDocumento" required 
-                               placeholder="Ej: 12345678">
-                        
-                        <label>Teléfono</label>
-                        <input type="text" name="telefono" id="regTelefono" required>
-                        
-                        <label>Contraseña</label>
-                        <input type="password" name="contra" id="regContra" required>
-                        
-                        <button type="submit" id="registerBtn">Registrar</button>
-                    </form>
+                    <div class="form-group">
+                        <label for="regNombre">Nombre</label>
+                        <input type="text" name="nombre" id="regNombre" placeholder="Ingrese su Nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regApellido">Apellido</label>
+                        <input type="text" name="apellido" id="regApellido" placeholder="Ingrese su Apellido" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">E-mail</label>
+                        <input type="email" name="email" id="regEmail" placeholder="Ingrese su E-mail" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regDocumento">Documento (DNI/Pasaporte)</label>
+                        <input type="text" name="documento" id="regDocumento" placeholder="Ej: 12345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regTelefono">Teléfono</label>
+                        <input type="text" name="telefono" id="regTelefono" placeholder="Ingrese su Teléfono" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regContra">Contraseña</label>
+                        <input type="password" name="contra" id="regContra" placeholder="Ingrese su Contraseña" required>
+                    </div>
+                    <button type="submit" id="registerBtn" class="btn-register">Registrar</button>
                     <a href="#" id="showLogin" class="btn-login">Ya tengo una Cuenta</a>
+                </form>
                 </div>
                 <div class="back2">
                     <div class="success-icon">✓</div>

@@ -6,6 +6,8 @@
 @import url('./components/forms.css');
 @import url('./components/footer.css');
 @import url('./components/habitaciones.css');
+@import url('./components/sobrenosotros.css');
+@import url('./components/servicios.css');
 
 /* ===== VARIABLES GLOBALES ===== */
 :root {
@@ -107,4 +109,28 @@ body {
   body {
     padding-top: 60px;
   }
+}
+
+/* Hace que la barra de scroll se superponga */
+html {
+  scrollbar-gutter: stable both-edges;
+  overflow-y: overlay; /* ⚠️ Experimental pero soportado por Chromium */
+}
+
+/* Estilo visual de la barra */
+::-webkit-scrollbar {
+  width: 8px; /* ancho fino */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* sin fondo visible */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3); /* color de la barra */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.5);
 }

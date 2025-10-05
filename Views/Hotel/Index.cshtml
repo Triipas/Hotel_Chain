@@ -4,33 +4,40 @@
 @{
     ViewData["Title"] = "Hoteles";
 }
-
-<link rel="stylesheet" href="~/client/css/main.css">
-
- <header>
-    <nav class="navbar">
-    <div class="logo">StayGo</div>
-    <div class="nav-derecha">
-        <ul class="nav-links">
-            <li><a asp-controller="Home" asp-action="Index" class="activo">Home</a></li>
-            <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-            <li><a asp-controller="Hotel" asp-action="Habitaciones">Habitaciones</a></li>
-            <li><a href="#">Sobre Nosotros</a></li>
-            <li><a href="#">Contáctanos</a></li>
-        </ul>
-
-        @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-        {
-            <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-            <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-        }
-        else
-        {
-            <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
-        }
-    </div>
-</nav>
-</header>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayGo - Hoteles</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=7">
+</head>
+<header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
 
 <section class="filtro-hoteles">
     <h2>Filtrar hoteles</h2>
@@ -62,8 +69,8 @@
                     <p>@hotel.Ciudad</p>
                     <p>@hotel.Descripcion</p>
                      <a href="/Habitacion/Index?hotelId=@hotel.HotelId" class="btn-reservar">
-    Ver habitaciones
-</a>
+                        Ver habitaciones
+                    </a>
                 </div>
             }
         }
@@ -73,8 +80,4 @@
         }
     </div>
 </section>
-
-<a href="/Home/Index" class="btn-volver">
-    Volver a Inicio
-</a>
-
+<script src="~/client/js/responsive-navbar.js"></script>

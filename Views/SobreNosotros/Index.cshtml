@@ -1,0 +1,135 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Sobre Nosotros";
+}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayGo - Sobre Nosotros</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=7">
+</head>
+
+<header>
+    <nav class="navbar">
+        <div class="logo">StayGo</div>
+        <button class="menu-toggle" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-derecha">
+            <ul class="nav-links">
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+            </ul>
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+            {
+                <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+            }
+            else
+            {
+                <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+            }
+        </div>
+    </nav>
+</header>
+
+<section class="sobre-nosotros">
+    <h1>@ViewBag.Mensaje</h1>
+    <div class="container">
+        <h1>Sobre Nosotros</h1>
+
+        <p>
+            <strong>StayGo</strong> es una plataforma digital diseñada para facilitar la búsqueda,
+            reserva y gestión de hoteles en distintas ciudades del Perú. Nació con el propósito de
+            modernizar la experiencia de alojamiento, brindando a los usuarios un acceso rápido y
+            transparente a las mejores opciones del mercado hotelero.
+        </p>
+
+        <h2>Nuestra Misión</h2>
+        <p>
+            Ofrecer una experiencia sencilla, eficiente y confiable para que los viajeros puedan
+            encontrar el alojamiento ideal según sus necesidades, presupuesto y ubicación. Buscamos
+            integrar tecnología moderna con un servicio humano que inspire confianza y comodidad.
+        </p>
+
+        <h2>Nuestra Visión</h2>
+        <p>
+            Ser la plataforma líder en reservas hoteleras en el Perú y Latinoamérica, reconocida por
+            su innovación tecnológica, su enfoque en la satisfacción del usuario y su compromiso con
+            la mejora continua de los servicios turísticos.
+        </p>
+
+        <h2>Nuestros Valores</h2>
+        <ul>
+            <li><strong>Transparencia:</strong> información clara sobre precios, servicios y políticas.</li>
+            <li><strong>Innovación:</strong> uso de tecnología moderna para optimizar la experiencia del usuario.</li>
+            <li><strong>Compromiso:</strong> trabajamos con hoteles certificados y de confianza.</li>
+            <li><strong>Calidad:</strong> buscamos que cada alojamiento cumpla con estándares altos.</li>
+            <li><strong>Sostenibilidad:</strong> promovemos prácticas responsables con el entorno.</li>
+        </ul>
+
+        <h2>Nuestra Historia</h2>
+        <p>
+            StayGo fue fundada en 2025 por un grupo de estudiantes de la carrera profesional de 
+            Ingenieria de Computacion y Sistemas de la Universidad de San Martin de Porres apasionados por la
+            tecnología y el turismo. Observamos cómo muchos viajeros enfrentaban dificultades para
+            encontrar alojamiento confiable y decidimos desarrollar una solución integral.
+        </p>
+        <p>
+            El sistema combina un motor de búsqueda inteligente con una base de datos actualizada,
+            ofreciendo información precisa sobre hoteles, habitaciones disponibles, precios y
+            servicios complementarios. Además, permite realizar reservas rápidas y seguras, así como
+            la gestión de datos por parte de administradores y personal hotelero.
+        </p>
+
+        <h2>Compromiso con el Usuario</h2>
+        <p>
+            Cada decisión que tomamos en StayGo está orientada a mejorar la experiencia del usuario.
+            Desde la interfaz intuitiva hasta las recomendaciones personalizadas, nuestro objetivo
+            es que el proceso de reserva sea tan placentero como la estadía en el hotel.
+        </p>
+
+        <h2>Contáctanos</h2>
+        <p>
+            Si deseas conocer más sobre nosotros o colaborar con StayGo, puedes escribirnos a:
+            <a href="mailto:roberto_bautista@usmp.pe">roberto_bautista@usmp.pe</a>  
+            o visitar nuestras oficinas en:
+            <strong>Av. Pizarro B-2, Arequipa, Perú</strong>.
+        </p>
+    </div>
+</section>
+<script src="~/client/js/responsive-navbar.js"></script>
+<script>
+// Acordeón para móvil
+        if (window.innerWidth <= 768) {
+            const h2Elements = document.querySelectorAll('.sobre-nosotros h2');
+            
+            h2Elements.forEach(h2 => {
+                // Envolver el contenido siguiente en un contenedor
+                let nextElement = h2.nextElementSibling;
+                const content = document.createElement('div');
+                content.className = 'accordion-content';
+                
+                while (nextElement && nextElement.tagName !== 'H2') {
+                    const temp = nextElement.nextElementSibling;
+                    content.appendChild(nextElement);
+                    nextElement = temp;
+                }
+                
+                h2.parentNode.insertBefore(content, h2.nextSibling);
+                
+                // Click para desplegar/ocultar
+                h2.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const accordionContent = this.nextElementSibling;
+                    accordionContent.classList.toggle('active');
+                });
+            });
+        }
+</script>
