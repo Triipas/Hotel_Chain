@@ -1,0 +1,20 @@
+select, ::picker(select) {
+    appearance: base-select;
+    overflow: hidden;
+}
+
+::picker(select) {
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    margin: .4rem 0;
+}
+
+select option {
+    line-height: 2.8; /* o 1.8, 2.2 según prefieras */
+}
+
+select option:hover {
+    background-color: #3252DF;
+    color: white;
+}

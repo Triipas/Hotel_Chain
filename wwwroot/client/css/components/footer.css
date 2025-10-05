@@ -69,16 +69,27 @@
   }
   
   .footer-contenido {
-    flex-direction: column;
+    flex-direction: column; /* Ya estaba, confirmado */
     text-align: center;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-xl); /* Aumentado el espacio entre secciones */
   }
   
   .footer-logo {
     max-width: 100%;
+    margin-bottom: var(--spacing-md); /* Espacio adicional */
+  }
+  
+  .footer-logo .logo-text {
+    font-size: 1.5rem; /* Ligeramente más grande en móvil */
   }
   
   .footer-panel {
     text-align: center;
+    width: 100%;
+  }
+  
+  .btn-panel-admin {
+    width: 100%; /* Botón de ancho completo en móvil */
+    max-width: 300px; /* Pero con un máximo */
   }
 }
