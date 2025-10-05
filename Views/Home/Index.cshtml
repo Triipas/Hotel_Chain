@@ -8,15 +8,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StayGo - Inicio</title>
-  <link rel="stylesheet" href="~/client/css/main.css">
- </head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StayGo - Inicio</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=3">
+</head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <div class="nav-derecha">
                 <ul class="nav-links">
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
@@ -46,12 +51,24 @@
                 <button class="mostrar-mas">Mostrar más</button>
                 <div class="stats-stack">
                     <div class="stats-images">
-                        <div class="stat-img">📷</div>
-                        <div class="stat-img">📷</div>
-                        <div class="stat-img">📷</div>
+                        <div class="stat-img">
+                            <img src="~/client/imagenes/icons/usuarios.png" 
+                                data-gif="@Url.Content("~/client/imagenes/icons/usuarios.gif")"
+                                alt="Usuarios">
+                        </div>
+                        <div class="stat-img">
+                            <img src="~/client/imagenes/icons/imagenes.png" 
+                                data-gif="@Url.Content("~/client/imagenes/icons/imagenes.gif")"
+                                alt="Imágenes">
+                        </div>
+                        <div class="stat-img">
+                            <img src="~/client/imagenes/icons/ciudades.png" 
+                                data-gif="@Url.Content("~/client/imagenes/icons/ciudades.gif")"
+                                alt="Ciudades">
+                        </div>
                     </div>
                     <div class="stats-texts">
-                        <div class="stat-text"><strong>500</strong><span>Usuarios</span></div>
+                        <div class="stat-text"><strong>50</strong><span>Usuarios</span></div>
                         <div class="stat-text"><strong>100</strong><span>Imagenes</span></div>
                         <div class="stat-text"><strong>10</strong><span>Ciudades</span></div>
                     </div>
@@ -60,26 +77,26 @@
             <div class="hero-imagen"></div>
         </section>
 
-        <section class="disponibilidad">
-            <!--<h2>Consultar disponibilidad</h2>-->
-            <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form">
-
+        <section class="disponibilidad"> 
+            <form asp-controller="Hotel" asp-action="Buscar" method="post" class="consultar-form"> 
                 <select name="consultar-disponibilidad">
-                    <option value="">Consultar Disponibilidad</option>
+                    <option value="" disabled selected hidden>Consultar Disponibilidad</option>
+                    <option value="Disponible">Disponible</option>
+                    <option value="No Disponible">No Disponible</option>
                 </select>
                 <select name="ubicacion">
-                    <option value="">Seleccionar Ubicación</option>
+                    <option value="" disabled selected hidden>Ubicación</option>
                     <option value="Arequipa">Arequipa</option>
                     <option value="Cusco">Cusco</option>
                     <option value="Lima">Lima</option>
                 </select>
                 <select name="clase">
-                    <option value="">Clases</option>
+                    <option value="" disabled selected hidden>Clases</option>
                     <option value="Económica">Económica</option>
                     <option value="Premium">Premium</option>
                 </select>
                 <select name="precio">
-                    <option value="">Precio</option>
+                    <option value="" disabled selected hidden>Precio</option>
                     <option value="Menos de 100">Menos de 100</option>
                     <option value="100 a 300">100 a 300</option>
                     <option value="Más de 300">Más de 300</option>
@@ -135,5 +152,54 @@
             </div>
         </div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navDerecha = document.querySelector('.nav-derecha');
+            const body = document.body;
+            
+            if(menuToggle) {
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menuToggle.classList.toggle('active');
+                    navDerecha.classList.toggle('active');
+                    body.classList.toggle('menu-open');
+                });
+                
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        menuToggle.classList.remove('active');
+                        navDerecha.classList.remove('active');
+                        body.classList.remove('menu-open');
+                    });
+                });
+                
+                document.addEventListener('click', function(event) {
+                    const isClickInside = navDerecha.contains(event.target) || menuToggle.contains(event.target);
+                    if (!isClickInside && navDerecha.classList.contains('active')) {
+                        menuToggle.classList.remove('active');
+                        navDerecha.classList.remove('active');
+                        body.classList.remove('menu-open');
+                    }
+                });
+            }
+        });
+        // Activar GIFs al pasar el mouse
+        document.querySelectorAll('.stat-img img').forEach(img => {
+            const staticSrc = img.src;
+            const gifSrc = img.getAttribute('data-gif');
+            
+            if (gifSrc) {
+                img.parentElement.addEventListener('mouseenter', () => {
+                    img.src = gifSrc;
+                });
+                
+                img.parentElement.addEventListener('mouseleave', () => {
+                    img.src = staticSrc;
+                });
+            }
+        });
+    </script>
 </body>
 </html>
