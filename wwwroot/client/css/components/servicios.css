@@ -1,0 +1,128 @@
+/* ===== SERVICIOS ===== */
+.servicios-container {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  gap: 0;
+}
+
+.servicios-sidebar {
+  width: 33.33%;
+  background-color: white;
+  border-right: 1px solid var(--border-light);
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+}
+
+.servicios-sidebar h2 {
+  color: var(--accent-color);
+  margin-bottom: var(--spacing-xl);
+  font-size: 1.5rem;
+}
+
+.servicios-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.servicio-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: var(--transition);
+  border: 2px solid transparent;
+}
+
+.servicio-link:hover {
+  background-color: var(--background-section);
+  border-color: var(--primary-color);
+}
+
+.servicio-link.active {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+.servicio-icon {
+  font-size: 1.5rem;
+}
+
+.servicios-content {
+  width: 66.67%;
+  padding: var(--spacing-xxl);
+  background-color: var(--background-light);
+}
+
+.servicio-detalle {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.servicio-detalle.active {
+  display: block;
+}
+
+.servicio-detalle h1 {
+  color: var(--text-muted);
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.servicio-detalle h2 {
+  color: var(--accent-color);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+.servicio-detalle p {
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .servicios-container {
+    flex-direction: column;
+  }
+  
+  .servicios-sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+    padding: var(--spacing-lg);
+  }
+  
+  .servicios-content {
+    width: 100%;
+    padding: var(--spacing-lg);
+  }
+  
+  .servicio-detalle h1 {
+    font-size: 1.8rem;
+  }
+  
+  .servicio-detalle h2 {
+    font-size: 1.5rem;
+  }
+}

@@ -110,7 +110,7 @@
   box-shadow: var(--shadow-heavy);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 940px) {
   .hero {
     flex-direction: column;
     padding: var(--spacing-xl) var(--spacing-lg);

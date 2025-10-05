@@ -18,6 +18,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--primary-color);
+  z-index: 1001;
 }
 
 .nav-derecha {
@@ -76,26 +77,16 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    padding: var(--spacing-md) var(--spacing-lg);
-    flex-wrap: wrap;
-  }
-  
-  .nav-links {
-    flex-direction: column;
-    width: 100%;
-    margin-top: var(--spacing-md);
-  }
-}
+/* Botón hamburguesa - oculto por defecto */
 .menu-toggle {
-  display: none; /* Oculto por defecto en desktop */
+  display: none;
   flex-direction: column;
   cursor: pointer;
   gap: 4px;
   background: none;
   border: none;
   padding: 5px;
+  z-index: 1001;
 }
 
 .menu-toggle span {
@@ -105,8 +96,7 @@
   transition: var(--transition);
   border-radius: 2px;
 }
-
-/* Animación del menú hamburguesa cuando está activo */
+ 
 .menu-toggle.active span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
 }
@@ -119,23 +109,20 @@
   transform: rotate(-45deg) translate(7px, -6px);
 }
 
-@media (max-width: 768px) {
-.navbar {
-  padding: var(--spacing-md) var(--spacing-lg);
-  flex-wrap: nowrap; /* Cambiado de wrap a nowrap */
-}
-  
-  /* Mostrar botón hamburguesa en móvil */
-  .menu-toggle {
-    display: flex;
-    z-index: 1001;
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+  .navbar {
+    padding: var(--spacing-md) var(--spacing-lg);
   }
-  
-  /* Contenedor de navegación en móvil */
+   
+  .menu-toggle {
+    display: flex; 
+  }
+   
   .nav-derecha {
     position: fixed;
     top: 0;
-    right: -100%; /* Oculto inicialmente fuera de pantalla */
+    right: -100%;
     width: 70%;
     height: 100vh;
     background-color: white;
@@ -145,9 +132,9 @@
     box-shadow: -2px 0 10px rgba(0,0,0,0.1);
     transition: right 0.3s ease;
     gap: var(--spacing-md);
-  }
-  
-  /* Menú activo - se desliza desde la derecha */
+    overflow-y: auto;
+  } 
+   
   .nav-derecha.active {
     right: 0;
   }
@@ -171,24 +158,23 @@
   }
   
   .nav-links a::after {
-    display: none; /* Remover el efecto de subrayado en móvil */
+    display: none;
   }
-  
-  /* Botón de login en móvil */
+   
   .login-btn {
     width: 100%;
     margin-top: var(--spacing-md);
   }
-  
-  /* Overlay oscuro cuando el menú está abierto */
-  body.menu-open::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 999;
-  }
+}
+
+/* Overlay cuando menú está abierto */
+body.menu-open::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
 }

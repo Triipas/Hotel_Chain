@@ -63,7 +63,7 @@
   transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 950px) {
   .footer {
     padding: var(--spacing-xl) var(--spacing-lg);
   }
