@@ -69,42 +69,40 @@
 
 <section class="listado-habitaciones">
     <div class="habitaciones-container">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var hab in Model)
+                @if (Model != null && Model.Any())
             {
-                <div class="habitacion-card">
-                    <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" alt="@hab.NumeroHabitacion"
-                        class="habitacion-img" />
+                foreach (var hab in Model)
+                {
+                    <div class="habitacion-card">
+                        <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" alt="@hab.NumeroHabitacion"
+                            class="habitacion-img" />
 
-                    <h3>@hab.NumeroHabitacion</h3>
-                    <p>Tipo: @hab.Tipo</p>
-                    <p>Capacidad: @hab.Capacidad personas</p>
-                    <p>@hab.Descripcion</p>
+                        <h3>Habitación @hab.NumeroHabitacion</h3>
+                        <p><strong>Tipo:</strong> @hab.Tipo</p>
+                        <p><strong>Capacidad:</strong> @hab.Capacidad personas</p>
+                        <p><strong>Precio:</strong> <span style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold;">S/ @hab.PrecioNoche.ToString("N2")</span> /noche</p>
+                        <p style="font-size: 0.9rem; color: var(--text-light);">@hab.Descripcion</p>
 
-                    <!-- Botón para ver detalles -->
-                    <a asp-controller="Habitacion" asp-action="Detalles" asp-route-id="@hab.HabitacionId" class="btn-detalles">
-                        Ver detalles
-                    </a>
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <a asp-controller="Reservas" 
+                               asp-action="IniciarReserva" 
+                               asp-route-habitacionId="@hab.HabitacionId"
+                               class="btn-reservar" 
+                               style="flex: 1; text-align: center; background-color: var(--secondary-color);">
+                                🛏️ Reservar Ahora
+                            </a>
 
-                    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-                    {
-                        <form asp-controller="Home" asp-action="Reservar" method="post">
-                            <input type="hidden" name="habitacionId" value="@hab.HabitacionId" />
-                            <input type="hidden" name="usuarioId"
-                                value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
-                            <button type="submit" class="btn-reservar">Reservar</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <a asp-controller="Login" asp-action="Index" class="btn-reservar">
-                            Inicia sesión para reservar
-                        </a>
-                    }
-                </div>
+                            <a asp-controller="Habitacion" 
+                               asp-action="Detalles" 
+                               asp-route-id="@hab.HabitacionId" 
+                               class="btn-detalles"
+                               style="flex: 1;">
+                                📋 Ver Más Detalles
+                            </a>
+                        </div>
+                    </div>
+                }
             }
-        }
         else
         {
             <p>No hay habitaciones disponibles para este hotel.</p>

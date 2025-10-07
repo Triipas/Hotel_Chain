@@ -1,0 +1,267 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Paso 1 - Reserva";
+    var habitacion = ViewBag.Habitacion as Hotel_chain.Models.Entities.Habitacion;
+    var hotelNombre = TempData["HotelNombre"]?.ToString() ?? habitacion?.Hotel?.Nombre ?? "Hotel";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+    <style>
+        .paso-container {
+            max-width: 800px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        .progreso-pasos {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progreso-pasos::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border-light);
+            z-index: 0;
+        }
+
+        .paso {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            background: white;
+            padding: 0 10px;
+        }
+
+        .paso-numero {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--border-light);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .paso.activo .paso-numero {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .paso.completado .paso-numero {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .paso-texto {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .paso.activo .paso-texto {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .card-paso {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .titulo-hotel {
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group-paso {
+            margin-bottom: 25px;
+        }
+
+        .form-group-paso label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .form-group-paso input,
+        .form-group-paso select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group-paso input:focus,
+        .form-group-paso select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .botones-navegacion {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-paso {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancelar {
+            background: var(--text-light);
+            color: white;
+        }
+
+        .btn-cancelar:hover {
+            background: var(--text-dark);
+        }
+
+        .btn-continuar {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-continuar:hover {
+            background: var(--secondary-hover);
+            transform: translateY(-2px);
+        }
+
+        @@media (max-width: 768px) {
+            .paso-container {
+                margin-top: 80px;
+            }
+
+            .card-paso {
+                padding: 25px;
+            }
+
+            .progreso-pasos {
+                overflow-x: auto;
+            }
+
+            .paso-texto {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="paso-container">
+        <div class="progreso-pasos">
+            <div class="paso activo">
+                <div class="paso-numero">1</div>
+                <div class="paso-texto">Huéspedes & Habitación</div>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">2</div>
+                <div class="paso-texto">Fechas de estadía</div>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-texto">Confirmar reserva</div>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-texto">Monto total</div>
+            </div>
+        </div>
+
+        <div class="card-paso">
+            <h1 class="titulo-hotel">@hotelNombre</h1>
+
+            <form asp-action="GuardarPaso1" method="post">
+                <div class="form-group-paso">
+                    <label for="numeroHuespedes">
+                        👥 Número de Huéspedes *
+                    </label>
+                    <select name="numeroHuespedes" id="numeroHuespedes" required>
+                        <option value="">Seleccionar número de huéspedes</option>
+                        @for (int i = 1; i <= (habitacion?.Capacidad ?? 10); i++)
+                        {
+                            <option value="@i">@i huésped@(i > 1 ? "es" : "")</option>
+                        }
+                    </select>
+                    <small style="color: var(--text-light); margin-top: 5px; display: block;">
+                        Capacidad máxima: @(habitacion?.Capacidad ?? 0) persona@(habitacion?.Capacidad > 1 ? "s" : "")
+                    </small>
+                </div>
+
+                <div style="background: var(--background-section); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">📋 Habitación Seleccionada</h4>
+                    <p><strong>Número:</strong> @habitacion?.NumeroHabitacion</p>
+                    <p><strong>Tipo:</strong> <span style="text-transform: capitalize;">@habitacion?.Tipo</span></p>
+                    <p><strong>Precio por noche:</strong> <span style="color: var(--primary-color); font-weight: bold;">S/ @habitacion?.PrecioNoche.ToString("N2")</span></p>
+                </div>
+
+                <div class="botones-navegacion">
+                    <a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@habitacion?.HotelId" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                        ← Cancelar
+                    </a>
+                    <button type="submit" class="btn-paso btn-continuar">
+                        Continuar →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+</body>
+</html>

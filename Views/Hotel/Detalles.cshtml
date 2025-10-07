@@ -1,0 +1,375 @@
+@model Hotel_chain.Models.Entities.Hotel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Detalles del Hotel";
+    var precioMinimo = (decimal)ViewBag.PrecioMinimo;
+    var totalHabitaciones = (int)ViewBag.TotalHabitaciones;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+    <style>
+        .detalle-hotel-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        .hotel-header {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .hotel-nombre {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .hotel-ubicacion {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .hotel-ubicacion i {
+            color: var(--primary-color);
+            margin-right: 8px;
+        }
+
+        .hotel-galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .hotel-imagen {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .hotel-imagen:hover {
+            transform: scale(1.05);
+        }
+
+        .hotel-info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .info-principal {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .info-principal h3 {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--background-section);
+        }
+
+        .descripcion-hotel {
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .info-contacto {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--background-section);
+            border-radius: 8px;
+        }
+
+        .info-contacto p {
+            margin: 10px 0;
+            color: var(--text-dark);
+        }
+
+        .info-contacto i {
+            color: var(--primary-color);
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .reserva-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 100px;
+        }
+
+        .precio-desde {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .precio-destacado {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .precio-noche {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .habitaciones-info {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+        }
+
+        .btn-ver-habitaciones {
+            width: 100%;
+            background: white;
+            color: var(--primary-color);
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-ver-habitaciones:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            color: var(--primary-color);
+        }
+
+        .btn-volver {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: var(--text-light);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-volver:hover {
+            background: var(--text-dark);
+            color: white;
+        }
+
+        .caracteristicas-hotel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .caracteristica {
+            padding: 15px;
+            background: var(--background-section);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .caracteristica i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        @@media (max-width: 768px) {
+            .detalle-hotel-container {
+                margin-top: 80px;
+            }
+
+            .hotel-header {
+                padding: 20px;
+            }
+
+            .hotel-nombre {
+                font-size: 1.8rem;
+            }
+
+            .hotel-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reserva-card {
+                position: static;
+            }
+
+            .precio-destacado {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="detalle-hotel-container">
+        <a asp-controller="Hotel" asp-action="Index" class="btn-volver">
+            ← Volver a Hoteles
+        </a>
+
+        <div class="hotel-header">
+            <h1 class="hotel-nombre">@Model.Nombre</h1>
+            <p class="hotel-ubicacion">
+                <i class="fas fa-map-marker-alt"></i>
+                @Model.Direccion, @Model.Ciudad
+            </p>
+        </div>
+
+        @if (Model.Imagenes != null && Model.Imagenes.Any())
+        {
+            <div class="hotel-galeria">
+                @foreach(var imagen in Model.Imagenes.Take(6))
+                {
+                    <img src="~/client/imagenes/@imagen.NombreArchivo" 
+                         alt="@Model.Nombre" 
+                         class="hotel-imagen" />
+                }
+            </div>
+        }
+
+        <div class="hotel-info-grid">
+            <div class="info-principal">
+                <h3>📝 Acerca de @Model.Nombre</h3>
+                <p class="descripcion-hotel">
+                    @if (!string.IsNullOrEmpty(Model.Descripcion))
+                    {
+                        @Model.Descripcion
+                    }
+                    else
+                    {
+                        <text>
+                            Bienvenido a @Model.Nombre, ubicado en el corazón de @Model.Ciudad. 
+                            Nuestro hotel ofrece instalaciones modernas y confortables para garantizar 
+                            una estadía inolvidable. Contamos con personal capacitado disponible las 24 horas 
+                            para atender todas sus necesidades.
+                        </text>
+                    }
+                </p>
+
+                <div class="caracteristicas-hotel">
+                    <div class="caracteristica">
+                        <i class="fas fa-wifi"></i>
+                        <p>WiFi Gratis</p>
+                    </div>
+                    <div class="caracteristica">
+                        <i class="fas fa-parking"></i>
+                        <p>Estacionamiento</p>
+                    </div>
+                    <div class="caracteristica">
+                        <i class="fas fa-concierge-bell"></i>
+                        <p>Servicio 24/7</p>
+                    </div>
+                    <div class="caracteristica">
+                        <i class="fas fa-utensils"></i>
+                        <p>Restaurante</p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.TelefonoContacto))
+                {
+                    <div class="info-contacto">
+                        <h4 style="margin-bottom: 15px; color: var(--accent-color);">📞 Información de Contacto</h4>
+                        <p><i class="fas fa-phone"></i><strong>Teléfono:</strong> @Model.TelefonoContacto</p>
+                        <p><i class="fas fa-map-marker-alt"></i><strong>Dirección:</strong> @Model.Direccion</p>
+                        <p><i class="fas fa-city"></i><strong>Ciudad:</strong> @Model.Ciudad</p>
+                    </div>
+                }
+            </div>
+
+            <div>
+                <div class="reserva-card">
+                    <div class="precio-desde">Desde</div>
+                    <div class="precio-destacado">S/ @precioMinimo.ToString("N2")</div>
+                    <div class="precio-noche">por noche</div>
+
+                    <div class="habitaciones-info">
+                        <p style="margin: 0; font-size: 1.1rem;">
+                            <i class="fas fa-bed"></i>
+                            <strong>@totalHabitaciones</strong> habitacion@(totalHabitaciones != 1 ? "es" : "") disponible@(totalHabitaciones != 1 ? "s" : "")
+                        </p>
+                    </div>
+
+                    @if (totalHabitaciones > 0)
+                    {
+                        <a asp-controller="Habitacion" 
+                           asp-action="Index" 
+                           asp-route-hotelId="@Model.HotelId" 
+                           class="btn-ver-habitaciones">
+                            🔍 Ver Habitaciones Disponibles
+                        </a>
+                    }
+                    else
+                    {
+                        <div style="text-align: center; padding: 20px; background: rgba(255,255,255,0.2); border-radius: 8px; margin-top: 20px;">
+                            <p>No hay habitaciones disponibles en este momento</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+</body>
+</html>

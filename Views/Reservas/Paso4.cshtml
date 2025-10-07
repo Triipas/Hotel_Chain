@@ -1,0 +1,175 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Paso 4 - Confirmación";
+    var habitacion = ViewBag.Habitacion as Hotel_chain.Models.Entities.Habitacion;
+    var hotelNombre = habitacion?.Hotel?.Nombre ?? "Hotel";
+    var fechaInicio = (DateTime)ViewBag.FechaInicio;
+    var fechaFin = (DateTime)ViewBag.FechaFin;
+    var numeroNoches = (int)ViewBag.NumeroNoches;
+    var precioTotal = (decimal)ViewBag.PrecioTotal;
+    var numeroHuespedes = (int)ViewBag.NumeroHuespedes;
+    var solicitudes = ViewBag.SolicitudesEspeciales?.ToString();
+    var isLoggedIn = (bool)ViewBag.IsLoggedIn;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+    <link rel="stylesheet" href="~/client/css/pages/pasos-reserva.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="paso-container">
+        <div class="progreso-pasos">
+            <div class="paso completado">
+                <div class="paso-numero">✓</div>
+                <div class="paso-texto">Huéspedes & Habitación</div>
+            </div>
+            <div class="paso completado">
+                <div class="paso-numero">✓</div>
+                <div class="paso-texto">Fechas de estadía</div>
+            </div>
+            <div class="paso completado">
+                <div class="paso-numero">✓</div>
+                <div class="paso-texto">Confirmar reserva</div>
+            </div>
+            <div class="paso activo">
+                <div class="paso-numero">4</div>
+                <div class="paso-texto">Monto total</div>
+            </div>
+        </div>
+
+        <div class="card-paso">
+            <h1 class="titulo-hotel">@hotelNombre</h1>
+
+            <div class="precio-total-grande">
+                <div class="label">Monto Total a Pagar</div>
+                <div class="monto">S/ @precioTotal.ToString("N2")</div>
+                <p style="opacity: 0.9; margin-top: 10px; font-size: 0.9rem;">
+                    Pago al momento del check-in
+                </p>
+            </div>
+
+            <div class="resumen-detalle">
+                <h4>📝 Detalles Finales de tu Reserva</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px;">
+                    <div>
+                        <p style="color: var(--text-light); margin: 5px 0;">Hotel:</p>
+                        <p style="font-weight: 600; margin: 5px 0;">@hotelNombre</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); margin: 5px 0;">Habitación:</p>
+                        <p style="font-weight: 600; margin: 5px 0; text-transform: capitalize;">@habitacion?.NumeroHabitacion - @habitacion?.Tipo</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); margin: 5px 0;">Check-in:</p>
+                        <p style="font-weight: 600; margin: 5px 0;">@fechaInicio.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); margin: 5px 0;">Check-out:</p>
+                        <p style="font-weight: 600; margin: 5px 0;">@fechaFin.ToString("dd/MM/yyyy")</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); margin: 5px 0;">Noches:</p>
+                        <p style="font-weight: 600; margin: 5px 0;">@numeroNoches noche@(numeroNoches > 1 ? "s" : "")</p>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-light); margin: 5px 0;">Huéspedes:</p>
+                        <p style="font-weight: 600; margin: 5px 0;">@numeroHuespedes persona@(numeroHuespedes > 1 ? "s" : "")</p>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(solicitudes))
+                {
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-light);">
+                        <p style="color: var(--text-light); margin: 5px 0;">Solicitudes Especiales:</p>
+                        <p style="font-weight: 600; margin: 5px 0;">@solicitudes</p>
+                    </div>
+                }
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div style="background: #fee; color: #c53030; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    ⚠️ @TempData["Error"]
+                </div>
+            }
+
+            @if (isLoggedIn)
+            {
+                <form asp-action="ConfirmarReserva" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <div style="background: #d1f2eb; border-left: 4px solid #0f5132; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                        <h4 style="color: #0f5132; margin-bottom: 10px;">✓ Todo listo para confirmar</h4>
+                        <p style="color: #0f5132; margin: 0;">
+                            Al confirmar, se creará tu reserva y recibirás un número de confirmación.
+                            El pago se realizará en el hotel al momento del check-in.
+                        </p>
+                    </div>
+
+                    <div class="botones-navegacion">
+                        <a asp-action="Paso3" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                            ← Atrás
+                        </a>
+                        <button type="submit" class="btn-paso btn-continuar">
+                            ✓ Confirmar Reserva
+                        </button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div style="background: #fff3cd; border-left: 4px solid #856404; padding: 20px; border-radius: 4px; margin: 20px 0;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">🔐 Inicia sesión para continuar</h4>
+                    <p style="color: #856404; margin-bottom: 15px;">
+                        Para confirmar tu reserva, necesitas iniciar sesión o crear una cuenta.
+                        No te preocupes, tus datos de reserva se mantendrán guardados.
+                    </p>
+                </div>
+
+                <div class="botones-navegacion">
+                    <a asp-action="Paso3" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                        ← Atrás
+                    </a>
+                    <a asp-controller="Login" asp-action="Index" class="btn-paso btn-continuar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                        🔐 Iniciar Sesión
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+</body>
+</html>
