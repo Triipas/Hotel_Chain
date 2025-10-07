@@ -32,7 +32,7 @@ class AdminApp {
                 appElement.innerHTML = await window.HabitacionesModule.render();
                 break;
             case 'reservas':
-                appElement.innerHTML = this.renderReservas();
+                appElement.innerHTML = await window.ReservasModule.render();
                 break;
             case 'usuarios':
                 appElement.innerHTML = await window.UsuariosModule.render();

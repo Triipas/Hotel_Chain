@@ -29,11 +29,13 @@
                     <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad">Reservar</a></li>
                 </ul>
                 @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
                 {
                     <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
                     <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                    <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
                 }
                 else
                 {

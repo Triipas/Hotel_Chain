@@ -1,0 +1,378 @@
+@model Hotel_chain.Models.DTOs.Reserva.ReservaCreateDto
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Confirmar Reserva";
+    var habitacion = ViewBag.Habitacion as Hotel_chain.Models.Entities.Habitacion;
+    var fechaInicio = (DateTime)ViewBag.FechaInicio;
+    var fechaFin = (DateTime)ViewBag.FechaFin;
+    var numeroHuespedes = (int)ViewBag.NumeroHuespedes;
+    var numeroNoches = (int)ViewBag.NumeroNoches;
+    var precioTotal = (decimal)ViewBag.PrecioTotal;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=8">
+    <style>
+        .confirmar-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .confirmar-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+        }
+
+        .card-confirmar {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-confirmar h2 {
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .resumen-item:last-child {
+            border-bottom: none;
+        }
+
+        .resumen-label {
+            color: var(--text-light);
+        }
+
+        .resumen-value {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .precio-destacado {
+            background: var(--background-section);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .precio-destacado .label {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .precio-destacado .monto {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .form-group-crear {
+            margin-bottom: 20px;
+        }
+
+        .form-group-crear label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .form-group-crear textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group-crear textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-confirmar-reserva {
+            width: 100%;
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-confirmar-reserva:hover {
+            background: var(--secondary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-cancelar {
+            width: 100%;
+            background: transparent;
+            color: var(--text-light);
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-cancelar:hover {
+            border-color: var(--text-dark);
+            color: var(--text-dark);
+        }
+
+        .habitacion-miniatura {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-importante {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-importante h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .info-importante ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #856404;
+        }
+
+        .validation-summary {
+            background-color: #fee;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #fc8181;
+        }
+
+        @@media (max-width: 768px) {
+            .confirmar-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .confirmar-container {
+                margin: 20px auto;
+            }
+
+            .card-confirmar {
+                padding: 20px;
+            }
+
+            .precio-destacado .monto {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad">Reservar</a></li>
+                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                </ul>
+                <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
+                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="confirmar-container">
+        <h1 style="text-align: center; color: var(--accent-color); margin-bottom: 30px;">
+            ✓ Confirmar Reserva
+        </h1>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary">
+                <h4>Por favor corrige los siguientes errores:</h4>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <div class="confirmar-grid">
+            <div>
+                <div class="card-confirmar">
+                    <h2>📋 Detalles de la Habitación</h2>
+                    
+                    @if (habitacion?.Imagenes != null && habitacion.Imagenes.Any())
+                    {
+                        <img src="~/client/imagenes/@habitacion.Imagenes.First().NombreArchivo" 
+                             alt="@habitacion.NumeroHabitacion"
+                             class="habitacion-miniatura" />
+                    }
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Hotel:</span>
+                        <span class="resumen-value">@habitacion?.Hotel?.Nombre</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Habitación:</span>
+                        <span class="resumen-value">@habitacion?.NumeroHabitacion</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Tipo:</span>
+                        <span class="resumen-value" style="text-transform: capitalize;">@habitacion?.Tipo</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Capacidad:</span>
+                        <span class="resumen-value">Hasta @habitacion?.Capacidad personas</span>
+                    </div>
+                </div>
+
+                <div class="card-confirmar" style="margin-top: 20px;">
+                    <h2>✏️ Solicitudes Especiales</h2>
+                    
+                    <form asp-action="Crear" method="post">
+                        <input type="hidden" asp-for="UsuarioId" value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
+                        <input type="hidden" asp-for="HabitacionId" value="@habitacion?.HabitacionId" />
+                        <input type="hidden" asp-for="FechaInicio" value="@fechaInicio.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" asp-for="FechaFin" value="@fechaFin.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" asp-for="NumeroHuespedes" value="@numeroHuespedes" />
+
+                        <div class="form-group-crear">
+                            <label asp-for="SolicitudesEspeciales">
+                                ¿Alguna solicitud especial? (Opcional)
+                            </label>
+                            <textarea asp-for="SolicitudesEspeciales" 
+                                      placeholder="Ej: Cama extra, piso alto, habitación alejada del ascensor..."></textarea>
+                        </div>
+
+                        <div class="info-importante">
+                            <h4>ℹ️ Información Importante:</h4>
+                            <ul>
+                                <li>Check-in: 15:00 hrs</li>
+                                <li>Check-out: 12:00 hrs</li>
+                                <li>Se requiere identificación válida</li>
+                                <li>Pago al momento del check-in</li>
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="btn-confirmar-reserva">
+                            ✓ Confirmar y Reservar
+                        </button>
+                        
+                        <a asp-action="BuscarDisponibilidad" class="btn-cancelar">
+                            ← Cancelar y Volver
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <div class="card-confirmar">
+                    <h2>📅 Resumen de tu Estadía</h2>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Check-in:</span>
+                        <span class="resumen-value">@fechaInicio.ToString("dd/MM/yyyy")</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Check-out:</span>
+                        <span class="resumen-value">@fechaFin.ToString("dd/MM/yyyy")</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Noches:</span>
+                        <span class="resumen-value">@numeroNoches noche@(numeroNoches > 1 ? "s" : "")</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Huéspedes:</span>
+                        <span class="resumen-value">@numeroHuespedes persona@(numeroHuespedes > 1 ? "s" : "")</span>
+                    </div>
+
+                    <hr style="margin: 20px 0; border: none; border-top: 2px solid var(--border-light);" />
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Precio por noche:</span>
+                        <span class="resumen-value">S/ @habitacion?.PrecioNoche.ToString("N2")</span>
+                    </div>
+
+                    <div class="resumen-item">
+                        <span class="resumen-label">Subtotal (@numeroNoches noche@(numeroNoches > 1 ? "s" : "")):</span>
+                        <span class="resumen-value">S/ @precioTotal.ToString("N2")</span>
+                    </div>
+
+                    <div class="precio-destacado">
+                        <div class="label">Total a Pagar</div>
+                        <div class="monto">S/ @precioTotal.ToString("N2")</div>
+                    </div>
+
+                    <div style="background: #d1f2eb; padding: 15px; border-radius: 8px; text-align: center;">
+                        <p style="margin: 0; color: #0f5132; font-weight: 600;">
+                            💳 Pago en el hotel
+                        </p>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #0f5132;">
+                            Se aceptan todas las formas de pago
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+</body>
+</html>
