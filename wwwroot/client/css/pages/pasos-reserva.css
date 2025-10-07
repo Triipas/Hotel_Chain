@@ -1,0 +1,217 @@
+/* wwwroot/client/css/pages/pasos-reserva.css */
+.paso-container {
+    max-width: 800px;
+    margin: 100px auto 40px;
+    padding: 0 20px;
+}
+
+.progreso-pasos {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.progreso-pasos::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border-light);
+    z-index: 0;
+}
+
+.paso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    background: white;
+    padding: 0 10px;
+}
+
+.paso-numero {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--border-light);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.paso.activo .paso-numero {
+    background: var(--primary-color);
+    color: white;
+}
+
+.paso.completado .paso-numero {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.paso-texto {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.paso.activo .paso-texto {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.card-paso {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.titulo-hotel {
+    color: var(--accent-color);
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.form-group-paso {
+    margin-bottom: 25px;
+}
+
+.form-group-paso label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.form-group-paso input,
+.form-group-paso select,
+.form-group-paso textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.form-group-paso textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-group-paso input:focus,
+.form-group-paso select:focus,
+.form-group-paso textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.botones-navegacion {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-paso {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancelar {
+    background: var(--text-light);
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background: var(--text-dark);
+}
+
+.btn-continuar {
+    background: var(--secondary-color);
+    color: white;
+}
+
+.btn-continuar:hover {
+    background: var(--secondary-hover);
+    transform: translateY(-2px);
+}
+
+.resumen-detalle {
+    background: var(--background-section);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.resumen-detalle h4 {
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+.resumen-detalle p {
+    margin: 10px 0;
+}
+
+.precio-total-grande {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.precio-total-grande .label {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.precio-total-grande .monto {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .paso-container {
+        margin-top: 80px;
+    }
+
+    .card-paso {
+        padding: 25px;
+    }
+
+    .titulo-hotel {
+        font-size: 1.5rem;
+    }
+
+    .progreso-pasos {
+        overflow-x: auto;
+    }
+
+    .paso-texto {
+        font-size: 0.75rem;
+    }
+
+    .botones-navegacion {
+        flex-direction: column;
+    }
+
+    .precio-total-grande .monto {
+        font-size: 2rem;
+    }
+}

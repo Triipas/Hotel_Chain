@@ -58,7 +58,7 @@
 <section class="listado-hoteles">
     <h2>Todos los hoteles</h2>
     <div class="hoteles-container">
-        @if (Model != null && Model.Any())
+                @if (Model != null && Model.Any())
         {
             foreach (var hotel in Model)
             {
@@ -68,8 +68,8 @@
                     <h3>@hotel.Nombre</h3>
                     <p>@hotel.Ciudad</p>
                     <p>@hotel.Descripcion</p>
-                     <a href="/Habitacion/Index?hotelId=@hotel.HotelId" class="btn-reservar">
-                        Ver habitaciones
+                     <a asp-controller="Hotel" asp-action="Detalle" asp-route-id="@hotel.HotelId" class="btn-reservar">
+                        Ver detalles
                     </a>
                 </div>
             }

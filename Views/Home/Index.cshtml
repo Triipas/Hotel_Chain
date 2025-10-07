@@ -34,6 +34,7 @@
                 {
                     <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
                     <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                    <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
                 }
                 else
                 {

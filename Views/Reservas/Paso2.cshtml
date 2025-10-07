@@ -1,0 +1,174 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Paso 2 - Fechas";
+    var habitacion = ViewBag.Habitacion as Hotel_chain.Models.Entities.Habitacion;
+    var hotelNombre = habitacion?.Hotel?.Nombre ?? "Hotel";
+    var numeroHuespedes = (int)ViewBag.NumeroHuespedes;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+    <link rel="stylesheet" href="~/client/css/pages/pasos-reserva.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="paso-container">
+        <div class="progreso-pasos">
+            <div class="paso completado">
+                <div class="paso-numero">✓</div>
+                <div class="paso-texto">Huéspedes & Habitación</div>
+            </div>
+            <div class="paso activo">
+                <div class="paso-numero">2</div>
+                <div class="paso-texto">Fechas de estadía</div>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">3</div>
+                <div class="paso-texto">Confirmar reserva</div>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-texto">Monto total</div>
+            </div>
+        </div>
+
+        <div class="card-paso">
+            <h1 class="titulo-hotel">@hotelNombre</h1>
+
+            @if (TempData["Error"] != null)
+            {
+                <div style="background: #fee; color: #c53030; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    ⚠️ @TempData["Error"]
+                </div>
+            }
+
+            <form asp-action="GuardarPaso2" method="post">
+                <div class="form-group-paso">
+                    <label for="fechaInicio">
+                        📅 Fecha de Check-in *
+                    </label>
+                    <input type="date" 
+                           name="fechaInicio" 
+                           id="fechaInicio" 
+                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                           required />
+                </div>
+
+                <div class="form-group-paso">
+                    <label for="fechaFin">
+                        📅 Fecha de Check-out *
+                    </label>
+                    <input type="date" 
+                           name="fechaFin" 
+                           id="fechaFin" 
+                           min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                           required />
+                </div>
+
+                <div id="resumenFechas" style="display: none; background: var(--background-section); padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: var(--accent-color); margin-bottom: 15px;">📊 Resumen de Estadía</h4>
+                    <p><strong>Check-in:</strong> <span id="checkInDisplay">-</span></p>
+                    <p><strong>Check-out:</strong> <span id="checkOutDisplay">-</span></p>
+                    <p><strong>Noches:</strong> <span id="nochesDisplay">-</span></p>
+                    <p><strong>Huéspedes:</strong> @numeroHuespedes persona@(numeroHuespedes > 1 ? "s" : "")</p>
+                    <p style="margin-top: 15px;"><strong>Precio estimado:</strong> <span id="precioEstimado" style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold;">-</span></p>
+                </div>
+
+                <div class="botones-navegacion">
+                    <a asp-action="IniciarReserva" asp-route-habitacionId="@habitacion?.HabitacionId" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                        ← Atrás
+                    </a>
+                    <button type="submit" class="btn-paso btn-continuar">
+                        Continuar →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+    <script>
+        const fechaInicio = document.getElementById('fechaInicio');
+        const fechaFin = document.getElementById('fechaFin');
+        const resumenFechas = document.getElementById('resumenFechas');
+        const precioNoche = @habitacion.PrecioNoche;
+
+        function actualizarResumen() {
+            const inicio = new Date(fechaInicio.value);
+            const fin = new Date(fechaFin.value);
+
+            if (fechaInicio.value && fechaFin.value && fin > inicio) {
+                const noches = Math.ceil((fin - inicio) / (1000 * 60 * 60 * 24));
+                const precioTotal = noches * precioNoche;
+
+                document.getElementById('checkInDisplay').textContent = inicio.toLocaleDateString('es-ES', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                document.getElementById('checkOutDisplay').textContent = fin.toLocaleDateString('es-ES', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                });
+
+                document.getElementById('nochesDisplay').textContent = noches + ' noche' + (noches > 1 ? 's' : '');
+                document.getElementById('precioEstimado').textContent = 'S/ ' + precioTotal.toFixed(2);
+
+                resumenFechas.style.display = 'block';
+            } else {
+                resumenFechas.style.display = 'none';
+            }
+        }
+
+        fechaInicio.addEventListener('change', function() {
+            const inicio = new Date(this.value);
+            const minFin = new Date(inicio);
+            minFin.setDate(minFin.getDate() + 1);
+            fechaFin.min = minFin.toISOString().split('T')[0];
+            
+            if (fechaFin.value && new Date(fechaFin.value) <= inicio) {
+                fechaFin.value = minFin.toISOString().split('T')[0];
+            }
+
+            actualizarResumen();
+        });
+
+        fechaFin.addEventListener('change', actualizarResumen);
+    </script>
+</body>
+</html>

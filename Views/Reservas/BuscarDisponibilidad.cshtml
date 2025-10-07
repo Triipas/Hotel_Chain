@@ -1,0 +1,244 @@
+@model Hotel_chain.Models.DTOs.Reserva.DisponibilidadSearchDto
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Buscar Disponibilidad";
+    var hoteles = ViewBag.Hoteles as IEnumerable<Hotel_chain.Models.Entities.Hotel>;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=8">
+    <style>
+        .reservas-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .reservas-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .reservas-header h1 {
+            color: var(--accent-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .reservas-header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        .form-reserva {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group-reserva {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group-reserva label {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .form-group-reserva input,
+        .form-group-reserva select {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group-reserva input:focus,
+        .form-group-reserva select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn-buscar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-buscar:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .validation-errors {
+            background-color: #fee;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #fc8181;
+        }
+
+        @@media (max-width: 768px) {
+            .reservas-container {
+                margin: 20px 15px;
+                padding: 25px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .reservas-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad">Reservar</a></li>
+                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="reservas-container">
+        <div class="reservas-header">
+            <h1>🔍 Buscar Disponibilidad</h1>
+            <p>Encuentra la habitación perfecta para tu estadía</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-errors">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form asp-action="BuscarDisponibilidad" method="post" class="form-reserva">
+            <div class="form-group-reserva">
+                <label asp-for="HotelId">Hotel *</label>
+                <select asp-for="HotelId" class="form-control" required>
+                    <option value="">Selecciona un hotel</option>
+                    @if (hoteles != null)
+                    {
+                        @foreach (var hotel in hoteles)
+                        {
+                            <option value="@hotel.HotelId">@hotel.Nombre - @hotel.Ciudad</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="HotelId" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group-reserva">
+                    <label asp-for="FechaInicio">Check-in *</label>
+                    <input asp-for="FechaInicio" 
+                           type="date" 
+                           min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                           required />
+                    <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                </div>
+
+                <div class="form-group-reserva">
+                    <label asp-for="FechaFin">Check-out *</label>
+                    <input asp-for="FechaFin" 
+                           type="date" 
+                           min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")"
+                           required />
+                    <span asp-validation-for="FechaFin" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group-reserva">
+                <label asp-for="NumeroHuespedes">Número de Huéspedes *</label>
+                <input asp-for="NumeroHuespedes" 
+                       type="number" 
+                       min="1" 
+                       max="10" 
+                       value="2"
+                       required />
+                <span asp-validation-for="NumeroHuespedes" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-buscar">
+                🔍 Buscar Habitaciones Disponibles
+            </button>
+        </form>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+    <script>
+        // Validación de fechas en el cliente
+        const fechaInicio = document.querySelector('input[name="FechaInicio"]');
+        const fechaFin = document.querySelector('input[name="FechaFin"]');
+
+        fechaInicio.addEventListener('change', function() {
+            const inicio = new Date(this.value);
+            const minFin = new Date(inicio);
+            minFin.setDate(minFin.getDate() + 1);
+            fechaFin.min = minFin.toISOString().split('T')[0];
+            
+            if (fechaFin.value && new Date(fechaFin.value) <= inicio) {
+                fechaFin.value = minFin.toISOString().split('T')[0];
+            }
+        });
+    </script>
+</body>
+</html>

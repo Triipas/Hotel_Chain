@@ -1,0 +1,395 @@
+@model IEnumerable<Hotel_chain.Models.Entities.Reserva>
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Mis Reservas";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=8">
+    <style>
+        .mis-reservas-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header-reservas {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .page-header-reservas h1 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d1f2eb;
+            color: #0f5132;
+            border-left: 4px solid #0a3622;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c53030;
+            border-left: 4px solid #fc8181;
+        }
+
+        .reservas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .reserva-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .reserva-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .reserva-header {
+            padding: 20px;
+            background: var(--background-section);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .reserva-numero {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .reserva-estado {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .estado-pendiente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .estado-confirmada {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .estado-completada {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .estado-cancelada {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .reserva-body {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+        }
+
+        .reserva-seccion h4 {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .reserva-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .reserva-precio {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .reserva-actions {
+            padding: 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-reserva {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-ver-detalle {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-ver-detalle:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        .btn-cancelar-reserva {
+            background: transparent;
+            border: 2px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-cancelar-reserva:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-nueva-reserva {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-nueva-reserva:hover {
+            background: var(--primary-hover);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @@media (max-width: 768px) {
+            .reserva-body {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .reserva-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .reserva-actions {
+                flex-direction: column;
+            }
+
+            .btn-reserva {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad">Reservar</a></li>
+                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                </ul>
+                <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
+                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mis-reservas-container">
+        <div class="page-header-reservas">
+            <h1>🗓️ Mis Reservas</h1>
+            <p style="color: var(--text-light);">Gestiona todas tus reservas en un solo lugar</p>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                ✓ @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error">
+                ✗ @TempData["Error"]
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="reservas-list">
+                @foreach (var reserva in Model)
+                {
+                    <div class="reserva-card">
+                        <div class="reserva-header">
+                            <div class="reserva-numero">
+                                📋 Reserva: @reserva.NumeroReserva
+                            </div>
+                            <div class="reserva-estado estado-@reserva.Estado.ToLower()">
+                                @reserva.Estado
+                            </div>
+                        </div>
+
+                        <div class="reserva-body">
+                            <div class="reserva-seccion">
+                                <h4>🏨 Alojamiento</h4>
+                                <div class="reserva-info-item">
+                                    <strong>@reserva.Habitacion?.Hotel?.Nombre</strong>
+                                </div>
+                                <div class="reserva-info-item">
+                                    🚪 Habitación @reserva.Habitacion?.NumeroHabitacion
+                                </div>
+                                <div class="reserva-info-item">
+                                    🛏️ Tipo: @reserva.Habitacion?.Tipo
+                                </div>
+                            </div>
+
+                            <div class="reserva-seccion">
+                                <h4>📅 Fechas</h4>
+                                <div class="reserva-info-item">
+                                    Check-in: @reserva.FechaInicio.ToString("dd/MM/yyyy")
+                                </div>
+                                <div class="reserva-info-item">
+                                    Check-out: @reserva.FechaFin.ToString("dd/MM/yyyy")
+                                </div>
+                                <div class="reserva-info-item">
+                                    🌙 @reserva.NumeroNoches noche@(reserva.NumeroNoches > 1 ? "s" : "")
+                                </div>
+                                <div class="reserva-info-item" style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light);">
+                                    Creada: @reserva.FechaCreacion.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                            </div>
+
+                            <div class="reserva-seccion">
+                                <h4>💰 Información de Pago</h4>
+                                <div class="reserva-info-item">
+                                    👥 @reserva.NumeroHuespedes huésped@(reserva.NumeroHuespedes > 1 ? "es" : "")
+                                </div>
+                                <div class="reserva-precio">
+                                    S/ @reserva.PrecioTotal.ToString("N2")
+                                </div>
+                                <div class="reserva-info-item" style="margin-top: 5px;">
+                                    Estado: <strong style="color: @(reserva.EstadoPago == "pagado" ? "#155724" : "#856404")">
+                                        @reserva.EstadoPago
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="reserva-actions">
+                            <a asp-action="Detalle" asp-route-id="@reserva.ReservaId" class="btn-reserva btn-ver-detalle">
+                                👁️ Ver Detalles
+                            </a>
+
+                            @if (reserva.Estado == "pendiente" || reserva.Estado == "confirmada")
+                            {
+                                <button onclick="confirmarCancelacion(@reserva.ReservaId, '@reserva.NumeroReserva')" 
+                                        class="btn-reserva btn-cancelar-reserva">
+                                    ✗ Cancelar Reserva
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <h2>No tienes reservas</h2>
+                <p>Aún no has realizado ninguna reserva. ¡Empieza a planear tu próximo viaje!</p>
+                <a asp-action="BuscarDisponibilidad" class="btn-nueva-reserva">
+                    🔍 Buscar y Reservar
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Formulario oculto para cancelar -->
+    <form id="cancelarForm" method="post" style="display: none;">
+        <input type="hidden" name="id" id="cancelarId" />
+        <input type="hidden" name="motivo" id="cancelarMotivo" />
+    </form>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+    <script>
+        function confirmarCancelacion(reservaId, numeroReserva) {
+            const motivo = prompt(`¿Estás seguro de que deseas cancelar la reserva ${numeroReserva}?\n\nPor favor indica el motivo de la cancelación:`);
+            
+            if (motivo !== null && motivo.trim() !== '') {
+                document.getElementById('cancelarId').value = reservaId;
+                document.getElementById('cancelarMotivo').value = motivo;
+                document.getElementById('cancelarForm').action = '/Reservas/Cancelar/' + reservaId;
+                document.getElementById('cancelarForm').submit();
+            } else if (motivo !== null) {
+                alert('Debes proporcionar un motivo para cancelar la reserva.');
+            }
+        }
+    </script>
+</body>
+</html>

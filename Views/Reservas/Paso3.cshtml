@@ -1,0 +1,122 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Paso 3 - Confirmar";
+    var habitacion = ViewBag.Habitacion as Hotel_chain.Models.Entities.Habitacion;
+    var hotelNombre = habitacion?.Hotel?.Nombre ?? "Hotel";
+    var fechaInicio = (DateTime)ViewBag.FechaInicio;
+    var fechaFin = (DateTime)ViewBag.FechaFin;
+    var numeroNoches = (int)ViewBag.NumeroNoches;
+    var precioTotal = (decimal)ViewBag.PrecioTotal;
+    var numeroHuespedes = (int)ViewBag.NumeroHuespedes;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+    <link rel="stylesheet" href="~/client/css/pages/pasos-reserva.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="paso-container">
+        <div class="progreso-pasos">
+            <div class="paso completado">
+                <div class="paso-numero">✓</div>
+                <div class="paso-texto">Huéspedes & Habitación</div>
+            </div>
+            <div class="paso completado">
+                <div class="paso-numero">✓</div>
+                <div class="paso-texto">Fechas de estadía</div>
+            </div>
+            <div class="paso activo">
+                <div class="paso-numero">3</div>
+                <div class="paso-texto">Confirmar reserva</div>
+            </div>
+            <div class="paso">
+                <div class="paso-numero">4</div>
+                <div class="paso-texto">Monto total</div>
+            </div>
+        </div>
+
+        <div class="card-paso">
+            <h1 class="titulo-hotel">@hotelNombre</h1>
+
+            <div class="resumen-detalle">
+                <h4>📋 Resumen de tu Reserva</h4>
+                <p><strong>Habitación:</strong> @habitacion?.NumeroHabitacion - <span style="text-transform: capitalize;">@habitacion?.Tipo</span></p>
+                <p><strong>Check-in:</strong> @fechaInicio.ToString("dd/MM/yyyy")</p>
+                <p><strong>Check-out:</strong> @fechaFin.ToString("dd/MM/yyyy")</p>
+                <p><strong>Noches:</strong> @numeroNoches</p>
+                <p><strong>Huéspedes:</strong> @numeroHuespedes persona@(numeroHuespedes > 1 ? "s" : "")</p>
+                <hr style="border: none; border-top: 1px solid var(--border-light); margin: 15px 0;" />
+                <p><strong>Precio por noche:</strong> S/ @habitacion?.PrecioNoche.ToString("N2")</p>
+                <p style="font-size: 1.2rem; color: var(--primary-color);"><strong>Precio Total:</strong> S/ @precioTotal.ToString("N2")</p>
+            </div>
+
+            <form asp-action="GuardarPaso3" method="post">
+                <div class="form-group-paso">
+                    <label for="solicitudesEspeciales">
+                        ✏️ Solicitudes Especiales (Opcional)
+                    </label>
+                    <textarea name="solicitudesEspeciales" 
+                              id="solicitudesEspeciales" 
+                              placeholder="Ej: Cama extra, piso alto, habitación alejada del ascensor, alergias alimentarias..."></textarea>
+                    <small style="color: var(--text-light); margin-top: 5px; display: block;">
+                        Haremos nuestro mejor esfuerzo para cumplir con tus solicitudes, aunque no podemos garantizarlas.
+                    </small>
+                </div>
+
+                <div style="background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                    <h4 style="color: #0c5460; margin-bottom: 10px;">ℹ️ Información Importante</h4>
+                    <ul style="color: #0c5460; margin: 0; padding-left: 20px;">
+                        <li>Check-in: 15:00 hrs</li>
+                        <li>Check-out: 12:00 hrs</li>
+                        <li>Se requiere identificación válida</li>
+                        <li>Pago al momento del check-in</li>
+                    </ul>
+                </div>
+
+                <div class="botones-navegacion">
+                    <a asp-action="Paso2" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                        ← Atrás
+                    </a>
+                    <button type="submit" class="btn-paso btn-continuar">
+                        Ver Monto Total →
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+</body>
+</html>
