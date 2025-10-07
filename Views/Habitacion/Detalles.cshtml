@@ -59,7 +59,7 @@
 
             @if(HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
             {
-                <form asp-controller="Home" asp-action="Reservar" method="post">
+                <form asp-controller="Reservas" asp-action="IniciarReserva" method="post">
                     <input type="hidden" name="habitacionId" value="@Model.HabitacionId" />
                     <input type="hidden" name="usuarioId" value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
                     <button type="submit" class="btn-reservar">Reservar</button>
