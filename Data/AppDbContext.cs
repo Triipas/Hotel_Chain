@@ -20,6 +20,12 @@ namespace Hotel_chain.Data
         public DbSet<Reserva> Reservas { get; set; }
         public DbSet<Imagen> Imagenes { get; set; }
 
+        public DbSet<HotelAmenidad> HotelAmenidades { get; set; }
+        public DbSet<HotelCaracteristica> HotelCaracteristicas { get; set; } = null!;
+        public DbSet<HabitacionAmenidad> HabitacionAmenidades { get; set; } = null!;
+        public DbSet<Reseña> Reseñas { get; set; } = null!;
+        public DbSet<PermisoUsuario> PermisosUsuarios { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

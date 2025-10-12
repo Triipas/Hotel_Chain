@@ -1,6 +1,7 @@
 // Controllers/Admin/AdminController.cs - Actualizado
 using Microsoft.AspNetCore.Mvc;
 using Hotel_chain.Services.Interfaces;
+using Hotel_chain.Models.Entities;
 
 namespace Hotel_chain.Controllers.Admin
 {
@@ -44,6 +45,7 @@ namespace Hotel_chain.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password, string? returnUrl = null)
         {
+                
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ViewBag.Error = "Por favor ingresa email y contraseña";

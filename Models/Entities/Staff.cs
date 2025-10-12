@@ -19,5 +19,14 @@ namespace Hotel_chain.Models.Entities
 
         // Permisos adicionales en formato JSON o texto
         public string? PermisosExtra { get; set; }
+
+       public int HotelId { get; set; }               // FK
+       [ForeignKey("HotelId")]
+        public virtual Hotel Hotel { get; set; } = null!; 
+
+         [MaxLength(100)]
+        public string? Departamento { get; set; }   // department
+
+         public DateTime? Fechadeingreso { get; set; }    // last_login
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Hotel_chain.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hotel_chain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251010235348_CrearTablaHabitacionAmenidad")]
+    partial class CrearTablaHabitacionAmenidad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,7 +139,7 @@ namespace Hotel_chain.Migrations
                         .HasColumnName("hotel_id");
 
                     b.Property<decimal?>("Calificacion")
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("CantidadResenas")
                         .HasColumnType("int");
@@ -159,6 +162,9 @@ namespace Hotel_chain.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Descripcion")
                         .HasColumnType("longtext")
                         .HasColumnName("descripcion");
@@ -170,23 +176,16 @@ namespace Hotel_chain.Migrations
                         .HasColumnName("direccion");
 
                     b.Property<string>("Estado")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime?>("FechaActulizacion")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime");
+                        .HasColumnType("longtext");
 
                     b.Property<bool?>("FumarPermitido")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<decimal?>("Latitud")
-                        .HasColumnType("decimal(9,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("Longitud")
-                        .HasColumnType("decimal(9,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool?>("MascotasPermitidas")
                         .HasColumnType("tinyint(1)");
@@ -202,22 +201,24 @@ namespace Hotel_chain.Migrations
                         .HasColumnName("nombre");
 
                     b.Property<string>("Pais")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("PoliticaCancelacion")
                         .HasColumnType("longtext");
 
                     b.Property<decimal?>("PrecioMax")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("PrecioMin")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TelefonoContacto")
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("telefono_contacto");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("HotelId");
 
@@ -321,27 +322,6 @@ namespace Hotel_chain.Migrations
                     b.HasIndex("HotelId");
 
                     b.ToTable("Imagenes", (string)null);
-                });
-
-            modelBuilder.Entity("Hotel_chain.Models.Entities.PermisoUsuario", b =>
-                {
-                    b.Property<int>("PermisoUsuarioId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Permiso")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PermisoUsuarioId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("PermisosUsuarios");
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.Reserva", b =>
@@ -465,64 +445,12 @@ namespace Hotel_chain.Migrations
                     b.ToTable("Reservas", (string)null);
                 });
 
-            modelBuilder.Entity("Hotel_chain.Models.Entities.Reseña", b =>
-                {
-                    b.Property<int>("ResenaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("Calificacion")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comentario")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("HotelId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservaId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VecesUtil")
-                        .HasColumnType("int");
-
-                    b.HasKey("ResenaId");
-
-                    b.HasIndex("HotelId");
-
-                    b.HasIndex("ReservaId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Reseñas");
-                });
-
             modelBuilder.Entity("Hotel_chain.Models.Entities.Staff", b =>
                 {
                     b.Property<int>("StaffId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("staff_id");
-
-                    b.Property<string>("Departamento")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime?>("Fechadeingreso")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("HotelId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PermisosExtra")
                         .HasColumnType("longtext")
@@ -540,8 +468,6 @@ namespace Hotel_chain.Migrations
 
                     b.HasKey("StaffId");
 
-                    b.HasIndex("HotelId");
-
                     b.HasIndex("UsuarioId")
                         .IsUnique();
 
@@ -554,6 +480,9 @@ namespace Hotel_chain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("usuario_id");
+
+                    b.Property<DateTime?>("ActualizadoEn")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Apellido")
                         .IsRequired()
@@ -585,6 +514,10 @@ namespace Hotel_chain.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("contraseña");
+
+                    b.Property<string>("Departamento")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("DireccionCalle")
                         .HasMaxLength(255)
@@ -620,8 +553,15 @@ namespace Hotel_chain.Migrations
                         .HasColumnName("estado");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime")
+                        .HasColumnType("datetime(6)")
                         .HasColumnName("fecha_creacion");
+
+                    b.Property<DateTime?>("FechaIngreso")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("HotelAsignado")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -629,11 +569,17 @@ namespace Hotel_chain.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("nombre");
 
+                    b.Property<string>("Notas")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Rol")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("rol");
+
+                    b.Property<decimal?>("Salario")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Telefono")
                         .HasMaxLength(20)
@@ -722,17 +668,6 @@ namespace Hotel_chain.Migrations
                     b.Navigation("Hotel");
                 });
 
-            modelBuilder.Entity("Hotel_chain.Models.Entities.PermisoUsuario", b =>
-                {
-                    b.HasOne("Hotel_chain.Models.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("Hotel_chain.Models.Entities.Reserva", b =>
                 {
                     b.HasOne("Hotel_chain.Models.Entities.Habitacion", "Habitacion")
@@ -758,48 +693,13 @@ namespace Hotel_chain.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Hotel_chain.Models.Entities.Reseña", b =>
-                {
-                    b.HasOne("Hotel_chain.Models.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hotel_chain.Models.Entities.Reserva", "Reserva")
-                        .WithMany()
-                        .HasForeignKey("ReservaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hotel_chain.Models.Entities.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hotel");
-
-                    b.Navigation("Reserva");
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("Hotel_chain.Models.Entities.Staff", b =>
                 {
-                    b.HasOne("Hotel_chain.Models.Entities.Hotel", "Hotel")
-                        .WithMany()
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Hotel_chain.Models.Entities.Usuario", "Usuario")
                         .WithOne("Staff")
                         .HasForeignKey("Hotel_chain.Models.Entities.Staff", "UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Hotel");
 
                     b.Navigation("Usuario");
                 });
