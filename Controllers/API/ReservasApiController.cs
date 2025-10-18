@@ -141,6 +141,7 @@ namespace Hotel_chain.Controllers.API
                     searchDto.FechaInicio,
                     searchDto.FechaFin,
                     searchDto.NumeroHuespedes
+
                 );
 
                 return Ok(ApiResponse<IEnumerable<Habitacion>>.SuccessResult(

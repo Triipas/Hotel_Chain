@@ -9,6 +9,10 @@
     var numeroNoches = (int)ViewBag.NumeroNoches;
     var precioTotal = (decimal)ViewBag.PrecioTotal;
     var numeroHuespedes = (int)ViewBag.NumeroHuespedes;
+
+    var adultos = TempData["Adultos"] != null ? (int)TempData["Adultos"] : 1;
+    var ninos = TempData["Ninos"] != null ? (int)TempData["Ninos"] : 0;
+    var habitaciones = TempData["CantidadHabitaciones"] != null ? (int)TempData["CantidadHabitaciones"] : 1;
 }
 
 <!DOCTYPE html>
@@ -19,15 +23,194 @@
     <title>@ViewData["Title"] - StayGo</title>
     <link rel="stylesheet" href="~/client/css/main.css?v=9">
     <link rel="stylesheet" href="~/client/css/pages/pasos-reserva.css">
+    <style>
+        /* Contenedor general */
+        .paso-container {
+            max-width: 1000px;
+            margin: 50px auto 40px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Barra de pasos horizontal */
+        .progreso-pasos {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .progreso-pasos::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ddd;
+            z-index: 0;
+        }
+
+        .paso {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+            background: white;
+            padding: 0 10px;
+        }
+
+        .paso-numero {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .paso.activo .paso-numero,
+        .paso.completado .paso-numero {
+            background: #0066ff;
+            color: white;
+        }
+
+        .paso-texto {
+            font-size: 0.85rem;
+            color: #777;
+            text-align: center;
+        }
+
+        .paso.activo .paso-texto,
+        .paso.completado .paso-texto {
+            color: #0066ff;
+            font-weight: 600;
+        }
+
+        /* Contenedor de cards */
+        .paso-columns {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card-paso, .card-resumen {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .card-paso {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .card-resumen {
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        .titulo-hotel {
+            color: #0066ff;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group-paso {
+            margin-bottom: 25px;
+        }
+
+        .form-group-paso label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group-paso input,
+        .form-group-paso textarea,
+        .form-group-paso select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group-paso input:focus,
+        .form-group-paso textarea:focus,
+        .form-group-paso select:focus {
+            outline: none;
+            border-color: #0066ff;
+        }
+
+        .botones-navegacion {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-paso {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancelar {
+            background: #aaa;
+            color: white;
+        }
+
+        .btn-cancelar:hover {
+            background: #888;
+        }
+
+        .btn-continuar {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn-continuar:hover {
+            background: #00a180;
+            transform: translateY(-2px);
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+
+        @@media (max-width: 768px) {
+            .paso-columns {
+                flex-direction: column;
+            }
+            .card-resumen {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">StayGo</div>
             <button class="menu-toggle" aria-label="Abrir menú">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <div class="nav-derecha">
                 <ul class="nav-links">
@@ -48,72 +231,90 @@
     </header>
 
     <div class="paso-container">
+        <!-- Barra de pasos -->
         <div class="progreso-pasos">
-            <div class="paso completado">
-                <div class="paso-numero">✓</div>
-                <div class="paso-texto">Huéspedes & Habitación</div>
-            </div>
-            <div class="paso completado">
-                <div class="paso-numero">✓</div>
-                <div class="paso-texto">Fechas de estadía</div>
-            </div>
-            <div class="paso activo">
-                <div class="paso-numero">3</div>
-                <div class="paso-texto">Confirmar reserva</div>
-            </div>
-            <div class="paso">
-                <div class="paso-numero">4</div>
-                <div class="paso-texto">Monto total</div>
-            </div>
+            <div class="paso completado"><div class="paso-numero">✓</div><div class="paso-texto">Huéspedes & Habitación</div></div>
+            <div class="paso completado"><div class="paso-numero">✓</div><div class="paso-texto">Fechas de estadía</div></div>
+            <div class="paso activo"><div class="paso-numero">3</div><div class="paso-texto">Confirmar reserva</div></div>
+            <div class="paso"><div class="paso-numero">4</div><div class="paso-texto">Monto total</div></div>
         </div>
 
-        <div class="card-paso">
-            <h1 class="titulo-hotel">@hotelNombre</h1>
+        <!-- Contenido principal -->
+        <div class="paso-columns">
+            <!-- Formulario / card hotel -->
+            <div class="card-paso">
+    <h1 class="titulo-hotel">@hotelNombre</h1>
 
-            <div class="resumen-detalle">
-                <h4>📋 Resumen de tu Reserva</h4>
-                <p><strong>Habitación:</strong> @habitacion?.NumeroHabitacion - <span style="text-transform: capitalize;">@habitacion?.Tipo</span></p>
-                <p><strong>Check-in:</strong> @fechaInicio.ToString("dd/MM/yyyy")</p>
-                <p><strong>Check-out:</strong> @fechaFin.ToString("dd/MM/yyyy")</p>
-                <p><strong>Noches:</strong> @numeroNoches</p>
-                <p><strong>Huéspedes:</strong> @numeroHuespedes persona@(numeroHuespedes > 1 ? "s" : "")</p>
-                <hr style="border: none; border-top: 1px solid var(--border-light); margin: 15px 0;" />
-                <p><strong>Precio por noche:</strong> S/ @habitacion?.PrecioNoche.ToString("N2")</p>
-                <p style="font-size: 1.2rem; color: var(--primary-color);"><strong>Precio Total:</strong> S/ @precioTotal.ToString("N2")</p>
-            </div>
+    <!-- Información de la habitación -->
+    <div class="form-group-paso">
+        <label>🏷️ Nombre de Habitación</label>
+        <input type="text" value="@habitacion?.Nombre" disabled />
+    </div>
 
-            <form asp-action="GuardarPaso3" method="post">
-                <div class="form-group-paso">
-                    <label for="solicitudesEspeciales">
-                        ✏️ Solicitudes Especiales (Opcional)
-                    </label>
-                    <textarea name="solicitudesEspeciales" 
-                              id="solicitudesEspeciales" 
-                              placeholder="Ej: Cama extra, piso alto, habitación alejada del ascensor, alergias alimentarias..."></textarea>
-                    <small style="color: var(--text-light); margin-top: 5px; display: block;">
-                        Haremos nuestro mejor esfuerzo para cumplir con tus solicitudes, aunque no podemos garantizarlas.
-                    </small>
-                </div>
+    <div class="form-group-paso">
+        <label>📝 Descripción de Habitación</label>
+        <textarea disabled>@habitacion?.Descripcion</textarea>
+    </div>
 
-                <div style="background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; border-radius: 4px; margin: 20px 0;">
-                    <h4 style="color: #0c5460; margin-bottom: 10px;">ℹ️ Información Importante</h4>
-                    <ul style="color: #0c5460; margin: 0; padding-left: 20px;">
-                        <li>Check-in: 15:00 hrs</li>
-                        <li>Check-out: 12:00 hrs</li>
-                        <li>Se requiere identificación válida</li>
-                        <li>Pago al momento del check-in</li>
-                    </ul>
-                </div>
+    @if (ViewBag.Amenidades != null && ((List<Hotel_chain.Models.Entities.HabitacionAmenidad>)ViewBag.Amenidades).Count > 0)
+{
+    <div class="form-group-paso">
+        <label>⭐ Amenidades</label>
+        <ul style="margin-left:20px;">
+            @foreach (var a in (List<Hotel_chain.Models.Entities.HabitacionAmenidad>)ViewBag.Amenidades)
+            {
+                <li>@a.Amenidad</li>
+            }
+        </ul>
+    </div>
+}
 
-                <div class="botones-navegacion">
-                    <a asp-action="Paso2" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
-                        ← Atrás
-                    </a>
-                    <button type="submit" class="btn-paso btn-continuar">
-                        Ver Monto Total →
-                    </button>
-                </div>
-            </form>
+    <!-- Solicitudes especiales -->
+    <form asp-action="GuardarPaso3" method="post">
+    <div class="form-group-paso">
+        <label for="solicitudesEspeciales">✏️ Solicitudes Especiales (Opcional)</label>
+        <textarea name="solicitudesEspeciales" id="solicitudesEspeciales"
+                  placeholder="Ej: Cama extra, piso alto, habitación alejada del ascensor, alergias alimentarias..."></textarea>
+        <small style="color: var(--text-light); margin-top:5px; display:block;">
+            Haremos nuestro mejor esfuerzo para cumplir con tus solicitudes, aunque no podemos garantizarlas.
+        </small>
+    </div>
+
+    <div style="background:#d1ecf1; border-left:4px solid #0c5460; padding:15px; border-radius:4px; margin:20px 0;">
+        <h4 style="color:#0c5460; margin-bottom:10px;">ℹ️ Información Importante</h4>
+        <ul style="color:#0c5460; margin:0; padding-left:20px;">
+            <li>Check-in: 15:00 hrs</li>
+            <li>Check-out: 12:00 hrs</li>
+            <li>Se requiere identificación válida</li>
+            <li>Pago al momento del check-in</li>
+        </ul>
+    </div>
+
+    <div class="botones-navegacion">
+        <a asp-action="Paso2" class="btn-paso btn-cancelar">← Atrás</a>
+        <button type="submit" class="btn-paso btn-continuar">Ver Monto Total →</button>
+    </div>
+    </form>
+</div>
+
+            <!-- Card Resumen -->
+            <div class="card-resumen">
+    <h4 style="color: var(--accent-color); margin-bottom:10px;">🏨 Resumen de Reserva</h4>
+    <p><strong>Hotel:</strong> @habitacion?.Hotel?.Nombre </p>
+    <p><strong>Ubicación:</strong> @habitacion?.Hotel?.Ciudad  @habitacion?.Hotel?.Pais </p>
+    <p><strong>Calificación:</strong> @habitacion?.Hotel?.Calificacion ⭐</p>
+    <p><strong>Habitación:</strong> @habitacion?.NumeroHabitacion - <span style="text-transform:capitalize;">@habitacion?.Tipo</span></p>
+    <hr/>
+    <p><strong>Check-in:</strong> @fechaInicio.ToString("dd/MM/yyyy")</p>
+    <p><strong>Check-out:</strong> @fechaFin.ToString("dd/MM/yyyy")</p>
+    <p><strong>Noches:</strong> @numeroNoches</p>
+    <p><strong>Adultos:</strong> @adultos</p>
+    <p><strong>Niños:</strong> @ninos</p>
+    <p><strong>Habitaciones:</strong> @habitaciones</p>
+    <hr/>
+    <p><strong>Precio por noche:</strong> S/ @habitacion?.PrecioNoche.ToString("N2")</p>
+    <p style="font-size:1.2rem; color:var(--primary-color);"><strong>Precio Total:</strong> S/ @precioTotal.ToString("N2")</p>
+</div>
         </div>
     </div>
 

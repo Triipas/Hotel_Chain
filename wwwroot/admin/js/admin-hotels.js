@@ -67,6 +67,12 @@ window.HotelesModule = {
                                         <td>${hotel.direccion || hotel.Direccion}</td>
                                         <td>${hotel.telefonoContacto || hotel.TelefonoContacto || 'N/A'}</td>
                                         <td>
+                                       <button class="btn btn-info" onclick="verAmenidades(${hotel.hotelId || hotel.HotelId})">
+  <i class="fas fa-list"></i> Ver Amenidades
+</button>
+<button class="btn btn-info" onclick="window.HotelCaracteristicasModule.verCaracteristicas(${hotel.hotelId || hotel.HotelId})">
+    <i class="fas fa-star"></i> Características
+</button>
                                             <button class="btn btn-edit" onclick="window.HotelesModule.edit(${hotel.hotelId || hotel.HotelId})">
                                                 <i class="fas fa-edit"></i> Editar
                                             </button>
@@ -114,32 +120,45 @@ window.HotelesModule = {
     },
 
     async edit(hotelId) {
-        try {
-            const response = await fetch(`${this.apiBase}/hotelesapi/${hotelId}`);
-            if (!response.ok) {
-                throw new Error('Hotel no encontrado');
-            }
-            
-            const responseData = await response.json();
-            const hotel = responseData?.data || responseData?.Data || responseData;
-            
-            this.isEditMode = true;
-            this.currentEditingId = hotelId;
-            document.getElementById('hotelModalTitle').textContent = 'Editar Hotel';
-            document.getElementById('saveHotelText').textContent = 'Actualizar Hotel';
-            
-            document.getElementById('hotelId').value = hotel.hotelId || hotel.HotelId;
-            document.getElementById('nombre').value = hotel.nombre || hotel.Nombre;
-            document.getElementById('direccion').value = hotel.direccion || hotel.Direccion;
-            document.getElementById('ciudad').value = hotel.ciudad || hotel.Ciudad;
-            document.getElementById('descripcion').value = hotel.descripcion || hotel.Descripcion || '';
-            document.getElementById('telefonoContacto').value = hotel.telefonoContacto || hotel.TelefonoContacto || '';
-            
-            document.getElementById('hotelModal').classList.add('show');
-        } catch (error) {
-            showAlert('Error al cargar los datos del hotel: ' + error.message, 'error');
+    try {
+        const response = await fetch(`${this.apiBase}/hotelesapi/${hotelId}`);
+        if (!response.ok) {
+            throw new Error('Hotel no encontrado');
         }
-    },
+
+        const responseData = await response.json();
+console.log(responseData)
+        // Extraer el objeto Hotel real de ApiResponse
+        const hotel = responseData?.data || responseData?.Data;
+        if (!hotel) throw new Error('Datos de hotel no disponibles');
+
+        this.isEditMode = true;
+        this.currentEditingId = hotelId;
+
+        document.getElementById('hotelModalTitle').textContent = 'Editar Hotel';
+        document.getElementById('saveHotelText').textContent = 'Actualizar Hotel';
+
+        document.getElementById('hotelId').value = hotel.hotelId ?? hotel.HotelId ?? '';
+        document.getElementById('nombre').value = hotel.nombre ?? hotel.Nombre ?? '';
+        document.getElementById('direccion').value = hotel.direccion ?? hotel.Direccion ?? '';
+        document.getElementById('ciudad').value = hotel.ciudad ?? hotel.Ciudad ?? '';
+        document.getElementById('descripcion').value = hotel.descripcion ?? hotel.Descripcion ?? '';
+        document.getElementById('telefonoContacto').value = hotel.telefonoContacto ?? hotel.TelefonoContacto ?? '';
+        document.getElementById('pais').value = hotel.pais ?? hotel.Pais ?? '';
+        document.getElementById('estado').value = hotel.estado ?? hotel.Estado ?? '';
+        document.getElementById('latitud').value = hotel.latitud ?? hotel.Latitud ?? '';
+        document.getElementById('longitud').value = hotel.longitud ?? hotel.Longitud ?? '';
+        document.getElementById('mascotasPermitidas').checked = hotel.mascotasPermitidas ?? hotel.MascotasPermitidas ?? false;
+        document.getElementById('fumarPermitido').checked = hotel.fumarPermitido ?? hotel.FumarPermitido ?? false;
+        document.getElementById('calificacion').value = hotel.calificacion ?? hotel.Calificacion ?? '';
+        document.getElementById('politicaCancelacion').value = hotel.politicaCancelacion ?? hotel.PoliticaCancelacion ?? '';
+
+
+        document.getElementById('hotelModal').classList.add('show');
+    } catch (error) {
+        showAlert('Error al cargar los datos del hotel: ' + error.message, 'error');
+    }
+},
 
     async save() {
         const form = document.getElementById('hotelForm');
@@ -161,7 +180,14 @@ window.HotelesModule = {
                 direccion: formData.get('direccion'),
                 ciudad: formData.get('ciudad'),
                 descripcion: formData.get('descripcion') || null,
-                telefonoContacto: formData.get('telefonoContacto') || null
+                telefonoContacto: formData.get('telefonoContacto') || null,
+                 pais: formData.get('pais') || null,
+    estado: formData.get('estado') || null,
+    latitud: formData.get('latitud') ? parseFloat(formData.get('latitud')) : null,
+    longitud: formData.get('longitud') ? parseFloat(formData.get('longitud')) : null,
+    mascotasPermitidas: formData.get('mascotasPermitidas') === 'on',
+    fumarPermitido: formData.get('fumarPermitido') === 'on',
+    politicaCancelacion: formData.get('politicaCancelacion') || null
             };
 
             let response;

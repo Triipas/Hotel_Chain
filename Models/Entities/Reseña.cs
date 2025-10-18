@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Hotel_chain.Models.Entities
 {
+    [Table("Resena")] 
     public class Reseña
     {
         [Key]
@@ -23,8 +24,8 @@ namespace Hotel_chain.Models.Entities
         public virtual Usuario Usuario { get; set; } = null!;
 
         // Contenido
-        [Range(1, 5)]
-        public int Calificacion { get; set; }  // rating
+        [Range(0.5, 5)]
+public decimal Calificacion { get; set; }  // antes era int
 
         [Required]
         public string Comentario { get; set; } = null!;  // comment

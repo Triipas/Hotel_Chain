@@ -54,7 +54,8 @@ namespace Hotel_chain.Services.Implementation
 
         public async Task<Hotel?> UpdateAsync(int id, Hotel hotel)
         {
-            var existingHotel = await _context.Hoteles.FindAsync(id);
+           var existingHotel = await _context.Hoteles
+    .FirstOrDefaultAsync(h => h.HotelId == id);
             if (existingHotel == null)
                 return null;
 
@@ -63,6 +64,13 @@ namespace Hotel_chain.Services.Implementation
             existingHotel.Ciudad = hotel.Ciudad;
             existingHotel.Descripcion = hotel.Descripcion;
             existingHotel.TelefonoContacto = hotel.TelefonoContacto;
+       existingHotel.Pais = hotel.Pais;
+existingHotel.Estado = hotel.Estado;
+existingHotel.Latitud = hotel.Latitud;
+existingHotel.Longitud = hotel.Longitud;
+existingHotel.MascotasPermitidas = hotel.MascotasPermitidas;
+            existingHotel.FumarPermitido = hotel.FumarPermitido;
+existingHotel.PoliticaCancelacion = hotel.PoliticaCancelacion;
 
             await _context.SaveChangesAsync();
             return existingHotel;

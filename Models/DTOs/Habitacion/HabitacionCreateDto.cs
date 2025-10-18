@@ -12,6 +12,9 @@ namespace Hotel_chain.Models.DTOs.Habitacion
         [MaxLength(10, ErrorMessage = "El número de habitación no puede exceder 10 caracteres")]
         public string NumeroHabitacion { get; set; } = null!;
 
+         [MaxLength(255, ErrorMessage = "El nombre no puede exceder 255 caracteres")]
+    public string? Nombre { get; set; }
+
         [Required(ErrorMessage = "El tipo es requerido")]
         [RegularExpression("^(simple|doble|suite)$", ErrorMessage = "El tipo debe ser: simple, doble o suite")]
         public string Tipo { get; set; } = null!;
@@ -28,5 +31,15 @@ namespace Hotel_chain.Models.DTOs.Habitacion
         public string? Descripcion { get; set; }
 
         public bool Disponible { get; set; } = true;
+        public int? CapacidadAdultos { get; set; }
+        public int? CapacidadNinos { get; set; }
+        public int? CantidadCamas { get; set; }
+        [MaxLength(100)]
+        public string? TipoCama { get; set; }
+        public int? TamanoM2 { get; set; }
+        public decimal? PrecioBase { get; set; }
+        public decimal? PrecioImpuestos { get; set; }
+        public decimal? PrecioTotal { get; set; }
+        public int? HabitacionesDisponibles { get; set; }
     }
 }

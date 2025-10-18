@@ -14,9 +14,14 @@ namespace Hotel_chain.Configuration
             services.AddScoped<IHabitacionService, HabitacionService>();
             services.AddScoped<IAdminAuthService, AdminAuthService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
-            
+
             // ✅ NUEVO: Servicio de Reservas
+            services.AddScoped<IResenaService, ResenaService>();
             services.AddScoped<IReservaService, ReservaService>();
+            services.AddScoped<IHabitacionAmenidadService, HabitacionAmenidadService>();
+            services.AddScoped<IHotelAmenidadService, HotelAmenidadService>();
+            services.AddScoped<IHotelCaracteristicaService, HotelCaracteristicaService>();
+            
 
             // Registrar filtros
             services.AddScoped<AdminAuthFilter>();

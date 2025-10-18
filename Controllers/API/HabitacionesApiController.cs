@@ -114,11 +114,21 @@ namespace Hotel_chain.Controllers.API
                 {
                     HotelId = habitacionDto.HotelId,
                     NumeroHabitacion = habitacionDto.NumeroHabitacion,
+Nombre = habitacionDto.Nombre,
                     Tipo = habitacionDto.Tipo,
                     Capacidad = habitacionDto.Capacidad,
                     PrecioNoche = habitacionDto.PrecioNoche,
                     Descripcion = habitacionDto.Descripcion,
-                    Disponible = habitacionDto.Disponible
+                    Disponible = habitacionDto.Disponible,
+                    CapacidadAdultos = habitacionDto.CapacidadAdultos,
+                    CapacidadNinos = habitacionDto.CapacidadNinos,
+                    CantidadCamas = habitacionDto.CantidadCamas,
+                    TipoCama = habitacionDto.TipoCama,
+                    TamanoM2 = habitacionDto.TamanoM2,
+                    PrecioBase = habitacionDto.PrecioBase,
+                    PrecioImpuestos = habitacionDto.PrecioImpuestos,
+                    PrecioTotal = habitacionDto.PrecioTotal,
+                    HabitacionesDisponibles = habitacionDto.HabitacionesDisponibles
                 };
 
                 var createdHabitacion = await _habitacionService.CreateAsync(habitacion);
@@ -154,11 +164,22 @@ namespace Hotel_chain.Controllers.API
                     HabitacionId = id,
                     HotelId = habitacionDto.HotelId,
                     NumeroHabitacion = habitacionDto.NumeroHabitacion,
+Nombre = habitacionDto.Nombre,
                     Tipo = habitacionDto.Tipo,
                     Capacidad = habitacionDto.Capacidad,
                     PrecioNoche = habitacionDto.PrecioNoche,
                     Descripcion = habitacionDto.Descripcion,
-                    Disponible = habitacionDto.Disponible
+                    Disponible = habitacionDto.Disponible,
+                    CapacidadAdultos = habitacionDto.CapacidadAdultos,
+                    CapacidadNinos = habitacionDto.CapacidadNinos,
+                    CantidadCamas = habitacionDto.CantidadCamas,
+                    TipoCama = habitacionDto.TipoCama,
+                    TamanoM2 = habitacionDto.TamanoM2,
+                    PrecioBase = habitacionDto.PrecioBase,
+                    PrecioImpuestos = habitacionDto.PrecioImpuestos,
+                    PrecioTotal = habitacionDto.PrecioTotal,
+                    HabitacionesDisponibles = habitacionDto.HabitacionesDisponibles
+
                 };
 
                 var updatedHabitacion = await _habitacionService.UpdateAsync(id, habitacion);

@@ -1,10 +1,12 @@
-// Models/DTOs/Usuario/UsuarioUpdateDto.cs
 using System.ComponentModel.DataAnnotations;
 
 namespace Hotel_chain.Models.DTOs.Usuario
 {
     public class UsuarioUpdateDto
     {
+        [Required]
+        public int UsuarioId { get; set; }
+
         [Required(ErrorMessage = "El nombre es requerido")]
         [MaxLength(100, ErrorMessage = "El nombre no puede exceder 100 caracteres")]
         public string Nombre { get; set; } = null!;
@@ -15,40 +17,56 @@ namespace Hotel_chain.Models.DTOs.Usuario
 
         [Required(ErrorMessage = "El email es requerido")]
         [EmailAddress(ErrorMessage = "El email no es válido")]
-        [MaxLength(150, ErrorMessage = "El email no puede exceder 150 caracteres")]
+        [MaxLength(255, ErrorMessage = "El email no puede exceder 255 caracteres")]
         public string Email { get; set; } = null!;
 
-        [Required(ErrorMessage = "El teléfono es requerido")]
         [MaxLength(20, ErrorMessage = "El teléfono no puede exceder 20 caracteres")]
-        public string Telefono { get; set; } = null!;
+        public string? Telefono { get; set; }
 
-        [Required(ErrorMessage = "El documento es requerido")]
+        [MaxLength(500, ErrorMessage = "La URL del avatar no puede exceder 500 caracteres")]
+        public string? Avatar { get; set; }
+
         [MaxLength(50, ErrorMessage = "El documento no puede exceder 50 caracteres")]
-        public string Documento { get; set; } = null!;
+        public string? Documento { get; set; }
 
-        // Contraseña opcional en update (solo si se quiere cambiar)
+        // Contraseña opcional al actualizar
         [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres")]
         public string? Contraseña { get; set; }
 
         [Required(ErrorMessage = "El rol es requerido")]
-        [RegularExpression("^(huesped|admin|recepcionista|gerente|dueño)$", 
+        [RegularExpression("^(huesped|admin|recepcionista|gerente|dueño)$",
             ErrorMessage = "El rol debe ser: huesped, admin, recepcionista, gerente o dueño")]
-        public string Rol { get; set; } = null!;
+        public string Rol { get; set; } = "huesped";
 
         [Required(ErrorMessage = "El estado es requerido")]
-        [RegularExpression("^(activo|inactivo)$", 
+        [RegularExpression("^(activo|inactivo)$",
             ErrorMessage = "El estado debe ser: activo o inactivo")]
-        public string Estado { get; set; } = null!;
+        public string Estado { get; set; } = "activo";
 
-        // Campos opcionales para Staff
+        // Dirección
+        [MaxLength(255)]
+        public string? DireccionCalle { get; set; }
+
         [MaxLength(100)]
-        public string? RolDetallado { get; set; }
+        public string? DireccionCiudad { get; set; }
 
-        public string? PermisosExtra { get; set; }
+        [MaxLength(100)]
+        public string? DireccionEstado { get; set; }
 
-        // Campos opcionales para Huesped
-        public string? Preferencias { get; set; }
+        [MaxLength(20)]
+        public string? CodigoPostal { get; set; }
 
-        public string? NotasInternas { get; set; }
+        [MaxLength(100)]
+        public string? DireccionPais { get; set; }
+
+        // Contacto de emergencia
+        [MaxLength(255)]
+        public string? ContactoEmergenciaNombre { get; set; }
+
+        [MaxLength(20)]
+        public string? ContactoEmergenciaTelefono { get; set; }
+
+        [MaxLength(100)]
+        public string? ContactoEmergenciaRelacion { get; set; }
     }
 }

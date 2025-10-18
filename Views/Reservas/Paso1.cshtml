@@ -12,10 +12,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - StayGo</title>
-    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+    <link rel="stylesheet" href="~/client/css/main.css?v=10">
+
     <style>
         .paso-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 100px auto 40px;
             padding: 0 20px;
         }
@@ -34,7 +35,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: var(--border-light);
+            background: #ddd;
             z-index: 0;
         }
 
@@ -51,8 +52,8 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--border-light);
-            color: var(--text-light);
+            background: #e0e0e0;
+            color: #666;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -61,23 +62,18 @@
         }
 
         .paso.activo .paso-numero {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .paso.completado .paso-numero {
-            background: var(--secondary-color);
+            background: #0066ff;
             color: white;
         }
 
         .paso-texto {
             font-size: 0.85rem;
-            color: var(--text-light);
+            color: #777;
             text-align: center;
         }
 
         .paso.activo .paso-texto {
-            color: var(--accent-color);
+            color: #0066ff;
             font-weight: 600;
         }
 
@@ -85,11 +81,11 @@
             background: white;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
         .titulo-hotel {
-            color: var(--accent-color);
+            color: #0066ff;
             font-size: 1.8rem;
             margin-bottom: 30px;
             text-align: center;
@@ -103,22 +99,55 @@
             display: block;
             margin-bottom: 10px;
             font-weight: 600;
-            color: var(--accent-color);
+            color: #333;
         }
 
-        .form-group-paso input,
-        .form-group-paso select {
+        .form-group-paso select,
+        .form-group-paso input {
             width: 100%;
             padding: 12px;
-            border: 2px solid var(--border-color);
+            border: 2px solid #ccc;
             border-radius: 8px;
             font-size: 1rem;
+            background: #fff;
+            color: #333;
+            transition: border-color 0.3s;
         }
 
-        .form-group-paso input:focus,
-        .form-group-paso select:focus {
+        .form-group-paso select:focus,
+        .form-group-paso input:focus {
             outline: none;
-            border-color: var(--primary-color);
+            border-color: #0066ff;
+        }
+
+        .grupo-selects {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .grupo-selects .form-group-paso {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .detalle-habitacion {
+            background: #f7f8fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .detalle-habitacion h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .detalle-habitacion p {
+            margin: 4px 0;
+            color: #555;
         }
 
         .botones-navegacion {
@@ -139,52 +168,39 @@
         }
 
         .btn-cancelar {
-            background: var(--text-light);
+            background: #aaa;
             color: white;
         }
 
         .btn-cancelar:hover {
-            background: var(--text-dark);
+            background: #888;
         }
 
         .btn-continuar {
-            background: var(--secondary-color);
+            background: #00b894;
             color: white;
         }
 
         .btn-continuar:hover {
-            background: var(--secondary-hover);
+            background: #00a180;
             transform: translateY(-2px);
         }
 
         @@media (max-width: 768px) {
-            .paso-container {
-                margin-top: 80px;
-            }
-
             .card-paso {
                 padding: 25px;
             }
-
-            .progreso-pasos {
-                overflow-x: auto;
-            }
-
-            .paso-texto {
-                font-size: 0.75rem;
+            .grupo-selects {
+                flex-direction: column;
             }
         }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar">
             <div class="logo">StayGo</div>
-            <button class="menu-toggle" aria-label="Abrir menú">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
             <div class="nav-derecha">
                 <ul class="nav-links">
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
@@ -226,41 +242,69 @@
         <div class="card-paso">
             <h1 class="titulo-hotel">@hotelNombre</h1>
 
-            <form asp-action="GuardarPaso1" method="post">
-                <div class="form-group-paso">
-                    <label for="numeroHuespedes">
-                        👥 Número de Huéspedes *
-                    </label>
-                    <select name="numeroHuespedes" id="numeroHuespedes" required>
-                        <option value="">Seleccionar número de huéspedes</option>
-                        @for (int i = 1; i <= (habitacion?.Capacidad ?? 10); i++)
-                        {
-                            <option value="@i">@i huésped@(i > 1 ? "es" : "")</option>
-                        }
-                    </select>
-                    <small style="color: var(--text-light); margin-top: 5px; display: block;">
-                        Capacidad máxima: @(habitacion?.Capacidad ?? 0) persona@(habitacion?.Capacidad > 1 ? "s" : "")
-                    </small>
-                </div>
+         <form asp-action="GuardarPaso1" method="post">
+    <input type="hidden" name="habitacionId" value="@habitacion?.HabitacionId" />
 
-                <div style="background: var(--background-section); padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h4 style="color: var(--accent-color); margin-bottom: 10px;">📋 Habitación Seleccionada</h4>
-                    <p><strong>Número:</strong> @habitacion?.NumeroHabitacion</p>
-                    <p><strong>Tipo:</strong> <span style="text-transform: capitalize;">@habitacion?.Tipo</span></p>
-                    <p><strong>Precio por noche:</strong> <span style="color: var(--primary-color); font-weight: bold;">S/ @habitacion?.PrecioNoche.ToString("N2")</span></p>
-                </div>
+    <div class="grupo-selects">
+        <div class="form-group-paso">
+            <label for="adultos">👨‍🦱 Adultos *</label>
+            <select id="adultos" name="adultos" required>
+                @for (int i = 1; i <= (habitacion?.CapacidadAdultos ?? 5); i++)
+                {
+                    <option value="@i">@i adulto@(i > 1 ? "s" : "")</option>
+                }
+            </select>
+        </div>
 
-                <div class="botones-navegacion">
-                    <a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@habitacion?.HotelId" class="btn-paso btn-cancelar" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
-                        ← Cancelar
-                    </a>
-                    <button type="submit" class="btn-paso btn-continuar">
-                        Continuar →
-                    </button>
-                </div>
-            </form>
+        <div class="form-group-paso">
+            <label for="ninos">👶 Niños</label>
+            <select id="ninos" name="ninos">
+                <option value="0" selected>Sin niños</option>
+                @for (int i = 1; i <= (habitacion?.CapacidadNinos ?? 5); i++)
+                {
+                    <option value="@i">@i niño@(i > 1 ? "s" : "")</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group-paso">
+            <label for="cantidadHabitaciones">🏠 Habitaciones *</label>
+            <select id="cantidadHabitaciones" name="cantidadHabitaciones" required>
+                @for (int i = 1; i <= (habitacion?.HabitacionesDisponibles ?? 3); i++)
+                {
+                    <option value="@i">@i habitación@(i > 1 ? "es" : "")</option>
+                }
+            </select>
         </div>
     </div>
+
+    <div class="botones-navegacion">
+        <a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@habitacion?.HotelId"
+           class="btn-paso btn-cancelar" style="text-decoration:none; text-align:center;">
+            ← Cancelar
+        </a>
+        <button type="submit" class="btn-paso btn-continuar">Continuar →</button>
+    </div>
+</form>
+
+<div class="detalle-habitacion">
+    <h4>📋 Habitación Seleccionada</h4>
+    <p><strong>Número:</strong> @habitacion?.NumeroHabitacion</p>
+    <p><strong>Tipo:</strong> <span style="text-transform: capitalize;">@habitacion?.Tipo</span></p>
+    <p><strong>Precio por noche:</strong>
+        <span style="color: var(--primary-color); font-weight: bold;">
+            S/ @habitacion?.PrecioNoche.ToString("N2")
+        </span>
+    </p>
+</div>
+
+<small style="color: var(--text-light); margin-top: 10px; display: block;">
+    Capacidad total: @(habitacion?.Capacidad ?? 0) persona@(habitacion?.Capacidad > 1 ? "s" : "")
+</small>
+        </div>
+    </div>
+
+
 
     <script src="~/client/js/responsive-navbar.js"></script>
 </body>

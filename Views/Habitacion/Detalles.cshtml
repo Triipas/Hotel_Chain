@@ -7,62 +7,85 @@
 }
 
 <link rel="stylesheet" href="~/client/css/main.css">
-
 <header>
-    <nav class="navbar">
-        <div class="logo">Costa Dorada</div>
-        <div class="nav-derecha">
-            <ul class="nav-links">
-                <li><a asp-controller="Hotel" asp-action="Index">Home</a></li>
-                <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                <li><a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@Model.HotelId">Habitaciones</a></li>
-                <li><a href="#">Sobre Nosotros</a></li>
-                <li><a href="#">Contáctanos</a></li>
-            </ul>
+        <nav class="navbar">
+            <div class="logo">Costa Dorada</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+                else
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+<main class="detalle-habitacion-container">
+    <div class="detalle-habitacion">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="columna-izquierda">
+            <div class="imagen-principal">
+                @if (Model.Imagenes != null && Model.Imagenes.Any())
+                {
+                    <img src="~/client/imagenes/@Model.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                         alt="@Model.Nombre" class="img-habitacion" />
+                }
+                else
+                {
+                    <p>No hay imágenes disponibles.</p>
+                }
+            </div>
+
+            <h2>@Model.Nombre</h2>
+            <p class="descripcion">@Model.Descripcion</p>
+
+            <div class="detalles-habitacion">
+                <p><strong>Capacidad:</strong> @Model.Capacidad personas</p>
+                <p><strong>Tipo de Cama:</strong> @Model.TipoCama</p>
+                <p><strong>Tamaño:</strong> @(Model.TamanoM2 ?? 0) m²</p>
+                <p><strong>Disponibilidad:</strong> @(Model.Disponible ? "Disponible" : "Ocupada")</p>
+            </div>
+
+            <div class="politicas">
+                <h3>Políticas del Alojamiento</h3>
+                <p>• Check-in a partir de las 2:00 PM<br />
+                   • Check-out hasta las 12:00 PM<br />
+                   • No se permiten mascotas<br />
+                   • Cancelaciones hasta 24 horas antes sin costo</p>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA -->
+        <div class="columna-derecha">
+            <h3>Detalles de Precio</h3>
+            <div class="precio-box">
+                <p><strong>Precio por noche:</strong> S/ @Model.PrecioNoche</p>
+                <p><strong>Precio base:</strong> S/ @(Model.PrecioBase ?? 0)</p>
+                <p><strong>Impuestos:</strong> S/ @(Model.PrecioImpuestos ?? 0)</p>
+                <p><strong>Total estimado:</strong> S/ @(Model.PrecioTotal ?? (Model.PrecioBase ?? 0) + (Model.PrecioImpuestos ?? 0))</p>
+            </div>
 
             @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
             {
-                <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-            }
-            else
-            {
-                <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
-            }
-        </div>
-    </nav>
-</header>
-
-<main class="container">
-    <h2>Habitación @Model.NumeroHabitacion</h2>
-
-    <div class="habitacion-detalle">
-        <div class="imagenes-habitacion">
-            @if(Model.Imagenes != null && Model.Imagenes.Any())
-            {
-                foreach(var img in Model.Imagenes)
-                {
-                    <img src="~/client/imagenes/@img.NombreArchivo" alt="@Model.NumeroHabitacion" class="habitacion-img" />
-                }
-            }
-            else
-            {
-                <p>No hay imágenes disponibles.</p>
-            }
-        </div>
-
-        <div class="info-habitacion">
-            <p><strong>Tipo:</strong> @Model.Tipo</p>
-            <p><strong>Capacidad:</strong> @Model.Capacidad personas</p>
-            <p><strong>Precio por noche:</strong> S/ @Model.PrecioNoche</p>
-            <p><strong>Descripción:</strong> @Model.Descripcion</p>
-
-            @if(HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-            {
                 <form asp-controller="Reservas" asp-action="IniciarReserva" method="post">
                     <input type="hidden" name="habitacionId" value="@Model.HabitacionId" />
-                    <input type="hidden" name="usuarioId" value="@HttpContextAccessor.HttpContext.Session.GetString("UsuarioId")" />
-                    <button type="submit" class="btn-reservar">Reservar</button>
+                    <button type="submit" class="btn-reservar">🛏️ Reservar</button>
                 </form>
             }
             else
@@ -71,8 +94,157 @@
                     Inicia sesión para reservar
                 </a>
             }
+
+            <a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@Model.HotelId" class="btn-otras">
+                🔙 Ver otras habitaciones
+            </a>
         </div>
     </div>
 
-    <a asp-controller="Habitacion" asp-action="Index" asp-route-hotelId="@Model.HotelId" class="btn-volver">← Volver a Habitaciones</a>
+    <hr />
+
+    <!-- SECCIÓN RESERVAS -->
+    <section class="reservas">
+        <h3>Reservas de esta habitación</h3>
+
+        @if (Model.Reservas != null && Model.Reservas.Any())
+        {
+            <table class="tabla-reservas">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha Inicio</th>
+                        <th>Fecha Fin</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reserva in Model.Reservas)
+                    {
+                        <tr>
+                            <td>@reserva.ReservaId</td>
+                            <td>@reserva.FechaInicio.ToShortDateString()</td>
+                            <td>@reserva.FechaFin.ToShortDateString()</td>
+                            <td>Pendiente</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay reservas registradas.</p>
+        }
+    </section>
+    <!-- CARD DE AMENIDADES -->
+<div class="card-amenidades">
+    <h3>🧴 Amenidades incluidas</h3>
+
+    @if (ViewBag.Amenidades != null && ((IEnumerable<dynamic>)ViewBag.Amenidades).Any())
+    {
+        <ul class="lista-amenidades">
+            @foreach (var item in (IEnumerable<dynamic>)ViewBag.Amenidades)
+            {
+                <li>✅ @item.Amenidad</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No se han registrado amenidades para esta habitación.</p>
+    }
+</div>
 </main>
+
+<style>
+.card-amenidades {
+    margin-top: 25px;
+    padding: 15px 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card-amenidades h3 {
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    color: #222;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+}
+
+.lista-amenidades {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lista-amenidades li {
+    background: #f8f8f8;
+    margin: 5px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+.detalle-habitacion-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+}
+.detalle-habitacion {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+}
+.img-habitacion {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.descripcion {
+    font-size: 1rem;
+    color: #555;
+    margin: 15px 0;
+}
+.detalles-habitacion p {
+    margin: 4px 0;
+}
+.politicas {
+    margin-top: 20px;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+}
+.columna-derecha {
+    background: #fff8f5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.precio-box p {
+    margin: 6px 0;
+}
+.btn-reservar, .btn-otras {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px;
+    background: #222;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+}
+.btn-otras {
+    background: #555;
+}
+.tabla-reservas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.tabla-reservas th, .tabla-reservas td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+</style>

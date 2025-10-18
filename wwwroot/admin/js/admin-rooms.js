@@ -91,6 +91,9 @@ window.HabitacionesModule = {
                                             </span>
                                         </td>
                                         <td>
+                                         <button class="btn btn-info" onclick="window.HabitacionAmenidadesModule.verAmenidades(${hab.habitacionId || hab.HabitacionId})">
+    <i class="fas fa-concierge-bell"></i> Amenidades
+</button>
                                             <button class="btn btn-edit" onclick="window.HabitacionesModule.edit(${hab.habitacionId || hab.HabitacionId})">
                                                 <i class="fas fa-edit"></i> Editar
                                             </button>
@@ -131,6 +134,7 @@ window.HabitacionesModule = {
         
         document.getElementById('habitacionModal').classList.add('show');
         await this.loadHotelesDropdown();
+        this.setupCapacidadAuto();
     },
 
     closeModal() {
@@ -139,6 +143,24 @@ window.HabitacionesModule = {
         this.currentEditingId = null;
         this.isEditMode = false;
     },
+    
+    setupCapacidadAuto() {
+    const adultosInput = document.getElementById('capacidadAdultos');
+    const ninosInput = document.getElementById('capacidadNinos');
+    const capacidadTotalInput = document.getElementById('capacidad');
+
+    function actualizarCapacidadTotal() {
+        const adultos = parseInt(adultosInput.value) || 0;
+        const ninos = parseInt(ninosInput.value) || 0;
+        capacidadTotalInput.value = adultos + ninos;
+    }
+
+    adultosInput.addEventListener('input', actualizarCapacidadTotal);
+    ninosInput.addEventListener('input', actualizarCapacidadTotal);
+
+    // Actualizar inicialmente si ya hay valores
+    actualizarCapacidadTotal();
+},
 
     async loadHotelesDropdown() {
         try {
@@ -192,7 +214,7 @@ window.HabitacionesModule = {
             this.currentEditingId = habitacionId;
             document.getElementById('habitacionModalTitle').textContent = 'Editar Habitación';
             document.getElementById('saveHabitacionText').textContent = 'Actualizar Habitación';
-            
+            document.getElementById('nombreHabitacion').value = habitacion.nombre || habitacion.Nombre || '';
             document.getElementById('habitacionId').value = habitacion.habitacionId || habitacion.HabitacionId;
             document.getElementById('habitacionHotelId').value = habitacion.hotelId || habitacion.HotelId;
             document.getElementById('numeroHabitacion').value = habitacion.numeroHabitacion || habitacion.NumeroHabitacion;
@@ -201,11 +223,22 @@ window.HabitacionesModule = {
             document.getElementById('precioNoche').value = habitacion.precioNoche || habitacion.PrecioNoche;
             document.getElementById('descripcionHab').value = habitacion.descripcion || habitacion.Descripcion || '';
             document.getElementById('disponible').checked = habitacion.disponible !== false && habitacion.Disponible !== false;
+            document.getElementById('capacidadAdultos').value = habitacion.capacidadAdultos || habitacion.CapacidadAdultos || '';
+document.getElementById('capacidadNinos').value = habitacion.capacidadNinos || habitacion.CapacidadNinos || '';
+document.getElementById('cantidadCamas').value = habitacion.cantidadCamas || habitacion.CantidadCamas || '';
+document.getElementById('tipoCama').value = habitacion.tipoCama || habitacion.TipoCama || '';
+document.getElementById('tamanoM2').value = habitacion.tamanoM2 || habitacion.TamanoM2 || '';
+document.getElementById('precioBase').value = habitacion.precioBase || habitacion.PrecioBase || '';
+document.getElementById('precioImpuestos').value = habitacion.precioImpuestos || habitacion.PrecioImpuestos || '';
+document.getElementById('precioTotal').value = habitacion.precioTotal || habitacion.PrecioTotal || '';
+document.getElementById('habitacionesDisponibles').value = habitacion.habitacionesDisponibles || habitacion.HabitacionesDisponibles || 0;
+            
             
             document.getElementById('habitacionModal').classList.add('show');
         } catch (error) {
             showAlert('Error al cargar los datos de la habitación: ' + error.message, 'error');
         }
+        this.setupCapacidadAuto();
     },
 
     async save() {
@@ -226,11 +259,21 @@ window.HabitacionesModule = {
             const habitacionData = {
                 hotelId: parseInt(formData.get('hotelId')),
                 numeroHabitacion: formData.get('numeroHabitacion'),
+                 nombre: formData.get('nombre') || null,
                 tipo: formData.get('tipo'),
                 capacidad: parseInt(formData.get('capacidad')),
                 precioNoche: parseFloat(formData.get('precioNoche')),
                 descripcion: formData.get('descripcionHab') || null,
-                disponible: document.getElementById('disponible').checked
+                disponible: document.getElementById('disponible').checked,
+                capacidadAdultos: formData.get('capacidadAdultos') ? parseInt(formData.get('capacidadAdultos')) : null,
+    capacidadNinos: formData.get('capacidadNinos') ? parseInt(formData.get('capacidadNinos')) : null,
+    cantidadCamas: formData.get('cantidadCamas') ? parseInt(formData.get('cantidadCamas')) : null,
+    tipoCama: formData.get('tipoCama') || null,
+    tamanoM2: formData.get('tamanoM2') ? parseInt(formData.get('tamanoM2')) : null,
+    precioBase: formData.get('precioBase') ? parseFloat(formData.get('precioBase')) : null,
+    precioImpuestos: formData.get('precioImpuestos') ? parseFloat(formData.get('precioImpuestos')) : null,
+    precioTotal: formData.get('precioTotal') ? parseFloat(formData.get('precioTotal')) : null,
+    habitacionesDisponibles: formData.get('habitacionesDisponibles') ? parseInt(formData.get('habitacionesDisponibles')) : 0
             };
 
             let response;
@@ -287,4 +330,6 @@ window.HabitacionesModule = {
             showAlert('Error al eliminar la habitación: ' + error.message, 'error');
         }
     }
+
+    
 };

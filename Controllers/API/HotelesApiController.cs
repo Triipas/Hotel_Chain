@@ -19,58 +19,104 @@ namespace Hotel_chain.Controllers.Api
         }
 
         // GET: api/hoteles
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<Hotel>>>> GetHoteles(
-            [FromQuery] string? ubicacion, 
-            [FromQuery] string? nombre)
+       [HttpGet]
+public async Task<ActionResult<ApiResponse<IEnumerable<HotelResponseDto>>>> GetHoteles(
+    [FromQuery] string? ubicacion, 
+    [FromQuery] string? nombre)
+{
+    try
+    {
+        IEnumerable<Hotel> hoteles;
+        
+        if (!string.IsNullOrEmpty(ubicacion) || !string.IsNullOrEmpty(nombre))
         {
-            try
-            {
-                IEnumerable<Hotel> hoteles;
-                
-                if (!string.IsNullOrEmpty(ubicacion) || !string.IsNullOrEmpty(nombre))
-                {
-                    hoteles = await _hotelService.SearchAsync(ubicacion, nombre);
-                }
-                else
-                {
-                    hoteles = await _hotelService.GetAllAsync();
-                }
-
-                return Ok(ApiResponse<IEnumerable<Hotel>>.SuccessResult(hoteles, "Hoteles obtenidos exitosamente"));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ApiResponse<IEnumerable<Hotel>>.ErrorResult(
-                    "Error interno del servidor", 
-                    new List<string> { ex.Message }
-                ));
-            }
+            hoteles = await _hotelService.SearchAsync(ubicacion, nombre);
         }
+        else
+        {
+            hoteles = await _hotelService.GetAllAsync();
+        }
+
+        // Mapear a DTO
+        var hotelesDto = hoteles.Select(h => new HotelResponseDto
+        {
+            HotelId = h.HotelId,
+            Nombre = h.Nombre,
+            Direccion = h.Direccion,
+            Ciudad = h.Ciudad,
+            Pais = h.Pais,
+            Estado = h.Estado,
+            Latitud = h.Latitud,
+            Longitud = h.Longitud,
+            Descripcion = h.Descripcion,
+            TelefonoContacto = h.TelefonoContacto,
+            MascotasPermitidas = h.MascotasPermitidas,
+            FumarPermitido = h.FumarPermitido,
+            Moneda = h.Moneda,
+            CheckInTime = h.CheckInTime,
+            CheckOutTime = h.CheckOutTime,
+            ContactoEmail = h.ContactoEmail,
+            Calificacion = h.Calificacion,
+            TotalHabitaciones = h.Habitaciones.Count,
+            Imagenes = h.Imagenes.Select(i => i.NombreArchivo).ToList()
+        }).ToList();
+
+        return Ok(ApiResponse<IEnumerable<HotelResponseDto>>.SuccessResult(hotelesDto, "Hoteles obtenidos exitosamente"));
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ApiResponse<IEnumerable<HotelResponseDto>>.ErrorResult(
+            "Error interno del servidor", 
+            new List<string> { ex.Message }
+        ));
+    }
+}
 
         // GET: api/hoteles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Hotel>>> GetHotel(int id)
+public async Task<ActionResult<ApiResponse<HotelResponseDto>>> GetHotel(int id)
+{
+    try
+    {
+        var hotel = await _hotelService.GetByIdAsync(id);
+
+        if (hotel == null)
+            return NotFound(ApiResponse<HotelResponseDto>.ErrorResult($"Hotel con ID {id} no encontrado"));
+
+        var hotelDto = new HotelResponseDto
         {
-            try
-            {
-                var hotel = await _hotelService.GetByIdAsync(id);
+            HotelId = hotel.HotelId,
+            Nombre = hotel.Nombre,
+            Direccion = hotel.Direccion,
+            Ciudad = hotel.Ciudad,
+            Pais = hotel.Pais,
+            Estado = hotel.Estado,
+            Latitud = hotel.Latitud,
+            Longitud = hotel.Longitud,
+            Descripcion = hotel.Descripcion,
+            TelefonoContacto = hotel.TelefonoContacto,
+            MascotasPermitidas = hotel.MascotasPermitidas,
+            FumarPermitido = hotel.FumarPermitido,
+            Moneda = hotel.Moneda,
+            CheckInTime = hotel.CheckInTime,
+            CheckOutTime = hotel.CheckOutTime,
+            ContactoEmail = hotel.ContactoEmail,
+            Calificacion = hotel.Calificacion,
+            TotalHabitaciones = hotel.Habitaciones.Count,
+            PoliticaCancelacion = hotel.PoliticaCancelacion,
+            Imagenes = hotel.Imagenes.Select(i => i.NombreArchivo).ToList()
+        };
 
-                if (hotel == null)
-                {
-                    return NotFound(ApiResponse<Hotel>.ErrorResult($"Hotel con ID {id} no encontrado"));
-                }
-
-                return Ok(ApiResponse<Hotel>.SuccessResult(hotel, "Hotel obtenido exitosamente"));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ApiResponse<Hotel>.ErrorResult(
-                    "Error interno del servidor", 
-                    new List<string> { ex.Message }
-                ));
-            }
-        }
+        return Ok(ApiResponse<HotelResponseDto>.SuccessResult(hotelDto, "Hotel obtenido exitosamente"));
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ApiResponse<HotelResponseDto>.ErrorResult(
+            "Error interno del servidor", 
+            new List<string> { ex.Message }
+        ));
+    }
+}
 
         // POST: api/hoteles
         [HttpPost]
@@ -94,7 +140,14 @@ namespace Hotel_chain.Controllers.Api
                     Direccion = hotelDto.Direccion,
                     Ciudad = hotelDto.Ciudad,
                     Descripcion = hotelDto.Descripcion,
-                    TelefonoContacto = hotelDto.TelefonoContacto
+                    TelefonoContacto = hotelDto.TelefonoContacto,
+                    Pais = hotelDto.Pais,
+    Estado = hotelDto.Estado,
+    Latitud = hotelDto.Latitud,
+    Longitud = hotelDto.Longitud,
+    MascotasPermitidas = hotelDto.MascotasPermitidas,
+    FumarPermitido = hotelDto.FumarPermitido,
+    PoliticaCancelacion = hotelDto.PoliticaCancelacion
                 };
 
                 var createdHotel = await _hotelService.CreateAsync(hotel);
@@ -132,7 +185,14 @@ namespace Hotel_chain.Controllers.Api
                     Direccion = hotelDto.Direccion,
                     Ciudad = hotelDto.Ciudad,
                     Descripcion = hotelDto.Descripcion,
-                    TelefonoContacto = hotelDto.TelefonoContacto
+                    TelefonoContacto = hotelDto.TelefonoContacto,
+Pais = hotelDto.Pais,
+    Estado = hotelDto.Estado,
+    Latitud = hotelDto.Latitud,
+    Longitud = hotelDto.Longitud,
+    MascotasPermitidas = hotelDto.MascotasPermitidas,
+    FumarPermitido = hotelDto.FumarPermitido,
+    PoliticaCancelacion = hotelDto.PoliticaCancelacion
                 };
 
                 var updatedHotel = await _hotelService.UpdateAsync(id, hotel);

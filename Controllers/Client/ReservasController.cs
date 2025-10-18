@@ -12,17 +12,28 @@ namespace Hotel_chain.Controllers.Client
         private readonly IReservaService _reservaService;
         private readonly IHotelService _hotelService;
         private readonly IHabitacionService _habitacionService;
+
         private readonly ILogger<ReservasController> _logger;
+
+        private readonly IHabitacionAmenidadService _habitacionAmenidadService;
+        private readonly IUsuarioService _usuarioService;
+        private readonly IResenaService _resenaService;
 
         public ReservasController(
             IReservaService reservaService,
             IHotelService hotelService,
             IHabitacionService habitacionService,
+            IHabitacionAmenidadService habitacionAmenidadService,
+            IUsuarioService usuarioService,
+            IResenaService resenaService,
             ILogger<ReservasController> logger)
         {
             _reservaService = reservaService;
             _hotelService = hotelService;
             _habitacionService = habitacionService;
+            _habitacionAmenidadService = habitacionAmenidadService;
+            _usuarioService = usuarioService;
+            _resenaService = resenaService;
             _logger = logger;
         }
 
@@ -48,33 +59,39 @@ namespace Hotel_chain.Controllers.Client
             return View("Paso1");
         }
 
-        // POST PASO 1: Guardar número de huéspedes
+        // POST PASO 1: Guardar número de huéspedes Range(1, 10
         [HttpPost]
-        public IActionResult GuardarPaso1(int numeroHuespedes)
+        public async Task<IActionResult> GuardarPaso1(int habitacionId, int adultos, int ninos, int cantidadHabitaciones)
         {
-            if (numeroHuespedes < 1 || numeroHuespedes > 10)
+            Console.WriteLine($"Adultos: {adultos}, Niños: {ninos}, Cant: {cantidadHabitaciones}");
+
+            int totalHuespedes = adultos + ninos;
+
+            if (totalHuespedes < 1 || totalHuespedes > 10)
             {
-                TempData["Error"] = "El número de huéspedes debe estar entre 1 y 10";
-                return RedirectToAction("IniciarReserva", new { habitacionId = TempData["HabitacionId"] });
+                TempData["Error"] = "⚠️ El número de huéspedes debe estar entre 1 y 10";
+                return RedirectToAction("Paso1", new { habitacionId });
             }
 
-            TempData["NumeroHuespedes"] = numeroHuespedes;
+            // 🔹 Guardar correctamente todos los datos
+            TempData["HabitacionId"] = habitacionId;
+            TempData["Adultos"] = adultos;
+            TempData["Ninos"] = ninos;
+            TempData["CantidadHabitaciones"] = cantidadHabitaciones;
+            TempData["NumeroHuespedes"] = totalHuespedes;
             TempData.Keep();
-            
+
             return RedirectToAction("Paso2");
         }
-
         // PASO 2: Seleccionar Fechas
         public async Task<IActionResult> Paso2()
         {
             if (TempData["HabitacionId"] == null)
-            {
                 return RedirectToAction("Index", "Home");
-            }
 
-            var habitacionId = (int)TempData["HabitacionId"];
+            int habitacionId = (int)TempData["HabitacionId"];
             var habitacion = await _habitacionService.GetByIdAsync(habitacionId);
-            
+
             ViewBag.Habitacion = habitacion;
             ViewBag.NumeroHuespedes = TempData["NumeroHuespedes"];
             TempData.Keep();
@@ -113,6 +130,10 @@ namespace Hotel_chain.Controllers.Client
 
             TempData["FechaInicio"] = fechaInicio.ToString("yyyy-MM-dd");
             TempData["FechaFin"] = fechaFin.ToString("yyyy-MM-dd");
+            if (TempData["NumeroHuespedes"] != null)
+            {
+                TempData["NumeroHuespedes"] = TempData["NumeroHuespedes"];
+            }
             TempData.Keep();
 
             return RedirectToAction("Paso3");
@@ -122,9 +143,7 @@ namespace Hotel_chain.Controllers.Client
         public async Task<IActionResult> Paso3()
         {
             if (TempData["HabitacionId"] == null || TempData["FechaInicio"] == null)
-            {
                 return RedirectToAction("Index", "Home");
-            }
 
             var habitacionId = (int)TempData["HabitacionId"];
             var fechaInicio = DateTime.Parse(TempData["FechaInicio"].ToString());
@@ -134,12 +153,16 @@ namespace Hotel_chain.Controllers.Client
             var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacionId, fechaInicio, fechaFin);
             var numeroNoches = (fechaFin - fechaInicio).Days;
 
+            // 🔹 Obtener amenidades
+            var amenidades = await _habitacionAmenidadService.GetByHabitacionIdAsync(habitacionId);
+
             ViewBag.Habitacion = habitacion;
             ViewBag.FechaInicio = fechaInicio;
             ViewBag.FechaFin = fechaFin;
             ViewBag.NumeroNoches = numeroNoches;
             ViewBag.PrecioTotal = precioTotal;
             ViewBag.NumeroHuespedes = TempData["NumeroHuespedes"];
+            ViewBag.Amenidades = amenidades; // <-- agregar a ViewBag
             TempData.Keep();
 
             return View();
@@ -151,7 +174,7 @@ namespace Hotel_chain.Controllers.Client
         {
             TempData["SolicitudesEspeciales"] = solicitudesEspeciales;
             TempData.Keep();
-            
+
             return RedirectToAction("Paso4");
         }
 
@@ -175,6 +198,14 @@ namespace Hotel_chain.Controllers.Client
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
             var isLoggedIn = !string.IsNullOrEmpty(usuarioIdStr);
 
+            // Obtener datos del usuario si está logueado
+            Usuario usuario = null;
+            if (isLoggedIn)
+            {
+                usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
+            }
+
+            // Pasar datos a la vista
             ViewBag.Habitacion = habitacion;
             ViewBag.FechaInicio = fechaInicio;
             ViewBag.FechaFin = fechaFin;
@@ -183,14 +214,16 @@ namespace Hotel_chain.Controllers.Client
             ViewBag.NumeroHuespedes = TempData["NumeroHuespedes"];
             ViewBag.SolicitudesEspeciales = TempData["SolicitudesEspeciales"];
             ViewBag.IsLoggedIn = isLoggedIn;
-            TempData.Keep();
+            ViewBag.Usuario = usuario; // Aquí guardamos el usuario completo
+
+            TempData.Keep(); // Mantener TempData para futuros pasos
 
             return View();
         }
 
         // POST PASO 4: Confirmar Reserva (solo si está logueado)
         [HttpPost]
-        public async Task<IActionResult> ConfirmarReserva()
+        public async Task<IActionResult> ConfirmarReserva(string PaymentMethod)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
             if (string.IsNullOrEmpty(usuarioIdStr))
@@ -201,21 +234,42 @@ namespace Hotel_chain.Controllers.Client
 
             try
             {
+                // Obtener usuario y habitación para llenar los datos extra
+                var usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
+                var habitacion = await _habitacionService.GetByIdAsync((int)TempData["HabitacionId"]);
+
+                var fechaInicio = DateTime.Parse(TempData["FechaInicio"].ToString());
+                var fechaFin = DateTime.Parse(TempData["FechaFin"].ToString());
+                var numeroNoches = (fechaFin - fechaInicio).Days;
+                var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacion.HabitacionId, fechaInicio, fechaFin);
+
                 var reservaDto = new ReservaCreateDto
                 {
-                    UsuarioId = int.Parse(usuarioIdStr),
-                    HabitacionId = (int)TempData["HabitacionId"],
-                    FechaInicio = DateTime.Parse(TempData["FechaInicio"].ToString()),
-                    FechaFin = DateTime.Parse(TempData["FechaFin"].ToString()),
+                    UsuarioId = usuario.UsuarioId,
+                    HabitacionId = habitacion.HabitacionId,
+                    HotelId = habitacion.HotelId,
+                    FechaInicio = fechaInicio,
+                    FechaFin = fechaFin,
+                    NumeroNoches = numeroNoches,
                     NumeroHuespedes = (int)TempData["NumeroHuespedes"],
+                    GuestsAdults = (int)TempData["Adultos"],
+                    GuestsChildren = (int)TempData["Ninos"],
+                    GuestFirstName = usuario.Nombre,
+                    GuestLastName = usuario.Apellido,
+                    GuestEmail = usuario.Email,
+                    GuestPhone = usuario.Telefono,
+                    RoomRate = habitacion.PrecioNoche,
+                    Subtotal = habitacion.PrecioBase,
+                    Taxes = habitacion.PrecioImpuestos,
+                    Currency = habitacion.Moneda,
+                    PrecioTotal = precioTotal,
+                    PaymentMethod = PaymentMethod,
                     SolicitudesEspeciales = TempData["SolicitudesEspeciales"]?.ToString()
                 };
 
                 var reserva = await _reservaService.CreateAsync(reservaDto);
-                
-                // Limpiar TempData
+
                 TempData.Clear();
-                
                 TempData["Success"] = $"¡Reserva creada exitosamente! Número de reserva: {reserva.NumeroReserva}";
                 return RedirectToAction("MisReservas");
             }
@@ -227,7 +281,6 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Paso4");
             }
         }
-
         // ========== MÉTODOS EXISTENTES ==========
 
         // GET: /Reservas/BuscarDisponibilidad
@@ -258,7 +311,7 @@ namespace Hotel_chain.Controllers.Client
                 );
 
                 var hotel = await _hotelService.GetByIdAsync(searchDto.HotelId);
-                
+
                 ViewBag.Hotel = hotel;
                 ViewBag.FechaInicio = searchDto.FechaInicio;
                 ViewBag.FechaFin = searchDto.FechaFin;
@@ -315,9 +368,14 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("MisReservas");
             }
 
+            // 🔹 Traer las amenidades de la habitación
+            var amenidades = await _habitacionAmenidadService.GetByHabitacionIdAsync(reserva.HabitacionId);
+
+            // Asegurarse de que no sea null para evitar errores en la vista
+            ViewBag.Amenidades = amenidades?.ToList() ?? new List<HabitacionAmenidad>();
+
             return View(reserva);
         }
-
         // POST: /Reservas/Cancelar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -357,5 +415,60 @@ namespace Hotel_chain.Controllers.Client
 
             return RedirectToAction("MisReservas");
         }
+
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> CalificarEstancia([FromBody] CalificarRequest request)
+{
+    var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+    if (string.IsNullOrEmpty(usuarioIdStr)) return Unauthorized();
+
+    int usuarioId = int.Parse(usuarioIdStr);
+
+    // 1️⃣ Verificar que la reserva existe y está completada
+    var reserva = await _reservaService.GetByIdAsync(request.ReservaId);
+    if (reserva == null) return NotFound("Reserva no encontrada");
+    if (reserva.Estado.ToLower() != "completada") 
+        return BadRequest("Solo se puede calificar reservas completadas");
+
+    // 2️⃣ Verificar que el usuario no haya calificado esta reserva
+    var existeResena = await _resenaService.ExisteResenaAsync(request.ReservaId, usuarioId);
+    if (existeResena)
+        return BadRequest("Ya has calificado esta reserva");
+
+    // 3️⃣ Crear reseña
+    await _resenaService.CreateAsync(new Reseña
+    {
+        ReservaId = request.ReservaId,
+        HotelId = request.HotelId,
+        UsuarioId = usuarioId,
+        Calificacion = request.Calificacion,
+        Comentario = request.Comentario,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    });
+
+    // 4️⃣ Actualizar promedio del hotel
+    var hotel = await _hotelService.GetByIdAsync(request.HotelId);
+    if (hotel != null)
+    {
+        hotel.Calificacion = await _resenaService.GetPromedioCalificacionAsync(request.HotelId);
+        await _hotelService.UpdateAsync(hotel.HotelId, hotel);
+    }
+
+    return Ok();
+}
+
+// DTO para recibir JSON
+public class CalificarRequest
+{
+    public int ReservaId { get; set; }
+    public int HotelId { get; set; }
+    public decimal Calificacion { get; set; }
+    public string Comentario { get; set; } = null!;
+}
+
+
     }
 }

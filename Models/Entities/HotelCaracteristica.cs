@@ -11,7 +11,7 @@ namespace Hotel_chain.Models.Entities
         // FK hacia el hotel
         public int HotelId { get; set; }
         [ForeignKey("HotelId")]
-        public virtual Hotel Hotel { get; set; } = null!;
+        public virtual Hotel? Hotel { get; set; }
 
         [Required, MaxLength(200)]
         public string Caracteristica { get; set; } = null!;

@@ -70,5 +70,6 @@ namespace Hotel_chain.Models.Entities
         public virtual Huesped? Huesped { get; set; }
         public virtual Staff? Staff { get; set; }
         public virtual ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
+         public virtual ICollection<PermisoUsuario> PermisosUsuarios { get; set; } = new List<PermisoUsuario>();
     }
 }

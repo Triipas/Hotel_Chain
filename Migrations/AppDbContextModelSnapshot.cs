@@ -471,8 +471,8 @@ namespace Hotel_chain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("Calificacion")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Calificacion")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Comentario")
                         .IsRequired()
@@ -504,7 +504,7 @@ namespace Hotel_chain.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Reseñas");
+                    b.ToTable("Resena");
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.Staff", b =>
@@ -725,7 +725,7 @@ namespace Hotel_chain.Migrations
             modelBuilder.Entity("Hotel_chain.Models.Entities.PermisoUsuario", b =>
                 {
                     b.HasOne("Hotel_chain.Models.Entities.Usuario", "Usuario")
-                        .WithMany()
+                        .WithMany("PermisosUsuarios")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -821,6 +821,8 @@ namespace Hotel_chain.Migrations
             modelBuilder.Entity("Hotel_chain.Models.Entities.Usuario", b =>
                 {
                     b.Navigation("Huesped");
+
+                    b.Navigation("PermisosUsuarios");
 
                     b.Navigation("Reservas");
 
