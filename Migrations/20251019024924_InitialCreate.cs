@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Hotel_chain.Migrations
 {
     /// <inheritdoc />
-    public partial class HotelsFix : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -42,7 +42,7 @@ namespace Hotel_chain.Migrations
                     FumarPermitido = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     ContactoEmail = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true),
                     FechaCreacion = table.Column<DateTime>(type: "datetime", nullable: false),
-                    FechaActulizacion = table.Column<DateTime>(type: "datetime", nullable: true)
+                    FechaActualizacion = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -340,7 +340,7 @@ namespace Hotel_chain.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Reseñas",
+                name: "Resena",
                 columns: table => new
                 {
                     ResenaId = table.Column<int>(type: "int", nullable: false)
@@ -348,7 +348,7 @@ namespace Hotel_chain.Migrations
                     HotelId = table.Column<int>(type: "int", nullable: false),
                     ReservaId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    Calificacion = table.Column<int>(type: "int", nullable: false),
+                    Calificacion = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Comentario = table.Column<string>(type: "longtext", nullable: false),
                     VecesUtil = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -356,21 +356,21 @@ namespace Hotel_chain.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reseñas", x => x.ResenaId);
+                    table.PrimaryKey("PK_Resena", x => x.ResenaId);
                     table.ForeignKey(
-                        name: "FK_Reseñas_Hoteles_HotelId",
+                        name: "FK_Resena_Hoteles_HotelId",
                         column: x => x.HotelId,
                         principalTable: "Hoteles",
                         principalColumn: "hotel_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reseñas_Reservas_ReservaId",
+                        name: "FK_Resena_Reservas_ReservaId",
                         column: x => x.ReservaId,
                         principalTable: "Reservas",
                         principalColumn: "reserva_id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reseñas_Usuarios_UsuarioId",
+                        name: "FK_Resena_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "usuario_id",
@@ -420,18 +420,18 @@ namespace Hotel_chain.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reseñas_HotelId",
-                table: "Reseñas",
+                name: "IX_Resena_HotelId",
+                table: "Resena",
                 column: "HotelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reseñas_ReservaId",
-                table: "Reseñas",
+                name: "IX_Resena_ReservaId",
+                table: "Resena",
                 column: "ReservaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reseñas_UsuarioId",
-                table: "Reseñas",
+                name: "IX_Resena_UsuarioId",
+                table: "Resena",
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
@@ -495,7 +495,7 @@ namespace Hotel_chain.Migrations
                 name: "PermisosUsuarios");
 
             migrationBuilder.DropTable(
-                name: "Reseñas");
+                name: "Resena");
 
             migrationBuilder.DropTable(
                 name: "Staff");

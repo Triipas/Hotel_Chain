@@ -173,7 +173,7 @@ namespace Hotel_chain.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<DateTime?>("FechaActulizacion")
+                    b.Property<DateTime?>("FechaActualizacion")
                         .HasColumnType("datetime");
 
                     b.Property<DateTime>("FechaCreacion")

@@ -71,6 +71,6 @@ namespace Hotel_chain.Models.Entities
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
         [Column(TypeName = "datetime")]
-        public DateTime? FechaActulizacion { get; set; }
+        public DateTime? FechaActualizacion { get; set; }
     }
 }
