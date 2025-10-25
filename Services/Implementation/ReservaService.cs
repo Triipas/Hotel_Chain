@@ -56,10 +56,10 @@ namespace Hotel_chain.Services.Implementation
             return await _context.Reservas
     .Include(r => r.Habitacion)
         .ThenInclude(h => h.Hotel)
-            .ThenInclude(h => h.Imagenes) // <-- cargar imágenes del hotel
+            .ThenInclude(h => h.Imagenes)
     .Include(r => r.Habitacion)
-        .ThenInclude(h => h.Imagenes)   // <-- cargar imágenes de la habitación si quieres
-    .Include(r => r.Usuario) // cargar datos del usuario
+        .ThenInclude(h => h.Imagenes)
+    .Include(r => r.Usuario) 
     .Where(r => r.UsuarioId == usuarioId)
     .OrderByDescending(r => r.FechaCreacion)
     .ToListAsync();
@@ -121,7 +121,6 @@ namespace Hotel_chain.Services.Implementation
 
         public async Task<IEnumerable<Habitacion>> GetHabitacionesDisponiblesAsync(int hotelId, DateTime fechaInicio, DateTime fechaFin, int capacidad)
         {
-            // Obtener todas las habitaciones del hotel que cumplan con la capacidad
             var habitaciones = await _context.Habitaciones
                 .Include(h => h.Hotel)
                 .Include(h => h.Imagenes)
@@ -130,7 +129,6 @@ namespace Hotel_chain.Services.Implementation
                            h.Disponible)
                 .ToListAsync();
 
-            // Filtrar las que estén disponibles en las fechas solicitadas
             var disponibles = new List<Habitacion>();
             foreach (var habitacion in habitaciones)
             {
@@ -149,7 +147,6 @@ namespace Hotel_chain.Services.Implementation
 
         public async Task<Reserva> CreateAsync(ReservaCreateDto reservaDto)
         {
-            // Validar fechas
             if (reservaDto.FechaInicio >= reservaDto.FechaFin)
             {
                 throw new InvalidOperationException("La fecha de fin debe ser posterior a la fecha de inicio");
@@ -160,24 +157,20 @@ namespace Hotel_chain.Services.Implementation
                 throw new InvalidOperationException("No se pueden hacer reservas en fechas pasadas");
             }
 
-            // Verificar que la habitación existe
             var habitacion = await _context.Habitaciones.FindAsync(reservaDto.HabitacionId);
             if (habitacion == null)
             {
                 throw new InvalidOperationException("La habitación especificada no existe");
             }
 
-            // Verificar disponibilidad
             if (!await IsHabitacionDisponibleAsync(reservaDto.HabitacionId, reservaDto.FechaInicio, reservaDto.FechaFin))
             {
                 throw new InvalidOperationException("La habitación no está disponible en las fechas seleccionadas");
             }
 
-            // Calcular número de noches y precio total
             var numeroNoches = (reservaDto.FechaFin - reservaDto.FechaInicio).Days;
             var precioTotal = await CalcularPrecioTotalAsync(reservaDto.HabitacionId, reservaDto.FechaInicio, reservaDto.FechaFin);
 
-            // Crear la reserva
           var reserva = new Reserva
 {
     NumeroReserva = GenerarNumeroReserva(),
@@ -220,19 +213,16 @@ namespace Hotel_chain.Services.Implementation
             if (reserva == null)
                 return null;
 
-            // Solo permitir actualizar si está en estado pendiente
             if (reserva.Estado != "pendiente")
             {
                 throw new InvalidOperationException($"No se puede modificar una reserva en estado '{reserva.Estado}'");
             }
 
-            // Validar fechas
             if (reservaDto.FechaInicio >= reservaDto.FechaFin)
             {
                 throw new InvalidOperationException("La fecha de fin debe ser posterior a la fecha de inicio");
             }
 
-            // Verificar disponibilidad si cambiaron las fechas
             if (reserva.FechaInicio != reservaDto.FechaInicio || reserva.FechaFin != reservaDto.FechaFin)
             {
                 if (!await IsHabitacionDisponibleAsync(reserva.HabitacionId, reservaDto.FechaInicio, reservaDto.FechaFin, id))
@@ -241,7 +231,6 @@ namespace Hotel_chain.Services.Implementation
                 }
             }
 
-            // Actualizar datos
             reserva.FechaInicio = reservaDto.FechaInicio;
             reserva.FechaFin = reservaDto.FechaFin;
             reserva.NumeroHuespedes = reservaDto.NumeroHuespedes;
@@ -332,7 +321,6 @@ namespace Hotel_chain.Services.Implementation
             if (reserva == null)
                 return false;
 
-            // Solo permitir eliminar reservas canceladas
             if (reserva.Estado != "cancelada")
             {
                 throw new InvalidOperationException("Solo se pueden eliminar reservas canceladas. Cancela la reserva primero.");
@@ -364,7 +352,6 @@ namespace Hotel_chain.Services.Implementation
 
         public string GenerarNumeroReserva()
         {
-            // Formato: BK-YYYYMMDD-XXXX
             var fecha = DateTime.Now.ToString("yyyyMMdd");
             var random = new Random();
             var numero = random.Next(1000, 9999);

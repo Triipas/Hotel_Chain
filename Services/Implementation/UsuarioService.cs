@@ -67,7 +67,6 @@ namespace Hotel_chain.Services.Implementation
         public async Task<Usuario> CreateAsync(Usuario usuario, string? rolDetallado = null, 
             string? permisosExtra = null, string? preferencias = null, string? notasInternas = null)
         {
-            // Verificar que el email no exista
             if (await EmailExistsAsync(usuario.Email))
             {
                 throw new InvalidOperationException($"El email '{usuario.Email}' ya está registrado");
@@ -77,7 +76,6 @@ namespace Hotel_chain.Services.Implementation
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            // Crear registro en Huesped o Staff según el rol
             if (usuario.Rol == "huesped")
             {
                 var huesped = new Huesped
@@ -101,7 +99,6 @@ namespace Hotel_chain.Services.Implementation
 
             await _context.SaveChangesAsync();
 
-            // Recargar con las relaciones
             return await GetByIdAsync(usuario.UsuarioId) ?? usuario;
         }
 
@@ -116,13 +113,11 @@ namespace Hotel_chain.Services.Implementation
             if (existingUsuario == null)
                 return null;
 
-            // Verificar que el email no esté en uso por otro usuario
             if (await EmailExistsAsync(usuario.Email, id))
             {
                 throw new InvalidOperationException($"El email '{usuario.Email}' ya está registrado por otro usuario");
             }
 
-            // Actualizar datos básicos
             existingUsuario.Nombre = usuario.Nombre;
             existingUsuario.Apellido = usuario.Apellido;
             existingUsuario.Email = usuario.Email;
@@ -130,16 +125,13 @@ namespace Hotel_chain.Services.Implementation
             existingUsuario.Documento = usuario.Documento;
             existingUsuario.Estado = usuario.Estado;
 
-            // Actualizar contraseña solo si se proporciona una nueva
             if (!string.IsNullOrEmpty(usuario.Contraseña))
             {
                 existingUsuario.Contraseña = usuario.Contraseña;
             }
 
-            // Si el rol cambió, manejar el cambio
             if (existingUsuario.Rol != usuario.Rol)
             {
-                // Eliminar registro anterior (Huesped o Staff)
                 if (existingUsuario.Rol == "huesped" && existingUsuario.Huesped != null)
                 {
                     _context.Huespedes.Remove(existingUsuario.Huesped);
@@ -151,7 +143,6 @@ namespace Hotel_chain.Services.Implementation
 
                 existingUsuario.Rol = usuario.Rol;
 
-                // Crear nuevo registro
                 if (usuario.Rol == "huesped")
                 {
                     var huesped = new Huesped
@@ -175,7 +166,6 @@ namespace Hotel_chain.Services.Implementation
             }
             else
             {
-                // Solo actualizar el registro existente
                 if (usuario.Rol == "huesped" && existingUsuario.Huesped != null)
                 {
                     existingUsuario.Huesped.Preferencias = preferencias;
@@ -190,7 +180,6 @@ namespace Hotel_chain.Services.Implementation
 
             await _context.SaveChangesAsync();
 
-            // Recargar con las relaciones
             return await GetByIdAsync(id);
         }
 
@@ -205,13 +194,11 @@ namespace Hotel_chain.Services.Implementation
             if (usuario == null)
                 return false;
 
-            // Verificar si tiene reservas asociadas
             if (usuario.Reservas.Any())
             {
                 throw new InvalidOperationException($"No se puede eliminar el usuario '{usuario.Nombre} {usuario.Apellido}' porque tiene reservas asociadas. Puedes desactivarlo cambiando su estado a 'inactivo'.");
             }
 
-            // Eliminar registros relacionados
             if (usuario.Huesped != null)
             {
                 _context.Huespedes.Remove(usuario.Huesped);

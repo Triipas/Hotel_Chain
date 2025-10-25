@@ -24,7 +24,7 @@ namespace Hotel_chain.Controllers.Client
 
     if (hotelId.HasValue)
     {
-        // Si se pasa un hotelId, filtra por ese hotel
+
         if (!string.IsNullOrEmpty(tipo) || capacidad.HasValue)
         {
             habitaciones = await _habitacionService.SearchAsync(hotelId.Value, tipo, capacidad);
@@ -36,16 +36,12 @@ namespace Hotel_chain.Controllers.Client
     }
     else
     {
-        // 🔹 Si no se pasa hotelId (por ejemplo, desde el navbar)
-        // mostramos todas las habitaciones disponibles del sistema
         habitaciones = await _habitacionService.GetAllAsync();
     }
 
-    // 🔹 Si hay hotelId, obtenemos el hotel; si no, dejamos null
     var hotel = hotelId.HasValue ? await _hotelService.GetByIdAsync(hotelId.Value) : null;
-    ViewBag.Hotel = hotel;
-
-    // 🔹 Obtener amenidades por habitación
+            ViewBag.Hotel = hotel;
+    
     var amenidadesPorHabitacion = new Dictionary<int, IEnumerable<HabitacionAmenidad>>();
     foreach (var hab in habitaciones)
     {

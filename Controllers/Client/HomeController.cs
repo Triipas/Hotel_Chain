@@ -25,11 +25,9 @@ namespace Hotel_chain.Controllers.Client
             return View();
         }
 
-        // TODO: Este método se migrará a usar ReservaService en el futuro
         [HttpPost]
         public IActionResult Reservar(int habitacionId, int usuarioId)
         {
-            // Redirigir temporalmente hasta implementar ReservaService
             TempData["Mensaje"] = "Función de reservas en mantenimiento - será migrada a la nueva arquitectura";
             return RedirectToAction("Index");
         }

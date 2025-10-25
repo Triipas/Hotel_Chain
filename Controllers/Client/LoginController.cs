@@ -37,7 +37,6 @@ namespace Hotel_chain.Controllers.Client
 
                 if (usuario != null)
                 {
-                    // VALIDACIÓN: Solo permitir acceso a usuarios con rol "huesped"
                     if (usuario.Rol != "huesped")
                     {
                         _logger.LogWarning($"Intento de acceso al panel de cliente con rol '{usuario.Rol}' por {email}");
@@ -45,11 +44,9 @@ namespace Hotel_chain.Controllers.Client
                         return View("/Views/User/Login.cshtml");
                     }
 
-                    // Actualizar último acceso
                     usuario.UltimoAcceso = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
 
-                    // Guardar en sesión
                     HttpContext.Session.SetString("UsuarioNombre", usuario.Nombre);
                     HttpContext.Session.SetString("UsuarioEmail", usuario.Email);
                     HttpContext.Session.SetString("UsuarioId", usuario.UsuarioId.ToString());
@@ -86,7 +83,6 @@ public async Task<IActionResult> RegisterUser(
 {
     try
     {
-        // Validaciones básicas (solo los requeridos)
         if (string.IsNullOrWhiteSpace(nombre) ||
             string.IsNullOrWhiteSpace(apellido) ||
             string.IsNullOrWhiteSpace(email) ||
@@ -104,7 +100,6 @@ public async Task<IActionResult> RegisterUser(
             return View("/Views/User/Login.cshtml");
         }
 
-        // Crear usuario con campos opcionales
         var usuario = new Usuario
         {
             Nombre = nombre.Trim(),

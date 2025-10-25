@@ -43,7 +43,6 @@ namespace Hotel_chain.Controllers.Client
             return await Index(ubicacion, nombre);
         }
 
-        // GET: /Hotel/Detalle/5
         public async Task<IActionResult> Detalle(int id)
         {
             var hotel = await _hotelService.GetByIdAsync(id);
@@ -54,7 +53,6 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Index");
             }
 
-            // Obtener habitaciones del hotel para calcular precio mínimo
             var habitaciones = await _habitacionService.GetByHotelIdAsync(id);
 
             if (habitaciones.Any())

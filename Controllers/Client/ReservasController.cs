@@ -37,9 +37,6 @@ namespace Hotel_chain.Controllers.Client
             _logger = logger;
         }
 
-        // ========== FLUJO DE 4 PASOS ==========
-
-        // PASO 1: Iniciar Reserva - Huéspedes y Habitación
         public async Task<IActionResult> IniciarReserva(int habitacionId)
         {
             var habitacion = await _habitacionService.GetByIdAsync(habitacionId);
@@ -49,7 +46,6 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Index", "Home");
             }
 
-            // Guardar habitación en TempData para los siguientes pasos
             TempData["HabitacionId"] = habitacionId;
             TempData["HotelNombre"] = habitacion.Hotel?.Nombre;
             TempData["HabitacionNumero"] = habitacion.NumeroHabitacion;
@@ -59,7 +55,6 @@ namespace Hotel_chain.Controllers.Client
             return View("Paso1");
         }
 
-        // POST PASO 1: Guardar número de huéspedes Range(1, 10
         [HttpPost]
         public async Task<IActionResult> GuardarPaso1(int habitacionId, int adultos, int ninos, int cantidadHabitaciones)
         {
@@ -73,7 +68,6 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Paso1", new { habitacionId });
             }
 
-            // 🔹 Guardar correctamente todos los datos
             TempData["HabitacionId"] = habitacionId;
             TempData["Adultos"] = adultos;
             TempData["Ninos"] = ninos;
@@ -83,7 +77,7 @@ namespace Hotel_chain.Controllers.Client
 
             return RedirectToAction("Paso2");
         }
-        // PASO 2: Seleccionar Fechas
+
         public async Task<IActionResult> Paso2()
         {
             if (TempData["HabitacionId"] == null)
@@ -99,7 +93,6 @@ namespace Hotel_chain.Controllers.Client
             return View();
         }
 
-        // POST PASO 2: Guardar fechas
         [HttpPost]
         public async Task<IActionResult> GuardarPaso2(DateTime fechaInicio, DateTime fechaFin)
         {
@@ -119,7 +112,6 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Paso2");
             }
 
-            // Verificar disponibilidad
             var disponible = await _reservaService.IsHabitacionDisponibleAsync(habitacionId, fechaInicio, fechaFin);
             if (!disponible)
             {
@@ -139,7 +131,6 @@ namespace Hotel_chain.Controllers.Client
             return RedirectToAction("Paso3");
         }
 
-        // PASO 3: Confirmar Habitación y Tarifa
         public async Task<IActionResult> Paso3()
         {
             if (TempData["HabitacionId"] == null || TempData["FechaInicio"] == null)
@@ -153,7 +144,6 @@ namespace Hotel_chain.Controllers.Client
             var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacionId, fechaInicio, fechaFin);
             var numeroNoches = (fechaFin - fechaInicio).Days;
 
-            // 🔹 Obtener amenidades
             var amenidades = await _habitacionAmenidadService.GetByHabitacionIdAsync(habitacionId);
 
             ViewBag.Habitacion = habitacion;
@@ -162,13 +152,12 @@ namespace Hotel_chain.Controllers.Client
             ViewBag.NumeroNoches = numeroNoches;
             ViewBag.PrecioTotal = precioTotal;
             ViewBag.NumeroHuespedes = TempData["NumeroHuespedes"];
-            ViewBag.Amenidades = amenidades; // <-- agregar a ViewBag
+            ViewBag.Amenidades = amenidades;
             TempData.Keep();
 
             return View();
         }
 
-        // POST PASO 3: Ir a paso 4 (monto total)
         [HttpPost]
         public IActionResult GuardarPaso3(string solicitudesEspeciales)
         {
@@ -178,7 +167,6 @@ namespace Hotel_chain.Controllers.Client
             return RedirectToAction("Paso4");
         }
 
-        // PASO 4: Monto Total y Confirmación
         public async Task<IActionResult> Paso4()
         {
             if (TempData["HabitacionId"] == null || TempData["FechaInicio"] == null)
@@ -194,18 +182,15 @@ namespace Hotel_chain.Controllers.Client
             var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacionId, fechaInicio, fechaFin);
             var numeroNoches = (fechaFin - fechaInicio).Days;
 
-            // Verificar si el usuario está logueado
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
             var isLoggedIn = !string.IsNullOrEmpty(usuarioIdStr);
 
-            // Obtener datos del usuario si está logueado
             Usuario usuario = null;
             if (isLoggedIn)
             {
                 usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
             }
 
-            // Pasar datos a la vista
             ViewBag.Habitacion = habitacion;
             ViewBag.FechaInicio = fechaInicio;
             ViewBag.FechaFin = fechaFin;
@@ -214,14 +199,13 @@ namespace Hotel_chain.Controllers.Client
             ViewBag.NumeroHuespedes = TempData["NumeroHuespedes"];
             ViewBag.SolicitudesEspeciales = TempData["SolicitudesEspeciales"];
             ViewBag.IsLoggedIn = isLoggedIn;
-            ViewBag.Usuario = usuario; // Aquí guardamos el usuario completo
+            ViewBag.Usuario = usuario;
 
-            TempData.Keep(); // Mantener TempData para futuros pasos
+            TempData.Keep();
 
             return View();
         }
 
-        // POST PASO 4: Confirmar Reserva (solo si está logueado)
         [HttpPost]
         public async Task<IActionResult> ConfirmarReserva(string PaymentMethod)
         {
@@ -234,7 +218,6 @@ namespace Hotel_chain.Controllers.Client
 
             try
             {
-                // Obtener usuario y habitación para llenar los datos extra
                 var usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
                 var habitacion = await _habitacionService.GetByIdAsync((int)TempData["HabitacionId"]);
 
@@ -281,16 +264,13 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Paso4");
             }
         }
-        // ========== MÉTODOS EXISTENTES ==========
 
-        // GET: /Reservas/BuscarDisponibilidad
         public async Task<IActionResult> BuscarDisponibilidad()
         {
             ViewBag.Hoteles = await _hotelService.GetAllAsync();
             return View();
         }
 
-        // POST: /Reservas/BuscarDisponibilidad
         [HttpPost]
         public async Task<IActionResult> BuscarDisponibilidad(DisponibilidadSearchDto searchDto)
         {
@@ -328,7 +308,6 @@ namespace Hotel_chain.Controllers.Client
             }
         }
 
-        // GET: /Reservas/MisReservas
         public async Task<IActionResult> MisReservas()
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -344,7 +323,6 @@ namespace Hotel_chain.Controllers.Client
             return View(reservas);
         }
 
-        // GET: /Reservas/Detalle/5
         public async Task<IActionResult> Detalle(int id)
         {
             var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
@@ -361,22 +339,19 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("MisReservas");
             }
 
-            // Verificar que la reserva pertenezca al usuario
             if (reserva.UsuarioId != int.Parse(usuarioIdStr))
             {
                 TempData["Error"] = "No tienes permiso para ver esta reserva";
                 return RedirectToAction("MisReservas");
             }
 
-            // 🔹 Traer las amenidades de la habitación
             var amenidades = await _habitacionAmenidadService.GetByHabitacionIdAsync(reserva.HabitacionId);
 
-            // Asegurarse de que no sea null para evitar errores en la vista
             ViewBag.Amenidades = amenidades?.ToList() ?? new List<HabitacionAmenidad>();
 
             return View(reserva);
         }
-        // POST: /Reservas/Cancelar/5
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancelar(int id, string motivo)
@@ -397,7 +372,6 @@ namespace Hotel_chain.Controllers.Client
                     return RedirectToAction("MisReservas");
                 }
 
-                // Verificar que la reserva pertenezca al usuario
                 if (reserva.UsuarioId != int.Parse(usuarioIdStr))
                 {
                     TempData["Error"] = "No tienes permiso para cancelar esta reserva";
@@ -426,18 +400,15 @@ public async Task<IActionResult> CalificarEstancia([FromBody] CalificarRequest r
 
     int usuarioId = int.Parse(usuarioIdStr);
 
-    // 1️⃣ Verificar que la reserva existe y está completada
     var reserva = await _reservaService.GetByIdAsync(request.ReservaId);
     if (reserva == null) return NotFound("Reserva no encontrada");
     if (reserva.Estado.ToLower() != "completada") 
         return BadRequest("Solo se puede calificar reservas completadas");
 
-    // 2️⃣ Verificar que el usuario no haya calificado esta reserva
     var existeResena = await _resenaService.ExisteResenaAsync(request.ReservaId, usuarioId);
     if (existeResena)
         return BadRequest("Ya has calificado esta reserva");
 
-    // 3️⃣ Crear reseña
     await _resenaService.CreateAsync(new Reseña
     {
         ReservaId = request.ReservaId,
@@ -449,7 +420,6 @@ public async Task<IActionResult> CalificarEstancia([FromBody] CalificarRequest r
         UpdatedAt = DateTime.UtcNow
     });
 
-    // 4️⃣ Actualizar promedio del hotel
     var hotel = await _hotelService.GetByIdAsync(request.HotelId);
     if (hotel != null)
     {
@@ -460,7 +430,6 @@ public async Task<IActionResult> CalificarEstancia([FromBody] CalificarRequest r
     return Ok();
 }
 
-// DTO para recibir JSON
 public class CalificarRequest
 {
     public int ReservaId { get; set; }

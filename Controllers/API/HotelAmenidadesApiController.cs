@@ -15,7 +15,7 @@ namespace Hotel_chain.Controllers.Api
             _hotelAmenidadService = hotelAmenidadService;
         }
 
-        // ✅ GET: api/hotelamenidadesapi
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,7 +23,7 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, data = amenidades });
         }
 
-        // ✅ GET: api/hotelamenidadesapi/{id}
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -34,7 +34,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, data = amenidad });
         }
 
-        // ✅ GET: api/hotelamenidadesapi/hotel/{hotelId}
         [HttpGet("hotel/{hotelId}")]
         public async Task<IActionResult> GetByHotelId(int hotelId)
         {
@@ -46,7 +45,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, data = amenidades });
         }
 
-        // ✅ POST: api/hotelamenidadesapi
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] HotelAmenidad amenidad)
         {
@@ -57,7 +55,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, message = "Amenidad agregada correctamente", data = nuevaAmenidad });
         }
 
-        // ✅ PUT: api/hotelamenidadesapi/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] HotelAmenidad amenidad)
         {
@@ -71,7 +68,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, message = "Amenidad actualizada correctamente" });
         }
 
-        // ✅ DELETE: api/hotelamenidadesapi/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -37,7 +37,6 @@ public async Task<ActionResult<ApiResponse<IEnumerable<HotelResponseDto>>>> GetH
             hoteles = await _hotelService.GetAllAsync();
         }
 
-        // Mapear a DTO
         var hotelesDto = hoteles.Select(h => new HotelResponseDto
         {
             HotelId = h.HotelId,
@@ -72,7 +71,6 @@ public async Task<ActionResult<ApiResponse<IEnumerable<HotelResponseDto>>>> GetH
     }
 }
 
-        // GET: api/hoteles/5
         [HttpGet("{id}")]
 public async Task<ActionResult<ApiResponse<HotelResponseDto>>> GetHotel(int id)
 {
@@ -118,7 +116,6 @@ public async Task<ActionResult<ApiResponse<HotelResponseDto>>> GetHotel(int id)
     }
 }
 
-        // POST: api/hoteles
         [HttpPost]
         public async Task<ActionResult<ApiResponse<Hotel>>> CreateHotel([FromBody] HotelCreateDto hotelDto)
         {

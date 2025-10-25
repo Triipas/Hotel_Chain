@@ -15,7 +15,6 @@ namespace Hotel_chain.Controllers.Api
             _hotelCaracteristicaService = hotelCaracteristicaService;
         }
 
-        // GET: api/hotelcaracteristicasapi
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,7 +22,7 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, data = caracteristicas });
         }
 
-        // GET: api/hotelcaracteristicasapi/{id}
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -34,7 +33,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, data = caracteristica });
         }
 
-        // GET: api/hotelcaracteristicasapi/hotel/{hotelId}
         [HttpGet("hotel/{hotelId}")]
         public async Task<IActionResult> GetByHotelId(int hotelId)
         {
@@ -46,7 +44,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, data = caracteristicas });
         }
 
-        // POST: api/hotelcaracteristicasapi
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] HotelCaracteristica caracteristica)
         {
@@ -57,7 +54,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, message = "Característica agregada correctamente", data = nuevaCaracteristica });
         }
 
-        // PUT: api/hotelcaracteristicasapi/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] HotelCaracteristica caracteristica)
         {
@@ -71,7 +67,6 @@ namespace Hotel_chain.Controllers.Api
             return Ok(new { success = true, message = "Característica actualizada correctamente" });
         }
 
-        // DELETE: api/hotelcaracteristicasapi/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
