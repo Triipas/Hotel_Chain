@@ -13,7 +13,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-ENV ASPNETCORE_URLS=http://+:10000
-EXPOSE 10000
+# Usar el puerto que Render asigna
+ENV ASPNETCORE_URLS=http://+:$PORT
+EXPOSE $PORT
 
 ENTRYPOINT ["dotnet", "Hotel-chain.dll"]
