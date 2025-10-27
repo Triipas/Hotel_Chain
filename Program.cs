@@ -1,18 +1,34 @@
-// Program.cs
 using Hotel_chain.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔧 Configurar servicios usando clases de configuración
+// ===============================
+// 🔧 CONFIGURAR SERVICIOS
+// ===============================
 builder.Services.ConfigureDatabase(builder.Configuration);
 builder.Services.ConfigureBusinessServices();
 builder.Services.ConfigureApiServices();
 builder.Services.ConfigureClientServices();
 builder.Services.ConfigureAdminServices();
 
+// 💳 NUEVO: Configuración de Mercado Pago
+builder.Services.ConfigurePaymentServices(builder.Configuration);
+
+// ===============================
+// 🚀 CONSTRUIR APLICACIÓN
+// ===============================
 var app = builder.Build();
 
-// 🔧 Configurar pipeline usando clase de configuración
+// ===============================
+// 🌐 CONFIGURAR PIPELINE
+// ===============================
 app.ConfigurePipeline();
 
+// ✅ RUTAS API Y MVC
+app.MapControllers(); // Para que /api/pago funcione
+app.MapDefaultControllerRoute();
+
+// ===============================
+// ▶️ EJECUTAR APP
+// ===============================
 app.Run();

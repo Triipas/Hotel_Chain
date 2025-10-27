@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Hotel_chain.Services.Interfaces;
 using Hotel_chain.Models.DTOs.Reserva;
 using Hotel_chain.Models.Entities;
+using MercadoPago.Client.Preference;
+using MercadoPago.Config;
+using MercadoPago.Resource.Preference;
 using Newtonsoft.Json;
 
 namespace Hotel_chain.Controllers.Client
@@ -281,6 +284,69 @@ namespace Hotel_chain.Controllers.Client
                 return RedirectToAction("Paso4");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> PagarConMercadoPago(int reservaId)
+        {
+            try
+            {
+                // 1️⃣ Configurar tu Access Token de Mercado Pago
+                MercadoPagoConfig.AccessToken = "APP_USR-7414149299049294-101023-a6c8228e7ab8480545ec141f3615d304-2914738092";
+
+                // 2️⃣ Obtener la reserva completa desde el servicio
+                var reserva = await _reservaService.GetByIdAsync(reservaId);
+                if (reserva == null)
+                    return NotFound("Reserva no encontrada.");
+
+                // 3️⃣ Obtener la habitación y hotel relacionados
+                var habitacion = await _habitacionService.GetByIdAsync(reserva.HabitacionId);
+                var hotel = await _hotelService.GetByIdAsync(habitacion.HotelId);
+                var usuario = await _usuarioService.GetByIdAsync(reserva.UsuarioId);
+
+                // 4️⃣ Preparar los datos del pago
+                var precioTotal = reserva.PrecioTotal;
+                var nombreHabitacion = $"{hotel.Nombre} - Habitación {habitacion.NumeroHabitacion}";
+
+                // 5️⃣ Crear la preferencia de pago
+                var request = new PreferenceRequest
+                {
+                    Items = new List<PreferenceItemRequest>
+                    {
+                        new PreferenceItemRequest
+                        {
+                            Title = nombreHabitacion,
+                            Quantity = 1,
+                            CurrencyId = "PEN",
+                            UnitPrice = (decimal)precioTotal
+                        }
+                    },
+                    Payer = new PreferencePayerRequest
+                    {
+                        Name = usuario.Nombre,
+                        Email = usuario.Email
+                    },
+                    BackUrls = new PreferenceBackUrlsRequest
+                    {
+                        Success = Url.Action("PagoExitoso", "Reservas", null, Request.Scheme),
+                        Failure = Url.Action("PagoFallido", "Reservas", null, Request.Scheme),
+                        Pending = Url.Action("PagoPendiente", "Reservas", null, Request.Scheme)
+                    },
+                    AutoReturn = "approved"
+                };
+
+                var client = new PreferenceClient();
+                var preference = await client.CreateAsync(request);
+
+                // 6️⃣ Redirigir al checkout de Mercado Pago
+                return Redirect(preference.InitPoint);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error en el pago con Mercado Pago");
+                TempData["Error"] = "Ocurrió un error al iniciar el pago. Intenta nuevamente.";
+                return RedirectToAction("Paso4");
+            }
+        }
+
         // ========== MÉTODOS EXISTENTES ==========
 
         // GET: /Reservas/BuscarDisponibilidad

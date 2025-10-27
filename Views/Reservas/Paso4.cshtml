@@ -207,7 +207,12 @@ var usuarioTelefono = usuario?.Telefono ?? "";
                     <a asp-action="Paso3" class="btn-paso btn-cancelar">← Atrás</a>
                     <button type="submit" class="btn-paso btn-continuar">✓ Confirmar Reserva</button>
                 </div>
+                
+
             </form>
+             <button id="btnPagar" class="btn btn-warning w-100 mt-3">
+                    💳 Pagar con Mercado Pago
+            </button>
         }
         else
         {
@@ -224,6 +229,42 @@ var usuarioTelefono = usuario?.Telefono ?? "";
     </div>
 </div>
 
+
 <script src="~/client/js/responsive-navbar.js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script>
+    const mp = new MercadoPago("APP_USR-b82e04b9-4e72-4ae1-8a09-0e7606d754f6", {
+        locale: "es-PE"
+    });
+
+    document.getElementById("btnPagar").addEventListener("click", async () => {
+        try {
+            const response = await fetch("/api/pago/crear-preferencia", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    titulo: "Reserva en @hotelNombre",
+                    monto: @precioTotal
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.preferenceId) {
+                mp.checkout({
+                    preference: { id: data.preferenceId },
+                    autoOpen: true, // abre el modal automáticamente
+                });
+            } else {
+                alert("❌ Error al crear la preferencia de pago.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Ocurrió un error al iniciar el pago.");
+        }
+    });
+</script>
+
+
 </body>
 </html>
