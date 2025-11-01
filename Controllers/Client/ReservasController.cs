@@ -463,7 +463,6 @@ namespace Hotel_chain.Controllers.Client
                     return RedirectToAction("MisReservas");
                 }
 
-                // Verificar que la reserva pertenezca al usuario
                 if (reserva.UsuarioId != int.Parse(usuarioIdStr))
                 {
                     TempData["Error"] = "No tienes permiso para cancelar esta reserva";

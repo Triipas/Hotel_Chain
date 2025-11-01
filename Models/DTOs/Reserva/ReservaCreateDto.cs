@@ -14,7 +14,7 @@ namespace Hotel_chain.Models.DTOs.Reserva
         [Required]
         public int HabitacionId { get; set; }
 
-        public int? HotelId { get; set; } // opcional
+        public int? HotelId { get; set; }
 
         [Required]
         public DateTime FechaInicio { get; set; }

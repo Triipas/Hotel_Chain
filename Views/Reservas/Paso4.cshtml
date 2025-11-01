@@ -19,13 +19,13 @@ var usuarioEmail = usuario?.Email ?? "";
 var usuarioTelefono = usuario?.Telefono ?? "";
 
 
-    // Datos de la habitación (tomados directamente del modelo Habitacion)
+    
     var roomRate = habitacion?.PrecioNoche ?? 0;
     var subtotal = habitacion?.PrecioBase ?? 0;
     var taxes = habitacion?.PrecioImpuestos ?? 0;
     var currency = habitacion?.Moneda ?? "PEN";
 
-    // Precio total calculado
+    
     var precioTotal = habitacion?.PrecioTotal ?? (subtotal + taxes);
 }
 
@@ -131,7 +131,6 @@ var usuarioTelefono = usuario?.Telefono ?? "";
                 </div>
             </div>
 
-            <!-- 💳 NUEVA SECCIÓN: DETALLES DE PAGO -->
             <div style="margin-top: 30px; border-top: 1px solid var(--border-light); padding-top: 20px;">
                 <h4>💳 Detalles de Pago</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px;">
@@ -253,7 +252,7 @@ var usuarioTelefono = usuario?.Telefono ?? "";
             if (data.preferenceId) {
                 mp.checkout({
                     preference: { id: data.preferenceId },
-                    autoOpen: true, // abre el modal automáticamente
+                    autoOpen: true, 
                 });
             } else {
                 alert("❌ Error al crear la preferencia de pago.");

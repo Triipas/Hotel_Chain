@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="~/client/css/main.css?v=9">
     <link rel="stylesheet" href="~/client/css/pages/pasos-reserva.css">
     <style>
-        /* Contenedor general */
+       
         .paso-container {
             max-width: 1000px;
             margin: 50px auto 40px;
@@ -34,7 +34,7 @@
             gap: 20px;
         }
 
-        /* Barra de pasos horizontal */
+     
         .progreso-pasos {
             display: flex;
             justify-content: space-between;
@@ -93,7 +93,7 @@
             font-weight: 600;
         }
 
-        /* Contenedor de cards */
+
         .paso-columns {
             display: flex;
             gap: 20px;
@@ -231,7 +231,7 @@
     </header>
 
     <div class="paso-container">
-        <!-- Barra de pasos -->
+
         <div class="progreso-pasos">
             <div class="paso completado"><div class="paso-numero">✓</div><div class="paso-texto">Huéspedes & Habitación</div></div>
             <div class="paso completado"><div class="paso-numero">✓</div><div class="paso-texto">Fechas de estadía</div></div>
@@ -239,13 +239,13 @@
             <div class="paso"><div class="paso-numero">4</div><div class="paso-texto">Monto total</div></div>
         </div>
 
-        <!-- Contenido principal -->
+ 
         <div class="paso-columns">
-            <!-- Formulario / card hotel -->
+
             <div class="card-paso">
     <h1 class="titulo-hotel">@hotelNombre</h1>
 
-    <!-- Información de la habitación -->
+
     <div class="form-group-paso">
         <label>🏷️ Nombre de Habitación</label>
         <input type="text" value="@habitacion?.Nombre" disabled />
@@ -269,7 +269,6 @@
     </div>
 }
 
-    <!-- Solicitudes especiales -->
     <form asp-action="GuardarPaso3" method="post">
     <div class="form-group-paso">
         <label for="solicitudesEspeciales">✏️ Solicitudes Especiales (Opcional)</label>
@@ -297,7 +296,7 @@
     </form>
 </div>
 
-            <!-- Card Resumen -->
+
             <div class="card-resumen">
     <h4 style="color: var(--accent-color); margin-bottom:10px;">🏨 Resumen de Reserva</h4>
     <p><strong>Hotel:</strong> @habitacion?.Hotel?.Nombre </p>
