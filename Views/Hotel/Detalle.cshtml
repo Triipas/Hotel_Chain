@@ -15,7 +15,8 @@
     <title>@ViewData["Title"] - Costa Dorada</title>
     <link rel="stylesheet" href="~/client/css/main.css?v=9">
     <style>
-        .detalle-hotel-container {
+        
+.detalle-hotel-container {
             max-width: 1200px;
             margin: 100px auto 40px;
             padding: 0 20px;
@@ -230,10 +231,67 @@
                 font-size: 2rem;
             }
         }
+
+        .politicas-hotel {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--background-section);
+            border-radius: 8px;
+        }
+
+        .politicas-hotel h4 {
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .politica-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .politica-checkbox input {
+            margin-right: 10px;
+            cursor: default;
+        }
+
+        .gps-info {
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+
+        .calificacion-hotel {
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #f5b50a; /* color dorado para la estrella */
+        }
+
+        .calificacion-hotel i {
+            margin-right: 5px;
+        }
+
+        .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.card-item {
+    padding: 10px 15px;
+    background: var(--background-section);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-size: 0.95rem;
+}
     </style>
 </head>
 <body>
     <header>
+       <header>
         <nav class="navbar">
             <div class="logo">Costa Dorada</div>
             <button class="menu-toggle" aria-label="Abrir menú">
@@ -249,18 +307,14 @@
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-                {
-                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                    <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
-                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-                }
-                else
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
                 {
                     <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
                 }
             </div>
         </nav>
+    </header>
+
     </header>
 
     <div class="detalle-hotel-container">
@@ -269,11 +323,20 @@
         </a>
 
         <div class="hotel-header">
+            <!-- Calificación arriba del nombre -->
+            @if (Model.Calificacion.HasValue)
+            {
+                <div class="calificacion-hotel">
+                    <i class="fas fa-star"></i> @Model.Calificacion.Value.ToString("0.0")
+                </div>
+            }
+
             <h1 class="hotel-nombre">@Model.Nombre</h1>
+
             <p class="hotel-ubicacion">
-                <i class="fas fa-map-marker-alt"></i>
-                @Model.Direccion, @Model.Ciudad
-            </p>
+    <i class="fas fa-map-marker-alt"></i>
+    @Model.Direccion, @Model.Ciudad@if(!string.IsNullOrEmpty(Model.Pais)){<text>, @Model.Pais</text>}
+</p>
         </div>
 
         @if (Model.Imagenes != null && Model.Imagenes.Any())
@@ -307,25 +370,15 @@
                     }
                 </p>
 
-                <div class="caracteristicas-hotel">
-                    <div class="caracteristica">
-                        <i class="fas fa-wifi"></i>
-                        <p>WiFi Gratis</p>
+                <!-- Latitud y Longitud -->
+                @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+                {
+                    <div class="gps-info">
+                        <strong>Ubicación GPS:</strong> Lat: @Model.Latitud.Value, Long: @Model.Longitud.Value
                     </div>
-                    <div class="caracteristica">
-                        <i class="fas fa-parking"></i>
-                        <p>Estacionamiento</p>
-                    </div>
-                    <div class="caracteristica">
-                        <i class="fas fa-concierge-bell"></i>
-                        <p>Servicio 24/7</p>
-                    </div>
-                    <div class="caracteristica">
-                        <i class="fas fa-utensils"></i>
-                        <p>Restaurante</p>
-                    </div>
-                </div>
+                }
 
+                <!-- Información de contacto -->
                 @if (!string.IsNullOrEmpty(Model.TelefonoContacto))
                 {
                     <div class="info-contacto">
@@ -333,9 +386,55 @@
                         <p><i class="fas fa-phone"></i><strong>Teléfono:</strong> @Model.TelefonoContacto</p>
                         <p><i class="fas fa-map-marker-alt"></i><strong>Dirección:</strong> @Model.Direccion</p>
                         <p><i class="fas fa-city"></i><strong>Ciudad:</strong> @Model.Ciudad</p>
+                        @if (!string.IsNullOrEmpty(Model.Pais))
+                        {
+                            <p><i class="fas fa-flag"></i><strong>País:</strong> @Model.Pais</p>
+                        }
                     </div>
                 }
+
+                <!-- Políticas del hotel -->
+                <div class="politicas-hotel">
+                    <h4>🏷️ Políticas del Hotel</h4>
+                    <div class="politica-checkbox">
+                        <input type="checkbox" disabled @(Model.MascotasPermitidas == true ? "checked" : "") />
+                        <label>Mascotas Permitidas</label>
+                    </div>
+                    <div class="politica-checkbox">
+                        <input type="checkbox" disabled @(Model.FumarPermitido == true ? "checked" : "") />
+                        <label>Fumar Permitido</label>
+                    </div>
+                </div>
+
+                @if(ViewBag.Amenidades != null && ((List<Hotel_chain.Models.Entities.HotelAmenidad>)ViewBag.Amenidades).Any())
+{
+    <div class="politicas-hotel">
+        <h4>🏖️ Amenidades</h4>
+        <div class="cards-container">
+            @foreach(var amenidad in (List<Hotel_chain.Models.Entities.HotelAmenidad>)ViewBag.Amenidades)
+            {
+                <div class="card-item">@amenidad.Amenidad</div>
+            }
+        </div>
+    </div>
+}
+
+@if(ViewBag.Caracteristicas != null && ((List<Hotel_chain.Models.Entities.HotelCaracteristica>)ViewBag.Caracteristicas).Any())
+{
+    <div class="politicas-hotel">
+        <h4>✨ Características</h4>
+        <div class="cards-container">
+            @foreach(var caracteristica in (List<Hotel_chain.Models.Entities.HotelCaracteristica>)ViewBag.Caracteristicas)
+            {
+                <div class="card-item">@caracteristica.Caracteristica</div>
+            }
+        </div>
+    </div>
+}
             </div>
+
+
+
 
             <div>
                 <div class="reserva-card">
@@ -370,6 +469,30 @@
         </div>
     </div>
 
+    <!-- Menú Flotante (solo si hay sesión) -->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+    {
+        <div class="menu-flotante" id="menuFlotante">
+            <!-- Opciones del menú (ocultas inicialmente) -->
+            <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                <div class="menu-icon">📅</div>
+                <span>Mis Reservas</span>
+            </a>
+
+            <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                <div class="menu-icon">🚪</div>
+                <span>Cerrar Sesión</span>
+            </a>
+
+            <!-- Botón Principal (Perfil) -->
+            <button class="menu-principal" id="btnMenuPrincipal">
+                <div class="user-avatar">👤</div>
+            </button>
+        </div>
+    }
+
     <script src="~/client/js/responsive-navbar.js"></script>
+    <script src="~/client/js/menu-flotante.js"></script>
+
 </body>
 </html>

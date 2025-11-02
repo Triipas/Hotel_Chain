@@ -19,6 +19,11 @@ namespace Hotel_chain.Data
         public DbSet<Habitacion> Habitaciones { get; set; }
         public DbSet<Reserva> Reservas { get; set; }
         public DbSet<Imagen> Imagenes { get; set; }
+        public DbSet<HotelAmenidad> HotelAmenidades { get; set; }
+        public DbSet<HotelCaracteristica> HotelCaracteristicas { get; set; } = null!;
+        public DbSet<HabitacionAmenidad> HabitacionAmenidades { get; set; } = null!;
+        public DbSet<Reseña> Resenas { get; set; } = null!;
+        public DbSet<PermisoUsuario> PermisosUsuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,6 +89,7 @@ namespace Hotel_chain.Data
             modelBuilder.Entity<Hotel>().Property(h => h.Ciudad).HasColumnName("ciudad");
             modelBuilder.Entity<Hotel>().Property(h => h.Descripcion).HasColumnName("descripcion");
             modelBuilder.Entity<Hotel>().Property(h => h.TelefonoContacto).HasColumnName("telefono_contacto");
+            
 
             // ===== CONFIGURACIÓN DE HABITACIONES =====
             modelBuilder.Entity<Habitacion>().Property(h => h.HabitacionId).HasColumnName("habitacion_id");

@@ -38,5 +38,7 @@ namespace Hotel_chain.Controllers.Client
         {
             return View();
         }
+
+
     }
 }

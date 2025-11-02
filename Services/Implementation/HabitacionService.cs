@@ -83,11 +83,21 @@ namespace Hotel_chain.Services.Implementation
 
             existingHabitacion.HotelId = habitacion.HotelId;
             existingHabitacion.NumeroHabitacion = habitacion.NumeroHabitacion;
+            existingHabitacion.Nombre = habitacion.Nombre;
             existingHabitacion.Tipo = habitacion.Tipo;
             existingHabitacion.Capacidad = habitacion.Capacidad;
             existingHabitacion.PrecioNoche = habitacion.PrecioNoche;
             existingHabitacion.Descripcion = habitacion.Descripcion;
             existingHabitacion.Disponible = habitacion.Disponible;
+             existingHabitacion.CapacidadAdultos = habitacion.CapacidadAdultos;
+    existingHabitacion.CapacidadNinos = habitacion.CapacidadNinos;
+    existingHabitacion.CantidadCamas = habitacion.CantidadCamas;
+    existingHabitacion.TipoCama = habitacion.TipoCama;
+    existingHabitacion.TamanoM2 = habitacion.TamanoM2;
+    existingHabitacion.PrecioBase = habitacion.PrecioBase;
+    existingHabitacion.PrecioImpuestos = habitacion.PrecioImpuestos;
+    existingHabitacion.PrecioTotal = habitacion.PrecioTotal;
+    existingHabitacion.HabitacionesDisponibles = habitacion.HabitacionesDisponibles;
 
             await _context.SaveChangesAsync();
             

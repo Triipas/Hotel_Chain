@@ -11,7 +11,91 @@
     <title>Costa Dorada - Habitaciones</title>
     <link rel="stylesheet" href="~/client/css/main.css?v=7">
 </head>
+<style>
 
+.listado-habitaciones .container {
+    max-width: 700px;  /* mismo ancho que el filtro */
+    margin: 0 auto;    /* centra el contenido */
+}
+
+.habitacion-card {
+    display: flex;
+    gap: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;       /* ocupa todo el ancho del contenedor */
+    max-width: 700px;  /* limita la card al mismo ancho que el contenedor */
+    background-color: #f9f9f9;
+    margin: 0 auto;    /* centra la card dentro del contenedor */
+}
+
+.habitacion-card img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Columna de info */
+.habitacion-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Columna de precio/botones */
+.habitacion-precio {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* Botones en columna 3 */
+.habitacion-botones {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.btn-reservar-negro, .btn-detalles-negro {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.btn-reservar-negro:hover, .btn-detalles-negro:hover {
+    background-color: #555;
+}
+
+@@media (max-width: 768px) {
+    .habitacion-card {
+        flex-direction: column;
+        align-items: center;
+    }
+    .habitacion-precio, .habitacion-info {
+        width: 100%;
+        align-items: flex-start;
+    }
+    .habitacion-card img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+}
+
+</style>
 <header>
         <nav class="navbar">
             <div class="logo">Costa Dorada</div>
@@ -69,40 +153,77 @@
 
 <section class="listado-habitaciones">
     <div class="habitaciones-container">
-                @if (Model != null && Model.Any())
+        @if (Model != null && Model.Any())
+        {
+            foreach (var hab in Model)
             {
-                foreach (var hab in Model)
-                {
-                    <div class="habitacion-card">
-                        <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" alt="@hab.NumeroHabitacion"
-                            class="habitacion-img" />
+                 var amenidades = ViewBag.AmenidadesPorHabitacion?[hab.HabitacionId] as IEnumerable<Hotel_chain.Models.Entities.HabitacionAmenidad>;
+                <div class="habitacion-card">
+                    <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                         alt="@hab.NumeroHabitacion"
+                         class="habitacion-img" />
 
-                        <h3>Habitación @hab.NumeroHabitacion</h3>
-                        <p><strong>Tipo:</strong> @hab.Tipo</p>
-                        <p><strong>Capacidad:</strong> @hab.Capacidad personas</p>
-                        <p><strong>Precio:</strong> <span style="color: var(--primary-color); font-size: 1.3rem; font-weight: bold;">S/ @hab.PrecioNoche.ToString("N2")</span> /noche</p>
-                        <p style="font-size: 0.9rem; color: var(--text-light);">@hab.Descripcion</p>
+                        <div class="habitacion-info">
+        <h3>Habitación @hab.NumeroHabitacion</h3>
+        @if (!string.IsNullOrEmpty(hab.Nombre))
+        {
+            <p><strong>Nombre:</strong> @hab.Nombre</p>
+        }
+        <p><strong>Tipo:</strong> @hab.Tipo</p>
+        <p><strong>Capacidad:</strong> @hab.Capacidad personas</p>
+        @if (hab.CapacidadAdultos.HasValue || hab.CapacidadNinos.HasValue)
+        {
+            <p><strong>Adultos:</strong> @hab.CapacidadAdultos ?? 0, 
+               <strong>Niños:</strong> @hab.CapacidadNinos ?? 0
+            </p>
+        }
+        @if (hab.CantidadCamas.HasValue)
+        {
+            <p><strong>Camas:</strong> @hab.CantidadCamas @hab.TipoCama</p>
+        }
+        @if (hab.TamanoM2.HasValue)
+        {
+            <p><strong>Tamaño:</strong> @hab.TamanoM2 m²</p>
+        }
+        <p style="font-size: 0.9rem; color: var(--text-light);">
+            <strong>Descripción:</strong> @hab.Descripcion
+        </p>
+        
+       <p><strong>Amenidades:</strong> @string.Join(", ", amenidades.Select(a => a.Amenidad))</p>
+    </div>
 
-                        <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <a asp-controller="Reservas" 
-                               asp-action="IniciarReserva" 
-                               asp-route-habitacionId="@hab.HabitacionId"
-                               class="btn-reservar" 
-                               style="flex: 1; text-align: center; background-color: var(--secondary-color);">
-                                🛏️ Reservar Ahora
-                            </a>
+      <div class="habitacion-precio">
+        <p><strong>Precio/noche:</strong> S/ @hab.PrecioBase.GetValueOrDefault().ToString("N2")</p>
+        <p><strong>Disponible:</strong> @(hab.Disponible ? "Sí" : "No")</p>
 
-                            <a asp-controller="Habitacion" 
-                               asp-action="Detalles" 
-                               asp-route-id="@hab.HabitacionId" 
-                               class="btn-detalles"
-                               style="flex: 1;">
-                                📋 Ver Más Detalles
-                            </a>
-                        </div>
-                    </div>
-                }
+<p><strong>Precio Base:</strong> S/ @hab.PrecioBase.GetValueOrDefault().ToString("N2")</p>
+<p><strong>Impuestos:</strong> S/ @hab.PrecioImpuestos.GetValueOrDefault().ToString("N2")</p>
+
+        <div class="habitacion-botones">
+            <a asp-controller="Reservas" 
+               asp-action="IniciarReserva" 
+               asp-route-habitacionId="@hab.HabitacionId"
+               class="btn-reservar-negro">
+                🛏️ Reservar
+            </a>
+
+            <a asp-controller="Habitacion" 
+               asp-action="Detalles" 
+               asp-route-id="@hab.HabitacionId" 
+               class="btn-detalles-negro">
+                📋 Detalles
+            </a>
+        </div>
+    </div>
+</div>
+                
+
+                    @if (!hab.Disponible)
+                    {
+                        <p style="color: red; font-weight: bold; margin-top: 10px;">¡Agotado!</p>
+                    }
             }
+        }
         else
         {
             <p>No hay habitaciones disponibles para este hotel.</p>

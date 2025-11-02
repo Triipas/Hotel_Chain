@@ -233,6 +233,34 @@
                 text-align: center;
             }
         }
+
+        .filtros-reservas {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtro-btn {
+    background: white;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filtro-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.filtro-btn.activo {
+    background: var(--primary-color);
+    color: white;
+}
     </style>
 </head>
 <body>
@@ -252,15 +280,22 @@
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
-                <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
-                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
             </div>
         </nav>
     </header>
 
     <div class="mis-reservas-container">
         <div class="page-header-reservas">
+            <div class="filtros-reservas" style="text-align:center; margin-bottom:25px;">
+                <button class="filtro-btn activo" data-estado="todos">Todos</button>
+                <button class="filtro-btn" data-estado="pendiente">Pendientes</button>
+                <button class="filtro-btn" data-estado="cancelada">Canceladas</button>
+                <button class="filtro-btn" data-estado="completada">Completadas</button>
+            </div>
             <h1>🗓️ Mis Reservas</h1>
             <p style="color: var(--text-light);">Gestiona todas tus reservas en un solo lugar</p>
         </div>
@@ -284,76 +319,54 @@
             <div class="reservas-list">
                 @foreach (var reserva in Model)
                 {
-                    <div class="reserva-card">
-                        <div class="reserva-header">
-                            <div class="reserva-numero">
-                                📋 Reserva: @reserva.NumeroReserva
-                            </div>
-                            <div class="reserva-estado estado-@reserva.Estado.ToLower()">
-                                @reserva.Estado
-                            </div>
-                        </div>
+                 <div class="reserva-card">
+    <div class="reserva-body" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 20px;">
+        
+        <!-- Columna 1: Info de la reserva (lo que ya tienes) -->
+        <div style="display: flex; gap: 20px;">
+            <div>
+                <img src="@(reserva.Habitacion?.Hotel?.Imagenes?.FirstOrDefault()?.NombreArchivo ?? "~/client/images/hotel-placeholder.png")" 
+                     alt="Imagen @reserva.Habitacion?.Hotel?.Nombre" 
+                     style="width: 150px; height: 120px; object-fit: cover; border-radius: 8px;" />
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <strong style="font-size: 1.1rem;">@reserva.Habitacion?.Hotel?.Nombre</strong>
+                <span style="color: var(--text-light);">@reserva.Habitacion?.Hotel?.Pais, @reserva.Habitacion?.Hotel?.Ciudad</span>
+                <span>🛏️ @reserva.Habitacion?.Tipo &nbsp; | &nbsp; Código: @reserva.NumeroReserva</span>
+                <span>📅 Check-in: @reserva.FechaInicio.ToString("dd/MM/yyyy") &nbsp; | &nbsp; Check-out: @reserva.FechaFin.ToString("dd/MM/yyyy")</span>
+                <span>👥 @reserva.NumeroHuespedes huésped@(reserva.NumeroHuespedes > 1 ? "es" : "")</span>
+                <span>Usuario: @reserva.Usuario?.Nombre @reserva.Usuario?.Apellido</span>
+                <span>(Huésped principal: @reserva.GuestFirstName @reserva.GuestLastName)</span>
+                <span class="reserva-estado estado-@reserva.Estado.ToLower()">@reserva.Estado</span>
+            </div>
+        </div>
 
-                        <div class="reserva-body">
-                            <div class="reserva-seccion">
-                                <h4>🏨 Alojamiento</h4>
-                                <div class="reserva-info-item">
-                                    <strong>@reserva.Habitacion?.Hotel?.Nombre</strong>
-                                </div>
-                                <div class="reserva-info-item">
-                                    🚪 Habitación @reserva.Habitacion?.NumeroHabitacion
-                                </div>
-                                <div class="reserva-info-item">
-                                    🛏️ Tipo: @reserva.Habitacion?.Tipo
-                                </div>
-                            </div>
+        <!-- Columna 2: Card resumen de pago -->
+        <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; justify-content: space-between;">
+            <div>
+                <h2 style="color: var(--primary-color); font-size: 2rem; margin: 0;">S/ @reserva.PrecioTotal.ToString("N2")</h2>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-light);">
+                    <span>Subtotal:</span>
+                    <span>S/ @(reserva.Subtotal.HasValue ? reserva.Subtotal.Value.ToString("N2") : "0.00")</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: var(--text-light);">
+                    <span>Impuesto:</span>
+                    <span>S/ @(reserva.Taxes.HasValue ? reserva.Taxes.Value.ToString("N2") : "0.00")</span>
+                </div>
+                <hr />
+                <div style="font-size: 0.85rem; color: var(--text-dark);">
+                    Número de tarjeta: **** **** **** 1234
+                </div>
+            </div>
 
-                            <div class="reserva-seccion">
-                                <h4>📅 Fechas</h4>
-                                <div class="reserva-info-item">
-                                    Check-in: @reserva.FechaInicio.ToString("dd/MM/yyyy")
-                                </div>
-                                <div class="reserva-info-item">
-                                    Check-out: @reserva.FechaFin.ToString("dd/MM/yyyy")
-                                </div>
-                                <div class="reserva-info-item">
-                                    🌙 @reserva.NumeroNoches noche@(reserva.NumeroNoches > 1 ? "s" : "")
-                                </div>
-                                <div class="reserva-info-item" style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light);">
-                                    Creada: @reserva.FechaCreacion.ToString("dd/MM/yyyy HH:mm")
-                                </div>
-                            </div>
+            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                <a asp-action="Detalle" asp-route-id="@reserva.ReservaId" class="btn-reserva btn-ver-detalle" style="flex:1;">👁️ Ver Detalles</a>
+                <button class="btn-reserva btn-ver-detalle" style="flex:1;">📄 Descargar</button>
+            </div>
+        </div>
 
-                            <div class="reserva-seccion">
-                                <h4>💰 Información de Pago</h4>
-                                <div class="reserva-info-item">
-                                    👥 @reserva.NumeroHuespedes huésped@(reserva.NumeroHuespedes > 1 ? "es" : "")
-                                </div>
-                                <div class="reserva-precio">
-                                    S/ @reserva.PrecioTotal.ToString("N2")
-                                </div>
-                                <div class="reserva-info-item" style="margin-top: 5px;">
-                                    Estado: <strong style="color: @(reserva.EstadoPago == "pagado" ? "#155724" : "#856404")">
-                                        @reserva.EstadoPago
-                                    </strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="reserva-actions">
-                            <a asp-action="Detalle" asp-route-id="@reserva.ReservaId" class="btn-reserva btn-ver-detalle">
-                                👁️ Ver Detalles
-                            </a>
-
-                            @if (reserva.Estado == "pendiente" || reserva.Estado == "confirmada")
-                            {
-                                <button onclick="confirmarCancelacion(@reserva.ReservaId, '@reserva.NumeroReserva')" 
-                                        class="btn-reserva btn-cancelar-reserva">
-                                    ✗ Cancelar Reserva
-                                </button>
-                            }
-                        </div>
-                    </div>
+    </div>
+</div>
                 }
             </div>
         }
@@ -376,7 +389,31 @@
         <input type="hidden" name="motivo" id="cancelarMotivo" />
     </form>
 
+
+    <!-- Menú Flotante (solo si hay sesión) -->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+    {
+        <div class="menu-flotante" id="menuFlotante">
+            <!-- Opciones del menú (ocultas inicialmente) -->
+            <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                <div class="menu-icon">📅</div>
+                <span>Mis Reservas</span>
+            </a>
+
+            <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                <div class="menu-icon">🚪</div>
+                <span>Cerrar Sesión</span>
+            </a>
+
+            <!-- Botón Principal (Perfil) -->
+            <button class="menu-principal" id="btnMenuPrincipal">
+                <div class="user-avatar">👤</div>
+            </button>
+        </div>
+    }
     <script src="~/client/js/responsive-navbar.js"></script>
+    <script src="~/client/js/menu-flotante.js"></script>
+
     <script>
         function confirmarCancelacion(reservaId, numeroReserva) {
             const motivo = prompt(`¿Estás seguro de que deseas cancelar la reserva ${numeroReserva}?\n\nPor favor indica el motivo de la cancelación:`);
@@ -391,5 +428,31 @@
             }
         }
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const botones = document.querySelectorAll(".filtro-btn");
+        const reservas = document.querySelectorAll(".reserva-card");
+
+        botones.forEach(btn => {
+            btn.addEventListener("click", () => {
+                // Quitar el activo anterior
+                botones.forEach(b => b.classList.remove("activo"));
+                btn.classList.add("activo");
+
+                const estadoSeleccionado = btn.dataset.estado.toLowerCase();
+
+                reservas.forEach(card => {
+                    const estado = card.querySelector(".reserva-estado")?.textContent.trim().toLowerCase();
+
+                    if (estadoSeleccionado === "todos" || estado === estadoSeleccionado) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+</script>
 </body>
 </html>

@@ -32,11 +32,14 @@ namespace Hotel_chain.Services.Implementation
 
         public async Task<Reserva?> GetByIdAsync(int id)
         {
-            return await _context.Reservas
-                .Include(r => r.Usuario)
-                .Include(r => r.Habitacion)
-                    .ThenInclude(h => h.Hotel)
-                .FirstOrDefaultAsync(r => r.ReservaId == id);
+       return await _context.Reservas
+    .Include(r => r.Habitacion)
+        .ThenInclude(h => h.Hotel)
+            .ThenInclude(h => h.Imagenes)
+    .Include(r => r.Habitacion)
+        .ThenInclude(h => h.Imagenes)
+    .Include(r => r.Usuario)
+    .FirstOrDefaultAsync(r => r.ReservaId == id);
         }
 
         public async Task<Reserva?> GetByNumeroReservaAsync(string numeroReserva)
@@ -51,11 +54,15 @@ namespace Hotel_chain.Services.Implementation
         public async Task<IEnumerable<Reserva>> GetByUsuarioIdAsync(int usuarioId)
         {
             return await _context.Reservas
-                .Include(r => r.Habitacion)
-                    .ThenInclude(h => h.Hotel)
-                .Where(r => r.UsuarioId == usuarioId)
-                .OrderByDescending(r => r.FechaCreacion)
-                .ToListAsync();
+    .Include(r => r.Habitacion)
+        .ThenInclude(h => h.Hotel)
+            .ThenInclude(h => h.Imagenes) // <-- cargar imágenes del hotel
+    .Include(r => r.Habitacion)
+        .ThenInclude(h => h.Imagenes)   // <-- cargar imágenes de la habitación si quieres
+    .Include(r => r.Usuario) // cargar datos del usuario
+    .Where(r => r.UsuarioId == usuarioId)
+    .OrderByDescending(r => r.FechaCreacion)
+    .ToListAsync();
         }
 
         public async Task<IEnumerable<Reserva>> GetByHabitacionIdAsync(int habitacionId)
@@ -171,21 +178,33 @@ namespace Hotel_chain.Services.Implementation
             var precioTotal = await CalcularPrecioTotalAsync(reservaDto.HabitacionId, reservaDto.FechaInicio, reservaDto.FechaFin);
 
             // Crear la reserva
-            var reserva = new Reserva
-            {
-                NumeroReserva = GenerarNumeroReserva(),
-                UsuarioId = reservaDto.UsuarioId,
-                HabitacionId = reservaDto.HabitacionId,
-                FechaInicio = reservaDto.FechaInicio,
-                FechaFin = reservaDto.FechaFin,
-                NumeroHuespedes = reservaDto.NumeroHuespedes,
-                NumeroNoches = numeroNoches,
-                PrecioTotal = precioTotal,
-                Estado = "pendiente",
-                EstadoPago = "pendiente",
-                SolicitudesEspeciales = reservaDto.SolicitudesEspeciales,
-                FechaCreacion = DateTime.UtcNow
-            };
+          var reserva = new Reserva
+{
+    NumeroReserva = GenerarNumeroReserva(),
+    UsuarioId = reservaDto.UsuarioId,
+    HabitacionId = reservaDto.HabitacionId,
+    HotelId = reservaDto.HotelId,
+    FechaInicio = reservaDto.FechaInicio,
+    FechaFin = reservaDto.FechaFin,
+    NumeroHuespedes = reservaDto.NumeroHuespedes,
+    GuestsAdults = reservaDto.GuestsAdults,
+    GuestsChildren = reservaDto.GuestsChildren,
+    GuestFirstName = reservaDto.GuestFirstName,
+    GuestLastName = reservaDto.GuestLastName,
+    GuestEmail = reservaDto.GuestEmail,
+    GuestPhone = reservaDto.GuestPhone,
+    NumeroNoches = numeroNoches,
+    RoomRate = reservaDto.RoomRate,
+    Subtotal = reservaDto.Subtotal,
+    Taxes = reservaDto.Taxes,
+    Currency = reservaDto.Currency,
+    PrecioTotal = precioTotal,
+    PaymentMethod = reservaDto.PaymentMethod,
+    SolicitudesEspeciales = reservaDto.SolicitudesEspeciales,
+    Estado = "pendiente",
+    EstadoPago = "pendiente",
+    FechaCreacion = DateTime.UtcNow
+};
 
             _context.Reservas.Add(reserva);
             await _context.SaveChangesAsync();

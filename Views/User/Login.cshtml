@@ -11,6 +11,34 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/client/css/pages/login.css?v=3">
 </head>
+<style>
+.form-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    width: 100%;
+}
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-columns h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+/* En pantallas pequeñas (móvil), se apilan */
+@@media (max-width: 768px) {
+    .form-columns {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 <body>
     <div class="login-wrapper">
         <div class="login-left"></div>
@@ -62,38 +90,94 @@
                     }
                     
                     <form id="registerForm" method="post" asp-controller="Login" asp-action="RegisterUser">
-                    <div class="form-group">
-                        <label for="regNombre">Nombre</label>
-                        <input type="text" name="nombre" id="regNombre" placeholder="Ingrese su Nombre" required>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="regApellido">Apellido</label>
-                        <input type="text" name="apellido" id="regApellido" placeholder="Ingrese su Apellido" required>
-                    </div>
+    <div class="form-columns">
+        <!-- 🟦 COLUMNA IZQUIERDA: CAMPOS OBLIGATORIOS -->
+        <div class="left-column">
+            <h4>Campos obligatorios</h4>
 
-                    <div class="form-group">
-                        <label for="regEmail">E-mail</label>
-                        <input type="email" name="email" id="regEmail" placeholder="Ingrese su E-mail" required>
-                    </div>
+            <div class="form-group">
+                <label for="regNombre">Nombre</label>
+                <input type="text" name="nombre" id="regNombre" placeholder="Ingrese su Nombre" required>
+            </div>
 
-                    <div class="form-group">
-                        <label for="regDocumento">Documento (DNI/Pasaporte)</label>
-                        <input type="text" name="documento" id="regDocumento" placeholder="Ej: 12345678" required>
-                    </div>
+            <div class="form-group">
+                <label for="regApellido">Apellido</label>
+                <input type="text" name="apellido" id="regApellido" placeholder="Ingrese su Apellido" required>
+            </div>
 
-                    <div class="form-group">
-                        <label for="regTelefono">Teléfono</label>
-                        <input type="text" name="telefono" id="regTelefono" placeholder="Ingrese su Teléfono" required>
-                    </div>
+            <div class="form-group">
+                <label for="regEmail">E-mail</label>
+                <input type="email" name="email" id="regEmail" placeholder="Ingrese su E-mail" required>
+            </div>
 
-                    <div class="form-group">
-                        <label for="regContra">Contraseña</label>
-                        <input type="password" name="contra" id="regContra" placeholder="Ingrese su Contraseña" required>
-                    </div>
-                    <button type="submit" id="registerBtn" class="btn-register">Registrar</button>
-                    <a href="#" id="showLogin" class="btn-login">Ya tengo una Cuenta</a>
-                </form>
+            <div class="form-group">
+                <label for="regDocumento">Documento (DNI/Pasaporte)</label>
+                <input type="text" name="documento" id="regDocumento" placeholder="Ej: 12345678" required>
+            </div>
+
+            <div class="form-group">
+                <label for="regTelefono">Teléfono</label>
+                <input type="text" name="telefono" id="regTelefono" placeholder="Ingrese su Teléfono" required>
+            </div>
+
+            <div class="form-group">
+                <label for="regContra">Contraseña</label>
+                <input type="password" name="contra" id="regContra" placeholder="Ingrese su Contraseña" required>
+            </div>
+        </div>
+
+        <!-- 🟩 COLUMNA DERECHA: CAMPOS OPCIONALES -->
+        <div class="right-column">
+            <h4>Campos opcionales</h4>
+
+            <div class="form-group">
+                <label for="regDireccionCalle">Dirección Calle</label>
+                <input type="text" name="direccionCalle" id="regDireccionCalle" placeholder="Ej: Av. Siempre Viva 742">
+            </div>
+
+            <div class="form-group">
+                <label for="regDireccionCiudad">Ciudad</label>
+                <input type="text" name="direccionCiudad" id="regDireccionCiudad" placeholder="Ej: Lima">
+            </div>
+
+            <div class="form-group">
+                <label for="regDireccionEstado">Departamento/Estado</label>
+                <input type="text" name="direccionEstado" id="regDireccionEstado" placeholder="Ej: Lima Metropolitana">
+            </div>
+
+            <div class="form-group">
+                <label for="regCodigoPostal">Código Postal</label>
+                <input type="text" name="codigoPostal" id="regCodigoPostal" placeholder="Ej: 15001">
+            </div>
+
+            <div class="form-group">
+                <label for="regDireccionPais">País</label>
+                <input type="text" name="direccionPais" id="regDireccionPais" placeholder="Ej: Perú">
+            </div>
+
+            <h4 style="margin-top:20px;">Contacto de Emergencia</h4>
+
+            <div class="form-group">
+                <label for="regEmergenciaNombre">Nombre</label>
+                <input type="text" name="contactoEmergenciaNombre" id="regEmergenciaNombre" placeholder="Ej: Juan Pérez">
+            </div>
+
+            <div class="form-group">
+                <label for="regEmergenciaTelefono">Teléfono</label>
+                <input type="text" name="contactoEmergenciaTelefono" id="regEmergenciaTelefono" placeholder="Ej: 987654321">
+            </div>
+
+            <div class="form-group">
+                <label for="regEmergenciaRelacion">Relación</label>
+                <input type="text" name="contactoEmergenciaRelacion" id="regEmergenciaRelacion" placeholder="Ej: Hermano">
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" id="registerBtn" class="btn-register">Registrar</button>
+    <a href="#" id="showLogin" class="btn-login">Ya tengo una Cuenta</a>
+</form>
                 </div>
                 <div class="back2">
                     <div class="success-icon">✓</div>

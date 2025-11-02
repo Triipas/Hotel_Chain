@@ -11,8 +11,17 @@
     
     <!-- Admin Styles -->
     <link rel="stylesheet" href="~/admin/css/admin-styles.css">
-
+<style>
+#modalAmenidades .modal-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+</style>
 </head>
+
 <body>
     <div class="admin-layout">
         <!-- SIDEBAR -->
@@ -84,6 +93,87 @@
         </main>
     </div>
 
+<!-- Modal Usuario -->
+<div id="usuarioModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="usuarioModalTitle">Crear Usuario</h2>
+      <button class="close" onclick="UsuariosModule.closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="usuarioForm">
+        <input type="hidden" id="usuarioId" name="usuarioId">
+
+        <div class="form-group">
+          <label for="usuarioNombre">Nombre *</label>
+          <input type="text" id="usuarioNombre" name="nombre" required>
+        </div>
+
+        <div class="form-group">
+          <label for="usuarioApellido">Apellido *</label>
+          <input type="text" id="usuarioApellido" name="apellido" required>
+        </div>
+
+        <div class="form-group">
+          <label for="usuarioEmail">Email *</label>
+          <input type="email" id="usuarioEmail" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="usuarioTelefono">Teléfono</label>
+          <input type="text" id="usuarioTelefono" name="telefono">
+        </div>
+
+        <div class="form-group">
+          <label for="usuarioDocumento">Documento</label>
+          <input type="text" id="usuarioDocumento" name="documento">
+        </div>
+
+        <!-- Contacto de emergencia -->
+        <h4>Contacto de Emergencia</h4>
+        <div class="form-group">
+          <label for="usuarioContactoNombre">Nombre</label>
+          <input type="text" id="usuarioContactoNombre" name="contactoEmergenciaNombre">
+        </div>
+        <div class="form-group">
+          <label for="usuarioContactoTelefono">Teléfono</label>
+          <input type="text" id="usuarioContactoTelefono" name="contactoEmergenciaTelefono">
+        </div>
+        <div class="form-group">
+          <label for="usuarioContactoRelacion">Relación</label>
+          <input type="text" id="usuarioContactoRelacion" name="contactoEmergenciaRelacion">
+        </div>
+
+        <div class="form-group">
+          <label for="usuarioRol">Rol *</label>
+          <select id="usuarioRol" name="rol">
+            <option value="huesped">Huésped</option>
+            <option value="admin">Admin</option>
+            <option value="recepcionista">Recepcionista</option>
+            <option value="gerente">Gerente</option>
+            <option value="dueño">Dueño</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="usuarioEstado">Estado *</label>
+          <select id="usuarioEstado" name="estado">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="UsuariosModule.closeModal()">Cancelar</button>
+      <button type="button" id="saveUsuarioBtn" class="btn btn-success" onclick="UsuariosModule.save()">
+        <span id="saveUsuarioText">Guardar</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
     <!-- Modal para Crear/Editar Hotel -->
     <div id="hotelModal" class="modal">
         <div class="modal-content">
@@ -129,6 +219,50 @@
                         <label for="telefonoContacto">Teléfono de Contacto</label>
                         <input type="tel" id="telefonoContacto" name="telefonoContacto" placeholder="Ej: +51 999 999 999">
                     </div>
+
+                                <div class="form-group">
+    <label for="pais">País</label>
+    <input type="text" id="pais" name="pais" maxlength="100">
+</div>
+
+<div class="form-group">
+    <label for="estado">Estado / Región</label>
+    <input type="text" id="estado" name="estado" maxlength="100">
+</div>
+
+<div class="form-group">
+    <label for="latitud">Latitud</label>
+    <input type="number" id="latitud" name="latitud" step="0.000001">
+</div>
+
+<div class="form-group">
+    <label for="longitud">Longitud</label>
+    <input type="number" id="longitud" name="longitud" step="0.000001">
+</div>
+
+<div class="form-group">
+    <label>
+        <input type="checkbox" id="mascotasPermitidas" name="mascotasPermitidas">
+        Mascotas permitidas
+    </label>
+</div>
+
+<div class="form-group">
+    <label>
+        <input type="checkbox" id="fumarPermitido" name="fumarPermitido">
+        Fumar permitido
+    </label>
+</div>
+
+<div class="form-group">
+    <label for="calificacion">Calificación</label>
+    <input type="number" id="calificacion" name="calificacion" step="0.01" readonly>
+</div>
+
+<div class="form-group">
+    <label for="politicaCancelacion">Política de Cancelación</label>
+    <input type="text" id="politicaCancelacion" name="politicaCancelacion" placeholder="Indicar política de cancelación del hotel..." maxlength="500">
+</div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -139,75 +273,199 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal para Crear/Editar Habitación -->
-    <div id="habitacionModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="habitacionModalTitle">Crear Habitación</h2>
-                <button class="close" onclick="HabitacionesModule.closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="habitacionForm">
-                    <input type="hidden" id="habitacionId" name="habitacionId">
-                    
-                    <div class="form-group">
-                        <label for="habitacionHotelId">Hotel *</label>
-                        <select id="habitacionHotelId" name="hotelId" required>
-                            <option value="">Seleccionar hotel</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="numeroHabitacion">Número de Habitación *</label>
-                        <input type="text" id="numeroHabitacion" name="numeroHabitacion" required placeholder="Ej: 101, A-205, Suite Premium">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="tipo">Tipo de Habitación *</label>
-                        <select id="tipo" name="tipo" required>
-                            <option value="">Seleccionar tipo</option>
-                            <option value="simple">Simple</option>
-                            <option value="doble">Doble</option>
-                            <option value="suite">Suite</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="capacidad">Capacidad (personas) *</label>
-                        <input type="number" id="capacidad" name="capacidad" required min="1" max="10" placeholder="Ej: 2">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="precioNoche">Precio por Noche (S/) *</label>
-                        <input type="number" id="precioNoche" name="precioNoche" required min="0" step="0.01" placeholder="Ej: 150.00">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="descripcionHab">Descripción</label>
-                        <textarea id="descripcionHab" name="descripcionHab" placeholder="Describe las características de la habitación..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="disponible" name="disponible" checked>
-                            Habitación disponible
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="HabitacionesModule.closeModal()">Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="HabitacionesModule.save()" id="saveHabitacionBtn">
-                    <span id="saveHabitacionText">Guardar</span>
-                </button>
-            </div>
-        </div>
+<!-- Modal Amenidades -->
+<!-- Modal Amenidades (versión simple estilo panel admin) -->
+<div id="modalAmenidades" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Amenidades del Hotel</h2>
+      <button class="close" onclick="closeAmenidadesModal()">&times;</button>
     </div>
 
+    <div class="modal-body" id="modalAmenidadesBody">
+      <!-- Lista dinámica de amenidades -->
+      <ul id="listaAmenidades">
+        <li>Cargando...</li>
+      </ul>
+
+      <hr>
+
+      <!-- Formulario para agregar una nueva -->
+      <div class="form-group">
+        <label for="nuevaAmenidad">Agregar nueva amenidad</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="nuevaAmenidad" class="form-control" placeholder="Ej: WiFi, Piscina, Spa...">
+          <button type="button" class="btn btn-success" onclick="agregarAmenidad()">Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeAmenidadesModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modalCaracteristicasHotel" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Características del Hotel</h2>
+      <button onclick="window.HotelCaracteristicasModule.closeModal()">&times;</button>
+    </div>
+    <div id="modalCaracteristicasHotelBody"></div>
+    <div class="modal-footer">
+      <button onclick="window.HotelCaracteristicasModule.closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+    <!-- Modal para Crear/Editar Habitación -->
+    <div id="habitacionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="habitacionModalTitle">Crear Habitación</h2>
+            <button class="close" onclick="HabitacionesModule.closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="habitacionForm">
+                <input type="hidden" id="habitacionId" name="habitacionId">
+
+                <!-- Hotel -->
+                <div class="form-group">
+                    <label for="habitacionHotelId">Hotel *</label>
+                    <select id="habitacionHotelId" name="hotelId" required>
+                        <option value="">Seleccionar hotel</option>
+                    </select>
+                </div>
+
+                <!-- Número de habitación -->
+                <div class="form-group">
+                    <label for="numeroHabitacion">Número de Habitación *</label>
+                    <input type="text" id="numeroHabitacion" name="numeroHabitacion" required placeholder="Ej: 101, A-205, Suite Premium">
+                </div>
+<div class="form-group">
+    <label for="nombreHabitacion">Nombre de la Habitación</label>
+    <input type="text" id="nombreHabitacion" name="nombre" placeholder="Ej: Suite Vista Mar, Doble Superior" maxlength="255">
+</div>
+                <!-- Tipo -->
+                <div class="form-group">
+                    <label for="tipo">Tipo de Habitación *</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="">Seleccionar tipo</option>
+                        <option value="simple">Simple</option>
+                        <option value="doble">Doble</option>
+                        <option value="suite">Suite</option>
+                    </select>
+                </div>
+
+                <!-- Capacidad general -->
+                <div class="form-group">
+                    <label for="capacidad">Capacidad Total *</label>
+                    <input type="number" id="capacidad" name="capacidad" readonly>
+                </div>
+
+                <!-- Capacidad adultos y niños -->
+                <div class="form-group">
+                    <label for="capacidadAdultos">Capacidad Adultos</label>
+                    <input type="number" id="capacidadAdultos" name="capacidadAdultos" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="capacidadNinos">Capacidad Niños</label>
+                    <input type="number" id="capacidadNinos" name="capacidadNinos" min="0">
+                </div>
+
+                <!-- Camas -->
+                <div class="form-group">
+                    <label for="cantidadCamas">Cantidad de Camas</label>
+                    <input type="number" id="cantidadCamas" name="cantidadCamas" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="tipoCama">Tipo de Cama</label>
+                    <input type="text" id="tipoCama" name="tipoCama" placeholder="King, Queen, Twin...">
+                </div>
+
+                <!-- Tamaño -->
+                <div class="form-group">
+                    <label for="tamanoM2">Tamaño (m²)</label>
+                    <input type="number" id="tamanoM2" name="tamanoM2" min="0">
+                </div>
+
+                <!-- Precios -->
+                <div class="form-group">
+    <label for="precioBase">Precio Base</label>
+    <input type="number" id="precioBase" name="precioBase" step="0.01" min="0">
+</div>
+<div class="form-group">
+    <label for="precioImpuestos">Precio Impuestos (18%)</label>
+    <input type="number" id="precioImpuestos" name="precioImpuestos" step="0.01" min="0" readonly>
+</div>
+<div class="form-group">
+    <label for="precioTotal">Precio Total</label>
+    <input type="number" id="precioTotal" name="precioTotal" step="0.01" min="0" readonly>
+</div>
+                <div class="form-group">
+                    <label for="precioNoche">Precio por Noche (S/) *</label>
+                    <input type="number" id="precioNoche" name="precioNoche" required min="0" step="0.01">
+                </div>
+
+                <!-- Habitaciones disponibles -->
+                <div class="form-group">
+                    <label for="habitacionesDisponibles">Habitaciones Disponibles</label>
+                    <input type="number" id="habitacionesDisponibles" name="habitacionesDisponibles" min="0">
+                </div>
+
+                <!-- Descripción -->
+                <div class="form-group">
+                    <label for="descripcionHab">Descripción</label>
+                    <textarea id="descripcionHab" name="descripcionHab" placeholder="Describe las características de la habitación..."></textarea>
+                </div>
+
+                <!-- Disponible -->
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="disponible" name="disponible" checked>
+                        Habitación disponible
+                    </label>
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="HabitacionesModule.closeModal()">Cancelar</button>
+            <button type="button" class="btn btn-success" onclick="HabitacionesModule.save()" id="saveHabitacionBtn">
+                <span id="saveHabitacionText">Guardar</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="modalAmenidadesHabitacion" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Amenidades de la Habitación</h2>
+      <button onclick="window.HabitacionAmenidadesModule.closeModal()">&times;</button>
+    </div>
+    <div id="modalAmenidadesHabitacionBody"></div>
+    <div class="modal-footer">
+      <button onclick="window.HabitacionAmenidadesModule.closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById('precioBase').addEventListener('input', function() {
+    const precioBase = parseFloat(this.value) || 0;
+    const impuesto = precioBase * 0.18;
+    const total = precioBase + impuesto;
+
+    document.getElementById('precioImpuestos').value = impuesto.toFixed(2);
+    document.getElementById('precioTotal').value = total.toFixed(2);
+});
+</script>
     <!-- Admin JavaScript Modules -->
+    <script src="~/admin/js/admin-habitacion-amenidades.js"></script>
     <script src="~/admin/js/admin-app.js"></script>
     <script src="~/admin/js/admin-hotels.js"></script>
+    <script src="~/admin/js/admin-hotel-amenidades.js"></script>
+    <script src="~/admin/js/admin-hotel-caracteristicas.js"></script>
     <script src="~/admin/js/admin-rooms.js"></script>
     <script src="~/admin/js/admin-users.js"></script>
     <script src="~/admin/js/admin-reservations.js"></script>

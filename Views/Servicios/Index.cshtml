@@ -23,18 +23,13 @@
                 <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                 <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
                 <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
-                <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
+                <li><a asp-controller="Servicios" asp-action="Index" style="color: #0077cc;">Servicios</a></li>
                 <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
             </ul>
-            @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-            {
-                <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-            }
-            else
-            {
-                <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
-            }
+            @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
             </div>
     </nav>
 </header>
@@ -99,7 +94,30 @@
                 <p>Aquí se mostrarán los hoteles con salón de belleza.</p>
             </div>
         </section>
+            <!-- Menú Flotante (solo si hay sesión) -->
+        @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+        {
+            <div class="menu-flotante" id="menuFlotante">
+                <!-- Opciones del menú (ocultas inicialmente) -->
+                <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                    <div class="menu-icon">📅</div>
+                    <span>Mis Reservas</span>
+                </a>
+
+                <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                    <div class="menu-icon">🚪</div>
+                    <span>Cerrar Sesión</span>
+                </a>
+
+                <!-- Botón Principal (Perfil) -->
+                <button class="menu-principal" id="btnMenuPrincipal">
+                    <div class="user-avatar">👤</div>
+                </button>
+            </div>
+        }
     </main>
+    <script src="~/client/js/menu-flotante.js"></script>
+
     <script>
         // Script de navegación de servicios
         const servicioLinks = document.querySelectorAll('.servicio-link');

@@ -10,11 +10,16 @@ namespace Hotel_chain.Controllers.Client
         private readonly IHotelService _hotelService;
         private readonly IHabitacionService _habitacionService;
 
-        public HotelController(IHotelService hotelService, IHabitacionService habitacionService)
-        {
-            _hotelService = hotelService;
-            _habitacionService = habitacionService;
-        }
+           private readonly IHotelAmenidadService _hotelAmenidadService;
+    private readonly IHotelCaracteristicaService _hotelCaracteristicaService;
+
+        public HotelController(IHotelService hotelService, IHabitacionService habitacionService, IHotelAmenidadService hotelAmenidadService, IHotelCaracteristicaService hotelCaracteristicaService)
+    {
+        _hotelService = hotelService;
+        _habitacionService = habitacionService;
+        _hotelAmenidadService = hotelAmenidadService;
+        _hotelCaracteristicaService = hotelCaracteristicaService;
+    }
 
         public async Task<IActionResult> Index(string? ubicacion, string? nombre)
         {
@@ -42,7 +47,7 @@ namespace Hotel_chain.Controllers.Client
         public async Task<IActionResult> Detalle(int id)
         {
             var hotel = await _hotelService.GetByIdAsync(id);
-            
+
             if (hotel == null)
             {
                 TempData["Error"] = "Hotel no encontrado";
@@ -51,7 +56,7 @@ namespace Hotel_chain.Controllers.Client
 
             // Obtener habitaciones del hotel para calcular precio mínimo
             var habitaciones = await _habitacionService.GetByHotelIdAsync(id);
-            
+
             if (habitaciones.Any())
             {
                 ViewBag.PrecioMinimo = habitaciones.Min(h => h.PrecioNoche);
@@ -63,7 +68,15 @@ namespace Hotel_chain.Controllers.Client
                 ViewBag.TotalHabitaciones = 0;
             }
 
+var amenidades = await _hotelAmenidadService.GetByHotelIdAsync(id);
+    var caracteristicas = await _hotelCaracteristicaService.GetByHotelIdAsync(id);
+
+    ViewBag.Amenidades = amenidades;
+    ViewBag.Caracteristicas = caracteristicas;
+
             return View(hotel);
         }
+
     }
+    
 }

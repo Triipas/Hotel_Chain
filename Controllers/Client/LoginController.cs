@@ -77,71 +77,75 @@ namespace Hotel_chain.Controllers.Client
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterUser(string nombre, string apellido, string email, 
-            string contra, string telefono, string documento)
+public async Task<IActionResult> RegisterUser(
+    string nombre, string apellido, string email,
+    string contra, string telefono, string documento,
+    string? direccionCalle, string? direccionCiudad, string? direccionEstado,
+    string? codigoPostal, string? direccionPais,
+    string? contactoEmergenciaNombre, string? contactoEmergenciaTelefono, string? contactoEmergenciaRelacion)
+{
+    try
+    {
+        // Validaciones básicas (solo los requeridos)
+        if (string.IsNullOrWhiteSpace(nombre) ||
+            string.IsNullOrWhiteSpace(apellido) ||
+            string.IsNullOrWhiteSpace(email) ||
+            string.IsNullOrWhiteSpace(contra) ||
+            string.IsNullOrWhiteSpace(telefono) ||
+            string.IsNullOrWhiteSpace(documento))
         {
-            try
-            {
-                _logger.LogInformation($"Intento de registro para email: {email}");
-
-                // Validar que los campos no estén vacíos
-                if (string.IsNullOrWhiteSpace(nombre) || 
-                    string.IsNullOrWhiteSpace(apellido) || 
-                    string.IsNullOrWhiteSpace(email) || 
-                    string.IsNullOrWhiteSpace(contra) || 
-                    string.IsNullOrWhiteSpace(telefono) ||
-                    string.IsNullOrWhiteSpace(documento))
-                {
-                    ViewBag.Mensaje = "Todos los campos son obligatorios";
-                    return View("/Views/User/Login.cshtml");
-                }
-
-                // Verificar si el email ya existe
-                if (await _context.Usuarios.AnyAsync(u => u.Email.ToLower() == email.ToLower()))
-                {
-                    ViewBag.Mensaje = "El correo ya está registrado";
-                    return View("/Views/User/Login.cshtml");
-                }
-
-                // Crear nuevo usuario como huésped
-                var usuario = new Usuario
-                {
-                    Nombre = nombre.Trim(),
-                    Apellido = apellido.Trim(),
-                    Email = email.Trim().ToLower(),
-                    Contraseña = contra,
-                    Telefono = telefono.Trim(),
-                    Documento = documento.Trim(),
-                    Rol = "huesped",
-                    Estado = "activo",
-                    FechaCreacion = DateTime.UtcNow
-                };
-
-                _context.Usuarios.Add(usuario);
-                await _context.SaveChangesAsync();
-
-                // Crear registro de huésped asociado
-                var huesped = new Huesped
-                {
-                    UsuarioId = usuario.UsuarioId
-                };
-                
-                _context.Huespedes.Add(huesped);
-                await _context.SaveChangesAsync();
-                
-                _logger.LogInformation($"Usuario registrado exitosamente. ID: {usuario.UsuarioId}");
-
-                TempData["Mensaje"] = "Cuenta creada exitosamente. Ingresa tus datos para iniciar sesión.";
-                
-                return Content("Cuenta creada exitosamente");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al registrar usuario");
-                ViewBag.Mensaje = "Error al crear la cuenta. Por favor intenta nuevamente.";
-                return View("/Views/User/Login.cshtml");
-            }
+            ViewBag.Mensaje = "Todos los campos obligatorios deben completarse.";
+            return View("/Views/User/Login.cshtml");
         }
+
+        if (await _context.Usuarios.AnyAsync(u => u.Email.ToLower() == email.ToLower()))
+        {
+            ViewBag.Mensaje = "El correo ya está registrado.";
+            return View("/Views/User/Login.cshtml");
+        }
+
+        // Crear usuario con campos opcionales
+        var usuario = new Usuario
+        {
+            Nombre = nombre.Trim(),
+            Apellido = apellido.Trim(),
+            Email = email.Trim().ToLower(),
+            Contraseña = contra,
+            Telefono = telefono.Trim(),
+            Documento = documento.Trim(),
+            Rol = "huesped",
+            Estado = "activo",
+            DireccionCalle = direccionCalle,
+            DireccionCiudad = direccionCiudad,
+            DireccionEstado = direccionEstado,
+            CodigoPostal = codigoPostal,
+            DireccionPais = direccionPais,
+            ContactoEmergenciaNombre = contactoEmergenciaNombre,
+            ContactoEmergenciaTelefono = contactoEmergenciaTelefono,
+            ContactoEmergenciaRelacion = contactoEmergenciaRelacion,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        _context.Usuarios.Add(usuario);
+        await _context.SaveChangesAsync();
+
+        var huesped = new Huesped
+        {
+            UsuarioId = usuario.UsuarioId
+        };
+        _context.Huespedes.Add(huesped);
+        await _context.SaveChangesAsync();
+
+        TempData["Mensaje"] = "Cuenta creada exitosamente. Ingresa tus datos para iniciar sesión.";
+        return Content("Cuenta creada exitosamente");
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error al registrar usuario");
+        ViewBag.Mensaje = "Error al crear la cuenta. Intenta nuevamente.";
+        return View("/Views/User/Login.cshtml");
+    }
+}
 
         public IActionResult Logout()
         {

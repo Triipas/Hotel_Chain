@@ -4,6 +4,9 @@ using Hotel_chain.Models.Entities;
 using Hotel_chain.Models.DTOs.Usuario;
 using Hotel_chain.Models.DTOs.Common;
 using Hotel_chain.Services.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Hotel_chain.Controllers.API
 {
@@ -21,7 +24,6 @@ namespace Hotel_chain.Controllers.API
         // GET: api/usuarios
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<Usuario>>>> GetUsuarios(
-            [FromQuery] string? rol,
             [FromQuery] string? estado,
             [FromQuery] string? busqueda)
         {
@@ -29,47 +31,36 @@ namespace Hotel_chain.Controllers.API
             {
                 IEnumerable<Usuario> usuarios;
 
-                if (!string.IsNullOrEmpty(rol) || !string.IsNullOrEmpty(estado) || !string.IsNullOrEmpty(busqueda))
-                {
-                    usuarios = await _usuarioService.SearchAsync(rol, estado, busqueda);
-                }
+                if (!string.IsNullOrEmpty(estado) || !string.IsNullOrEmpty(busqueda))
+                    usuarios = await _usuarioService.SearchAsync(null, estado, busqueda);
                 else
-                {
                     usuarios = await _usuarioService.GetAllAsync();
-                }
 
-                return Ok(ApiResponse<IEnumerable<Usuario>>.SuccessResult(usuarios, "Usuarios obtenidos exitosamente"));
+                return Ok(ApiResponse<IEnumerable<Usuario>>.SuccessResult(usuarios, "Usuarios obtenidos correctamente"));
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return StatusCode(500, ApiResponse<IEnumerable<Usuario>>.ErrorResult(
-                    "Error interno del servidor",
-                    new List<string> { ex.Message }
-                ));
+                    "Error interno del servidor", new List<string> { ex.Message }));
             }
         }
 
-        // GET: api/usuarios/5
+        // GET: api/usuarios/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<Usuario>>> GetUsuario(int id)
         {
             try
             {
                 var usuario = await _usuarioService.GetByIdAsync(id);
-
                 if (usuario == null)
-                {
                     return NotFound(ApiResponse<Usuario>.ErrorResult($"Usuario con ID {id} no encontrado"));
-                }
 
-                return Ok(ApiResponse<Usuario>.SuccessResult(usuario, "Usuario obtenido exitosamente"));
+                return Ok(ApiResponse<Usuario>.SuccessResult(usuario, "Usuario obtenido correctamente"));
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return StatusCode(500, ApiResponse<Usuario>.ErrorResult(
-                    "Error interno del servidor",
-                    new List<string> { ex.Message }
-                ));
+                    "Error interno del servidor", new List<string> { ex.Message }));
             }
         }
 
@@ -77,136 +68,90 @@ namespace Hotel_chain.Controllers.API
         [HttpPost]
         public async Task<ActionResult<ApiResponse<Usuario>>> CreateUsuario([FromBody] UsuarioCreateDto usuarioDto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(ApiResponse<Usuario>.ErrorResult("Datos inválidos", errors));
+            }
+
+            var usuario = new Usuario
+            {
+                Nombre = usuarioDto.Nombre,
+                Apellido = usuarioDto.Apellido,
+                Email = usuarioDto.Email,
+                Telefono = usuarioDto.Telefono,
+                Documento = usuarioDto.Documento,
+                Contraseña = usuarioDto.Contraseña,
+                Rol = "huesped", // fijo para huespedes
+                Estado = usuarioDto.Estado ?? "activo"
+            };
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
-                    return BadRequest(ApiResponse<Usuario>.ErrorResult("Datos de entrada inválidos", errors));
-                }
-
-                var usuario = new Usuario
-                {
-                    Nombre = usuarioDto.Nombre,
-                    Apellido = usuarioDto.Apellido,
-                    Email = usuarioDto.Email,
-                    Telefono = usuarioDto.Telefono,
-                    Documento = usuarioDto.Documento,
-                    Contraseña = usuarioDto.Contraseña,
-                    Rol = usuarioDto.Rol,
-                    Estado = usuarioDto.Estado
-                };
-
-                var createdUsuario = await _usuarioService.CreateAsync(
-                    usuario,
-                    usuarioDto.RolDetallado,
-                    usuarioDto.PermisosExtra,
-                    usuarioDto.Preferencias,
-                    usuarioDto.NotasInternas
-                );
-
-                return Ok(ApiResponse<Usuario>.SuccessResult(createdUsuario, "Usuario creado exitosamente"));
+                var createdUsuario = await _usuarioService.CreateAsync(usuario);
+                return Ok(ApiResponse<Usuario>.SuccessResult(createdUsuario, "Usuario creado correctamente"));
             }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ApiResponse<Usuario>.ErrorResult(ex.Message));
-            }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return StatusCode(500, ApiResponse<Usuario>.ErrorResult(
-                    "Error al crear el usuario",
-                    new List<string> { ex.Message }
-                ));
+                    "Error al crear usuario", new List<string> { ex.Message }));
             }
         }
 
-        // PUT: api/usuarios/5
+        // PUT: api/usuarios/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUsuario(int id, [FromBody] UsuarioUpdateDto usuarioDto)
+        public async Task<ActionResult<ApiResponse<Usuario>>> UpdateUsuario(int id, [FromBody] UsuarioUpdateDto usuarioDto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(ApiResponse<Usuario>.ErrorResult("Datos inválidos", errors));
+            }
+
+            var usuario = new Usuario
+            {
+                UsuarioId = id,
+                Nombre = usuarioDto.Nombre,
+                Apellido = usuarioDto.Apellido,
+                Email = usuarioDto.Email,
+                Telefono = usuarioDto.Telefono,
+                Documento = usuarioDto.Documento,
+                Contraseña = usuarioDto.Contraseña ?? "", // opcional
+                Rol = "huesped",
+                Estado = usuarioDto.Estado ?? "activo"
+            };
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values
-                        .SelectMany(v => v.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
-
-                    return BadRequest(ApiResponse.ErrorResult("Datos de entrada inválidos", errors));
-                }
-
-                var usuario = new Usuario
-                {
-                    UsuarioId = id,
-                    Nombre = usuarioDto.Nombre,
-                    Apellido = usuarioDto.Apellido,
-                    Email = usuarioDto.Email,
-                    Telefono = usuarioDto.Telefono,
-                    Documento = usuarioDto.Documento,
-                    Contraseña = usuarioDto.Contraseña ?? "", // Se maneja en el servicio
-                    Rol = usuarioDto.Rol,
-                    Estado = usuarioDto.Estado
-                };
-
-                var updatedUsuario = await _usuarioService.UpdateAsync(
-                    id,
-                    usuario,
-                    usuarioDto.RolDetallado,
-                    usuarioDto.PermisosExtra,
-                    usuarioDto.Preferencias,
-                    usuarioDto.NotasInternas
-                );
-
+                var updatedUsuario = await _usuarioService.UpdateAsync(id, usuario);
                 if (updatedUsuario == null)
-                {
-                    return NotFound(ApiResponse.ErrorResult($"Usuario con ID {id} no encontrado"));
-                }
+                    return NotFound(ApiResponse<Usuario>.ErrorResult($"Usuario con ID {id} no encontrado"));
 
-                return Ok(ApiResponse<Usuario>.SuccessResult(updatedUsuario, "Usuario actualizado exitosamente"));
+                return Ok(ApiResponse<Usuario>.SuccessResult(updatedUsuario, "Usuario actualizado correctamente"));
             }
-            catch (InvalidOperationException ex)
+            catch (System.Exception ex)
             {
-                return BadRequest(ApiResponse.ErrorResult(ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ApiResponse.ErrorResult(
-                    "Error al actualizar el usuario",
-                    new List<string> { ex.Message }
-                ));
+                return StatusCode(500, ApiResponse<Usuario>.ErrorResult(
+                    "Error al actualizar usuario", new List<string> { ex.Message }));
             }
         }
 
-        // DELETE: api/usuarios/5
+        // DELETE: api/usuarios/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuario(int id)
+        public async Task<ActionResult<ApiResponse<string>>> DeleteUsuario(int id)
         {
             try
             {
                 var deleted = await _usuarioService.DeleteAsync(id);
-
                 if (!deleted)
-                {
-                    return NotFound(ApiResponse.ErrorResult($"Usuario con ID {id} no encontrado"));
-                }
+                    return NotFound(ApiResponse<string>.ErrorResult($"Usuario con ID {id} no encontrado"));
 
-                return Ok(ApiResponse.SuccessResult("Usuario eliminado exitosamente"));
+                return Ok(ApiResponse<string>.SuccessResult("Usuario eliminado correctamente"));
             }
-            catch (InvalidOperationException ex)
+            catch (System.Exception ex)
             {
-                return BadRequest(ApiResponse.ErrorResult(ex.Message));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ApiResponse.ErrorResult(
-                    "Error al eliminar el usuario",
-                    new List<string> { ex.Message }
-                ));
+                return StatusCode(500, ApiResponse<string>.ErrorResult(
+                    "Error al eliminar usuario", new List<string> { ex.Message }));
             }
         }
 
@@ -221,12 +166,10 @@ namespace Hotel_chain.Controllers.API
                 var exists = await _usuarioService.EmailExistsAsync(email, excludeId);
                 return Ok(ApiResponse<bool>.SuccessResult(exists, exists ? "Email ya está en uso" : "Email disponible"));
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 return StatusCode(500, ApiResponse<bool>.ErrorResult(
-                    "Error al verificar email",
-                    new List<string> { ex.Message }
-                ));
+                    "Error al verificar email", new List<string> { ex.Message }));
             }
         }
     }

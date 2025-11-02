@@ -1,8 +1,10 @@
 @model Hotel_chain.Models.Entities.Reserva
+@using Hotel_chain.Models.Entities
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Detalle de Reserva";
+
 }
 
 <!DOCTYPE html>
@@ -14,7 +16,7 @@
     <link rel="stylesheet" href="~/client/css/main.css?v=8">
     <style>
         .detalle-container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
         }
@@ -58,25 +60,77 @@
         }
 
         .detalle-card {
-            background: white;
-            padding: 30px;
+            background: white; 
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: space-between;
+        }
+
+        .detalle-card-buttom {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 0;
+        }
+
+        .detalle-card-left {
+            background: #f8f8f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .detalle-card-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .detalle-card-right {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .habitacion-preview {
+            display: none; /* Ocultamos esta imagen ya que irá en el left */
+        }
+
+        .detalle-card-right .info-row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detalle-card-right .info-row:last-child {
+            border-bottom: none;
         }
 
         .detalle-card h3 {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--background-section);
+            background: #f8f8f8;
+            margin: 0;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         .info-row {
             display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-light);
+            flex-direction: column;
+            gap: 10px;
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: start;
         }
 
         .info-row:last-child {
@@ -84,22 +138,25 @@
         }
 
         .info-label {
-            color: var(--text-light);
-            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 100px;
         }
 
         .info-value {
-            color: var(--accent-color);
-            font-weight: 600;
-            text-align: right;
+            color: #333;
+            font-size: 14px;
+            word-break: break-word;
         }
 
         .habitacion-preview {
             width: 100%;
             height: 200px;
             object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            display: block;
         }
 
         .precio-total-card {
@@ -173,15 +230,18 @@
 
         .action-buttons {
             display: flex;
+            flex-direction: column;
             gap: 15px;
-            margin-top: 25px;
+            margin: 25px;
+            padding-bottom: 15px;
         }
 
         .btn-action {
             flex: 1;
             padding: 12px;
+            margin: 0px 30px;
             border: none;
-            border-radius: 8px;
+            border-radius: 15px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -191,8 +251,7 @@
             display: inline-block;
         }
 
-        .btn-volver {
-            background: var(--text-light);
+        .btn-volver { 
             color: white;
         }
 
@@ -255,6 +314,49 @@
                 font-size: 2rem;
             }
         }
+
+
+
+.rating {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    display: inline-flex;
+    font-size: 2rem;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    position: relative;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.rating label::before {
+    content: "★";
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: gold;
+}
+
+.rating label.half {
+    position: relative;
+}
+
+.rating label.half::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+    color: gold;
+    pointer-events: none; /* para que no interfiera con el hover */
+}
     </style>
 </head>
 <body>
@@ -270,7 +372,7 @@
                 <ul class="nav-links">
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad">Reservar</a></li>
+                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad" style="color: #0077cc;">Reservar</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
@@ -291,186 +393,234 @@
         </div>
 
         <div class="detalle-grid">
+            <!-- Columna izquierda -->
             <div>
+                <!-- CARD 1 – Hotel -->
                 <div class="detalle-card">
-                    <h3>🏨 Información del Alojamiento</h3>
-                    
-                    @if (Model.Habitacion?.Imagenes != null && Model.Habitacion.Imagenes.Any())
-                    {
-                        <img src="~/client/imagenes/@Model.Habitacion.Imagenes.First().NombreArchivo" 
-                             alt="@Model.Habitacion.NumeroHabitacion"
-                             class="habitacion-preview" />
-                    }
-
-                    <div class="info-row">
-                        <span class="info-label">Hotel:</span>
-                        <span class="info-value">@Model.Habitacion?.Hotel?.Nombre</span>
+                    <div class="detalle-card-top">
+                        <h3>🏨 Hotel</h3>
                     </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Ciudad:</span>
-                        <span class="info-value">@Model.Habitacion?.Hotel?.Ciudad</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Dirección:</span>
-                        <span class="info-value">@Model.Habitacion?.Hotel?.Direccion</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Habitación:</span>
-                        <span class="info-value">@Model.Habitacion?.NumeroHabitacion</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Tipo:</span>
-                        <span class="info-value" style="text-transform: capitalize;">@Model.Habitacion?.Tipo</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Capacidad:</span>
-                        <span class="info-value">Hasta @Model.Habitacion?.Capacidad personas</span>
-                    </div>
-
-                    @if (!string.IsNullOrEmpty(Model.SolicitudesEspeciales))
-                    {
-                        <div class="solicitudes-box">
-                            <h4>📝 Solicitudes Especiales:</h4>
-                            <p>@Model.SolicitudesEspeciales</p>
+                    <div class="detalle-card-buttom">
+                        <div class="detalle-card-left">
+                            @if (Model.Habitacion?.Hotel?.Imagenes != null && Model.Habitacion.Hotel.Imagenes.Any())
+                            {
+                                <img src="~/client/imagenes/@Model.Habitacion.Hotel.Imagenes.First().NombreArchivo" 
+                                    alt="@Model.Habitacion.Hotel.Nombre"
+                                    class="habitacion-preview" />
+                            }
+                            <img src="" alt="hotel">
                         </div>
-                    }
+                        <div class="detalle-card-right">
+                            <div class="info-row">
+                                <h4 class="info-value">@Model.Habitacion?.Hotel?.Nombre</h4>
+                                <span class="info-value">🌆 @Model.Habitacion?.Hotel?.Ciudad</span>
+                                <span class="info-value">📍 @Model.Habitacion?.Hotel?.Direccion</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-value">📞 @Model.Habitacion?.Hotel?.TelefonoContacto</span>
+                                <span class="info-value">✉️ @Model.Habitacion?.Hotel?.ContactoEmail</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- CARD 2 – Habitación -->
                 <div class="detalle-card" style="margin-top: 25px;">
-                    <h3>⏱️ Historial</h3>
-                    
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-icon">📅</div>
-                            <div class="timeline-content">
-                                <strong>Reserva Creada</strong>
-                                <small>@Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</small>
+                    <div class="detalle-card-top">
+                        <h3>🛏️ Habitación</h3>
+                    </div>
+                    <div class="detalle-card-buttom">
+                        <div class="detalle-card-left">
+                            @if (Model.Habitacion?.Imagenes != null && Model.Habitacion.Imagenes.Any())
+                            {
+                                <img src="~/client/imagenes/@Model.Habitacion.Imagenes.First().NombreArchivo" 
+                                    alt="@Model.Habitacion.NumeroHabitacion"
+                                    class="habitacion-preview" />
+                            } 
+                            <img src="" alt="habitacion">
+                        </div>
+                        <div class="detalle-card-right">
+                            <div class="info-row">
+                                <h4 class="info-value">@Model.Habitacion?.Nombre</h4>
+                                <span class="info-value">@Model.Habitacion?.Descripcion</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-value">👤 @Model.Habitacion?.Capacidad personas</span>
+                                <span class="info-value">🛏️ @Model.Habitacion?.TipoCama</span>
+                                <span class="info-value">⬜ @Model.Habitacion?.TamanoM2 m²</span>
                             </div>
                         </div>
-
-                        @if (Model.FechaModificacion.HasValue)
+                    </div>
+                    <hr>
+                    <div class="detalle-card-amenidades">
+                        <h4 class="info-value">Amenidades Incluidas</h4>
+                        @if (ViewBag.Amenidades != null && ((IEnumerable<Hotel_chain.Models.Entities.HabitacionAmenidad>)ViewBag.Amenidades).Any())
                         {
-                            <div class="timeline-item">
-                                <div class="timeline-icon">✏️</div>
-                                <div class="timeline-content">
-                                    <strong>Última Modificación</strong>
-                                    <small>@Model.FechaModificacion.Value.ToString("dd/MM/yyyy HH:mm")</small>
-                                </div>
-                            </div>
+                            <ul>
+                                @foreach (var amenidad in (IEnumerable<Hotel_chain.Models.Entities.HabitacionAmenidad>)ViewBag.Amenidades)
+                                {
+                                    <li>@amenidad.Amenidad</li>
+                                }
+                            </ul>
                         }
-
-                        @if (Model.Estado == "confirmada")
+                        else
                         {
-                            <div class="timeline-item">
-                                <div class="timeline-icon">✓</div>
-                                <div class="timeline-content">
-                                    <strong>Confirmada</strong>
-                                    <small>Reserva confirmada y pago recibido</small>
-                                </div>
-                            </div>
-                        }
-
-                        @if (Model.Estado == "completada")
-                        {
-                            <div class="timeline-item">
-                                <div class="timeline-icon">🏁</div>
-                                <div class="timeline-content">
-                                    <strong>Completada</strong>
-                                    <small>Estadía finalizada</small>
-                                </div>
-                            </div>
-                        }
-
-                        @if (Model.Estado == "cancelada")
-                        {
-                            <div class="timeline-item">
-                                <div class="timeline-icon">✗</div>
-                                <div class="timeline-content">
-                                    <strong>Cancelada</strong>
-                                    <small>Reserva cancelada</small>
-                                </div>
-                            </div>
+                            <p>No se registraron amenidades.</p>
                         }
                     </div>
+                </div>
+
+                <!-- CARD 3 – Fechas de Estadia -->
+                <div class="detalle-card" style="margin-top: 25px;">
+                    <div class="detalle-card-top">
+                        <h3>📅 Fechas de Estadia</h3>
+                    </div>
+                    <div class="detalle-card-buttom">
+                            <div class="info-row">
+                                <span class="info-label">Check-in:</span>
+                                <span class="info-value">@Model.FechaInicio.ToString("d 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                            </div>
+
+                            <div class="info-row">
+                                <span class="info-label">Check-out:</span>
+                                <span class="info-value">@Model.FechaFin.ToString("d 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                            </div>
+                        <div class="info-row">
+                            <span class="info-label">Duracion de la Estadia: <b>@Model.NumeroNoches</b> noches</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4 – Información del Huesped -->
+                <div class="detalle-card" style="margin-top: 25px;">
+                    <div class="detalle-card-top">
+                        <h3>👤 Información del Huesped</h3>
+                    </div>
+                    <div class="detalle-card-buttom">
+                            <div class="info-row">
+                                <span class="info-label">Nombre Completo</span>
+                                <span class="info-value">@Model.GuestFirstName @Model.GuestLastName</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Número de Huéspedes</span>
+                                <span class="info-value">@Model.NumeroHuespedes</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">E-mail</span>
+                                <span class="info-value">@Model.GuestEmail</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Teléfono</span>
+                                <span class="info-value">@Model.GuestPhone</span>
+                            </div>
+                    </div>
+                </div>
+
+                <!-- CARD 5 – Políticas del Hotel -->
+                <div class="detalle-card" style="margin-top: 25px;">
+                    <h3>🏨 Políticas del Hotel</h3>
+
+                    <div class="info-row">
+                        <input type="checkbox" id="mascotas" disabled @(Model.Habitacion?.Hotel?.MascotasPermitidas == true ? "checked" : "") />
+                        <label for="mascotas">Se permiten mascotas</label>
+                    </div>
+
+                    <div class="info-row">
+                        <input type="checkbox" id="fumar" disabled @(Model.Habitacion?.Hotel?.FumarPermitido == true ? "checked" : "") />
+                        <label for="fumar">Se permite fumar</label>
+                    </div>
+
+                    @if(!string.IsNullOrEmpty(Model.Habitacion?.Hotel?.PoliticaCancelacion))
+                    {
+                        <div class="info-row" style="margin-top: 10px;">
+                            <strong>Política de cancelación:</strong>
+                            <p>@Model.Habitacion.Hotel.PoliticaCancelacion</p>
+                        </div>
+                    }
                 </div>
             </div>
 
             <div>
+            <!-- Columna derecha -->
+                <!-- CARD 6 – Resumen del pago -->
                 <div class="detalle-card">
-                    <h3>📅 Fechas de Estadía</h3>
-
-                    <div class="info-row">
-                        <span class="info-label">Check-in:</span>
-                        <span class="info-value">@Model.FechaInicio.ToString("dd/MM/yyyy")</span>
+                    <div class="detalle-card-top">
+                        <h3>💳 Resumen de Pago</h3>
                     </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Check-out:</span>
-                        <span class="info-value">@Model.FechaFin.ToString("dd/MM/yyyy")</span>
+                    <div class="detalle-card-buttom" style="display: flex; justify-content: space-between;">
+                            <div class="info-row">
+                                <span class="info-label">Tarifa por noche:</span>
+                                <span class="info-label">Noches (@Model.NumeroNoches):</span>
+                                <span class="info-label">Impuestos y tasas:</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-value">S/ @Model.RoomRate?.ToString("N2")</span>
+                                <span class="info-value">S/ @(Model.RoomRate * Model.NumeroNoches)</span>
+                                <span class="info-value">S/ @Model.Taxes?.ToString("N2")</span>
+                            </div>
                     </div>
-
+                    <hr>
                     <div class="info-row">
-                        <span class="info-label">Número de noches:</span>
-                        <span class="info-value">@Model.NumeroNoches</span>
+                            <span class="info-label">Método de pago:</span>
+                            <span class="info-value">@Model.PaymentMethod</span>
                     </div>
-
                     <div class="info-row">
-                        <span class="info-label">Huéspedes:</span>
-                        <span class="info-value">@Model.NumeroHuespedes persona@(Model.NumeroHuespedes > 1 ? "s" : "")</span>
+                        <span class="info-label">Número de tarjeta:</span>
+                        <span class="info-value">**** **** **** XXXX</span>
                     </div>
-
-                    <div class="info-notice">
-                        <h4>ℹ️ Horarios</h4>
-                        <p><strong>Check-in:</strong> 15:00 hrs</p>
-                        <p><strong>Check-out:</strong> 12:00 hrs</p>
+                    <hr>
+                    <div class="info-row">
+                        <span class="info-label">Fecha de reserva:</span>
+                        <span class="info-value"> @Model.FechaCreacion.ToString("d 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
                     </div>
                 </div>
 
-                <div class="detalle-card" style="margin-top: 25px;">
-                    <h3>💰 Información de Pago</h3>
+                <!-- CARD 7 – Acciones -->
+                <div class="detalle-card" style="gap: 15px; margin-top: 25px">
+                    <h3>⚙️ Acciones</h3>
 
-                    <div class="info-row">
-                        <span class="info-label">Precio por noche:</span>
-                        <span class="info-value">S/ @Model.Habitacion?.PrecioNoche.ToString("N2")</span>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Subtotal (@Model.NumeroNoches noche@(Model.NumeroNoches > 1 ? "s" : "")):</span>
-                        <span class="info-value">S/ @Model.PrecioTotal.ToString("N2")</span>
-                    </div>
-
-                    <div class="precio-total-card">
-                        <div class="label">Total</div>
-                        <div class="monto">S/ @Model.PrecioTotal.ToString("N2")</div>
-                    </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Estado de Pago:</span>
-                        <span class="info-value" style="color: @(Model.EstadoPago == "pagado" ? "#155724" : "#856404");">
-                            @Model.EstadoPago.ToUpper()
-                        </span>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <a asp-action="MisReservas" class="btn-action btn-volver">
-                        ← Volver a Mis Reservas
-                    </a>
-                    
-                    @if (Model.Estado == "pendiente" || Model.Estado == "confirmada")
+                    @* Si la reserva está pendiente -> mostrar botón cancelar *@
+                    @if (Model.Estado.ToLower() == "pendiente")
                     {
-                        <button onclick="confirmarCancelacion(@Model.ReservaId, '@Model.NumeroReserva')" 
-                                class="btn-action btn-cancelar-detalle">
-                            ✗ Cancelar
+                        <button type="button" class="btn-cancelar-detalle"
+                                onclick="confirmarCancelacion(@Model.ReservaId, '@Model.NumeroReserva')">
+                            Cancelar Reserva
                         </button>
                     }
+                    @* Si la reserva está completada -> mostrar botón calificar *@
+                    else if (Model.Estado.ToLower() == "completada")
+                    {
+                    <button type="button" class="btn-action"
+                        style="background: #ffc107; color: black;"
+                        onclick="abrirModalCalificacion()">
+                        ⭐ Calificar Estancia
+                    </button>
+                    }
+
+                    <!-- Imprimir -->
+                    <button type="button" class="btn-action">
+                        Imprimir
+                    </button>
+
+                    <!-- Compartir -->
+                    <button type="button" class="btn-action">
+                        Compartir
+                    </button>
+
+                    <hr>
+
+                    <button type="button" class="btn-action">
+                        Contactar al Hotel
+                    </button>
+                    <!-- Volver -->
+                    <a asp-controller="Reservas" asp-action="MisReservas" class="btn-action" style="background: #28a745; color: white;">
+                        Volver a Reservas
+                    </a>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -480,7 +630,83 @@
         <input type="hidden" name="motivo" id="cancelarMotivo" />
     </form>
 
+    <div id="modalCalificacion" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+        <form id="formCalificacion">
+            @Html.AntiForgeryToken()
+        </form>
+        <div style="background:white; padding:20px; max-width:400px; margin:50px auto; border-radius:10px; position:relative;">
+            <h3>Calificar Estancia</h3>
+            <p>@Model.Habitacion?.Hotel?.Nombre - @Model.Habitacion?.Hotel?.Ciudad</p>
+            
+            <label>Calificación:</label>
+            <div class="rating">
+                @for (decimal i = 5; i >= 0.5m; i -= 0.5m)
+            {
+                var id = $"star{i}".Replace(".", "_");
+                <input type="radio" name="rating" id="@id" value="@i" />
+                <label for="@id" class="@(i % 1 == 0.5m ? "half" : "")" title="@i estrellas"></label>
+            }
+            </div>
+            
+            <label>Comentario:</label>
+            <textarea id="comentario" rows="4" style="width:100%;"></textarea>
+            
+            <button type="button" onclick="enviarCalificacion(@Model.ReservaId, @Model.Habitacion.Hotel.HotelId)">Enviar</button>
+            <button type="button" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+
     <script src="~/client/js/responsive-navbar.js"></script>
+
+    <script>
+function abrirModalCalificacion() {
+    document.getElementById('modalCalificacion').style.display = 'block';
+}
+
+function cerrarModal() {
+    document.getElementById('modalCalificacion').style.display = 'none';
+}
+
+async function enviarCalificacion(reservaId, hotelId) {
+    const ratingInput = document.querySelector('input[name="rating"]:checked');
+    if (!ratingInput) { 
+        alert('Selecciona una calificación'); 
+        return; 
+    }
+
+    const calificacion = parseFloat(ratingInput.value);
+    const comentario = document.getElementById('comentario').value.trim();
+
+    if (!comentario) { 
+        alert('Debes agregar un comentario'); 
+        return; 
+    }
+
+    const token = document.querySelector('#formCalificacion input[name="__RequestVerificationToken"]').value;
+
+    try {
+        const res = await fetch('/Reservas/CalificarEstancia', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify({ reservaId, hotelId, calificacion, comentario })
+        });
+
+        if (res.ok) {
+            alert('¡Gracias por tu calificación!');
+            window.location.reload();
+        } else {
+            const errorText = await res.text();
+            alert('Error al enviar calificación: ' + errorText);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error al enviar calificación (problema de conexión)');
+    }
+}
+    </script>
     <script>
         function confirmarCancelacion(reservaId, numeroReserva) {
             const motivo = prompt(`¿Estás seguro de que deseas cancelar la reserva ${numeroReserva}?\n\nPor favor indica el motivo de la cancelación:`);
@@ -494,6 +720,6 @@
                 alert('Debes proporcionar un motivo para cancelar la reserva.');
             }
         }
-    </script>
+    </script> 
 </body>
 </html>
