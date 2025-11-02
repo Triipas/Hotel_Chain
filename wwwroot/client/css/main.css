@@ -8,6 +8,7 @@
 @import url('./components/habitaciones.css');
 @import url('./components/sobrenosotros.css');
 @import url('./components/servicios.css');
+@import url('./components/menu-flotante.css');
 
 /* ===== VARIABLES GLOBALES ===== */
 :root {

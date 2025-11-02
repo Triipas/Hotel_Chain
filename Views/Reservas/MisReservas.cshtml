@@ -280,21 +280,22 @@
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
-                <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
-                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
             </div>
         </nav>
     </header>
 
     <div class="mis-reservas-container">
         <div class="page-header-reservas">
-        <div class="filtros-reservas" style="text-align:center; margin-bottom:25px;">
-    <button class="filtro-btn activo" data-estado="todos">Todos</button>
-    <button class="filtro-btn" data-estado="pendiente">Pendientes</button>
-    <button class="filtro-btn" data-estado="cancelada">Canceladas</button>
-    <button class="filtro-btn" data-estado="completada">Completadas</button>
-</div>
+            <div class="filtros-reservas" style="text-align:center; margin-bottom:25px;">
+                <button class="filtro-btn activo" data-estado="todos">Todos</button>
+                <button class="filtro-btn" data-estado="pendiente">Pendientes</button>
+                <button class="filtro-btn" data-estado="cancelada">Canceladas</button>
+                <button class="filtro-btn" data-estado="completada">Completadas</button>
+            </div>
             <h1>🗓️ Mis Reservas</h1>
             <p style="color: var(--text-light);">Gestiona todas tus reservas en un solo lugar</p>
         </div>
@@ -388,7 +389,31 @@
         <input type="hidden" name="motivo" id="cancelarMotivo" />
     </form>
 
+
+    <!-- Menú Flotante (solo si hay sesión) -->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+    {
+        <div class="menu-flotante" id="menuFlotante">
+            <!-- Opciones del menú (ocultas inicialmente) -->
+            <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                <div class="menu-icon">📅</div>
+                <span>Mis Reservas</span>
+            </a>
+
+            <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                <div class="menu-icon">🚪</div>
+                <span>Cerrar Sesión</span>
+            </a>
+
+            <!-- Botón Principal (Perfil) -->
+            <button class="menu-principal" id="btnMenuPrincipal">
+                <div class="user-avatar">👤</div>
+            </button>
+        </div>
+    }
     <script src="~/client/js/responsive-navbar.js"></script>
+    <script src="~/client/js/menu-flotante.js"></script>
+
     <script>
         function confirmarCancelacion(reservaId, numeroReserva) {
             const motivo = prompt(`¿Estás seguro de que deseas cancelar la reserva ${numeroReserva}?\n\nPor favor indica el motivo de la cancelación:`);
