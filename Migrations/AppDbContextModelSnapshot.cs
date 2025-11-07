@@ -125,7 +125,7 @@ namespace Hotel_chain.Migrations
 
                     b.HasIndex("HabitacionId");
 
-                    b.ToTable("HabitacionAmenidades");
+                    b.ToTable("HabitacionAmenidades", (string)null);
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.Hotel", b =>
@@ -242,7 +242,7 @@ namespace Hotel_chain.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("HotelAmenidades");
+                    b.ToTable("HotelAmenidades", (string)null);
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.HotelCaracteristica", b =>
@@ -263,7 +263,7 @@ namespace Hotel_chain.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("HotelCaracteristicas");
+                    b.ToTable("HotelCaracteristicas", (string)null);
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.Huesped", b =>
@@ -341,7 +341,7 @@ namespace Hotel_chain.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("PermisosUsuarios");
+                    b.ToTable("PermisosUsuarios", (string)null);
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.Reserva", b =>
@@ -504,7 +504,7 @@ namespace Hotel_chain.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Resena");
+                    b.ToTable("Resena", (string)null);
                 });
 
             modelBuilder.Entity("Hotel_chain.Models.Entities.Staff", b =>

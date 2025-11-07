@@ -19,7 +19,7 @@ namespace Hotel_chain.Configuration
             services.AddScoped<IHabitacionAmenidadService, HabitacionAmenidadService>();
             services.AddScoped<IHotelAmenidadService, HotelAmenidadService>();
             services.AddScoped<IHotelCaracteristicaService, HotelCaracteristicaService>();
-            
+            services.AddScoped<IChatService, ChatService>();
             services.AddScoped<AdminAuthFilter>();
 
             return services;
