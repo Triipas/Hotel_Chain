@@ -10,3 +10,12 @@ obj/
 # Archivos temporales
 *.cache
 *.log
+
+# API Keys y Secrets
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+
+# Variables de entorno
+.env
+.env.local
