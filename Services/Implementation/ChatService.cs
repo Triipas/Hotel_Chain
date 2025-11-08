@@ -18,7 +18,7 @@ namespace Hotel_chain.Services.Implementation
 TU TRABAJO:
 - Ayudar a los usuarios a buscar hoteles y habitaciones
 - Proporcionar información sobre disponibilidad y precios
-- Responder preguntas sobre servicios y políticas
+- Responder preguntas sobre servicios, amenidades y políticas
 - Ser amigable, profesional y conciso
 
 IMPORTANTE:
@@ -29,10 +29,12 @@ IMPORTANTE:
 - Usa emojis ocasionalmente para hacer las respuestas más amigables
 
 FUNCIONES DISPONIBLES:
-- BuscarHoteles: busca hoteles por ciudad o nombre
-- BuscarHabitaciones: busca habitaciones en un hotel
-- ObtenerDetallesHotel: información detallada de un hotel
-- VerificarDisponibilidad: revisa disponibilidad para fechas específicas
+- BuscarHoteles: busca hoteles por ciudad, nombre o amenidades
+- BuscarHabitaciones: busca habitaciones en un hotel con sus amenidades
+- ListarAmenidadesHotel: muestra todas las amenidades de un hotel
+- BuscarHotelesPorAmenidades: encuentra hoteles que tengan amenidades específicas
+- ObtenerDetallesHotel: información detallada de un hotel incluyendo amenidades
+- VerificarDisponibilidad: revisa disponibilidad para fechas específicas con amenidades
 - ListarTodosLosHoteles: muestra todos los hoteles
 - ObtenerAyuda: muestra información de ayuda";
 
@@ -40,7 +42,9 @@ FUNCIONES DISPONIBLES:
             IConfiguration configuration,
             IHotelService hotelService,
             IHabitacionService habitacionService,
-            IReservaService reservaService)
+            IReservaService reservaService,
+            IHotelAmenidadService hotelAmenidadService,
+            IHabitacionAmenidadService habitacionAmenidadService)
         {
             var apiKey = configuration["OpenAI:ApiKey"];
             var modelId = configuration["OpenAI:ModelId"] ?? "gpt-4o-mini";
@@ -48,7 +52,13 @@ FUNCIONES DISPONIBLES:
             var builder = Kernel.CreateBuilder();
             builder.AddOpenAIChatCompletion(modelId, apiKey);
             
-            var hotelPlugin = new HotelPlugin(hotelService, habitacionService, reservaService);
+            var hotelPlugin = new HotelPlugin(
+                hotelService, 
+                habitacionService, 
+                reservaService, 
+                hotelAmenidadService, 
+                habitacionAmenidadService);
+            
             builder.Plugins.AddFromObject(hotelPlugin, "HotelPlugin");
             
             _kernel = builder.Build();
@@ -91,9 +101,10 @@ FUNCIONES DISPONIBLES:
                 return $"Error: {ex.Message}";
             }
         }
+        
         public static void LimpiarHistorialesViejos()
         {
-
+            // Implementación opcional para limpiar historiales antiguos
         }
     }
 }
