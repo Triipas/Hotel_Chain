@@ -15,8 +15,10 @@
 </head>
 <body>
     <header>
-        <nav class="navbar">
-            <div class="logo">Costa Dorada</div>
+        <nav class="navbar">    
+            <div class="logo">
+                <span class="logo-text">Costa <span class="resaltado">Dorada</span></span>
+            </div>
             <button class="menu-toggle" aria-label="Abrir menú">
                 <span></span>
                 <span></span>
@@ -26,7 +28,7 @@
                 <ul class="nav-links">
                     <li><a asp-controller="Home" asp-action="Index" style="color: #0077cc;">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a>Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
@@ -43,7 +45,9 @@
             <div class="hero-text">
                 <h1>Menos trabajo,<br>más vacaciones.</h1>
                 <p>Te ofrecemos lo necesario para disfrutar de tus vacaciones en familia.<br>Es hora de crear momentos inolvidables.</p>
-                <button class="mostrar-mas">Mostrar más</button>
+                <a asp-controller="Hotel" asp-action="Index">
+                    <button class="mostrar-mas">Mostrar más</button>
+                </a>
                 <div class="stats-stack">
                     <div class="stats-images">
                         <div class="stat-img">

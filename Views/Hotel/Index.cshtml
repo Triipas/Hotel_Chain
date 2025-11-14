@@ -8,7 +8,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title> Costa Dorada - Hoteles</title>
-    <link rel="stylesheet" href="~/client/css/main.css?v=7">
+    <link rel="stylesheet" href="~/client/css/main.css?v=8">
 </head>
 <header>
         <nav class="navbar">
@@ -22,7 +22,7 @@
                 <ul class="nav-links">
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index" style="color: #0077cc;">Hoteles</a></li>
-                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a>Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
@@ -32,48 +32,84 @@
                 }
             </div>
         </nav>
-    </header>
-
-<section class="filtro-hoteles">
-    <h2>Filtrar hoteles</h2>
-    <form method="get" class="filtro-form">
-        <select name="ubicacion">
-            <option value="">Ubicación</option>
-            <option value="Lima">Lima</option>
-            <option value="Cusco">Cusco</option>
-            <option value="Arequipa">Arequipa</option>
-        </select>
-
-        <input type="text" name="nombre" placeholder="Buscar hotel por nombre" />
-
-        <button type="submit">Buscar</button>
-    </form>
-</section>
-
+</header> 
+ 
 <section class="listado-hoteles">
-    <h2>Todos los hoteles</h2>
-    <div class="hoteles-container">
-                @if (Model != null && Model.Any())
-        {
-            foreach (var hotel in Model)
+    @if (Model != null && Model.Any())
+    {
+        <!-- SECCIÓN SUPERIOR: 3 columnas x 2 filas -->
+        <div class="hoteles-grid-superior">
+            @for (int i = 0; i < Math.Min(5, Model.Count); i++)
             {
-                <div class="hotel-card">
+                var hotel = Model[i];
+                <div class="hotel-card @(i == 0 ? "card-tall" : "")">
                     <img src="~/client/imagenes/@hotel.Imagenes.FirstOrDefault()?.NombreArchivo" 
                          alt="@hotel.Nombre" class="hotel-img" />
-                    <h3>@hotel.Nombre</h3>
-                    <p>@hotel.Ciudad</p>
-                    <p>@hotel.Descripcion</p>
-                    <a asp-controller="Hotel" asp-action="Detalle" asp-route-id="@hotel.HotelId" class="btn-reservar">
-                        Ver detalles
-                    </a>
+                    <div class="hotel-overlay">
+                        <div class="hotel-info">
+                            <h3>@hotel.Nombre</h3>
+                            <p class="hotel-ubicacion">@hotel.Ciudad</p>
+                        </div>
+                        <a asp-controller="Hotel" asp-action="Detalle" asp-route-id="@hotel.HotelId" class="btn-ver-detalles">
+                            Ver detalles
+                        </a>
+                    </div>
                 </div>
             }
-        }
-        else
+        </div>
+
+        <!-- SECCIÓN INFERIOR: 4 columnas horizontales -->
+        @if (Model.Count > 5)
         {
-            <p>No hay hoteles registrados aún.</p>
+            <div class="hoteles-grid-inferior">
+                @for (int i = 5; i < Math.Min(9, Model.Count); i++)
+                {
+                    var hotel = Model[i];
+                    <div class="hotel-card">
+                        <img src="~/client/imagenes/@hotel.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                             alt="@hotel.Nombre" class="hotel-img" />
+                        <div class="hotel-overlay">
+                            <div class="hotel-info">
+                                <h3>@hotel.Nombre</h3>
+                                <p class="hotel-ubicacion">@hotel.Ciudad</p>
+                            </div>
+                            <a asp-controller="Hotel" asp-action="Detalle" asp-route-id="@hotel.HotelId" class="btn-ver-detalles">
+                                Ver detalles
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
         }
-    </div>
+
+        <!-- Hoteles adicionales (si hay más de 9) -->
+        @if (Model.Count > 9)
+        {
+            <div class="hoteles-grid-adicionales">
+                @for (int i = 9; i < Model.Count; i++)
+                {
+                    var hotel = Model[i];
+                    <div class="hotel-card">
+                        <img src="~/client/imagenes/@hotel.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                             alt="@hotel.Nombre" class="hotel-img" />
+                        <div class="hotel-overlay">
+                            <div class="hotel-info">
+                                <h3>@hotel.Nombre</h3>
+                                <p class="hotel-ubicacion">@hotel.Ciudad</p>
+                            </div>
+                            <a asp-controller="Hotel" asp-action="Detalle" asp-route-id="@hotel.HotelId" class="btn-ver-detalles">
+                                Ver detalles
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <p class="no-hoteles">No hay hoteles registrados aún.</p>
+    }
 
     <!-- Menú Flotante (solo si hay sesión) -->
     @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)

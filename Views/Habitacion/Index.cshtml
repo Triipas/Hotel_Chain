@@ -12,91 +12,307 @@
     <link rel="stylesheet" href="~/client/css/main.css?v=7">
 </head>
 <style>
-
-.listado-habitaciones .container {
-    max-width: 700px;  /* mismo ancho que el filtro */
-    margin: 0 auto;    /* centra el contenido */
+.titulo-hotel {
+    text-align: center;
+    margin: 60px 0 40px 0;
+    font-size: 2.5rem;
+    color: #1a1a1a;
+    font-weight: 600;
 }
 
-.habitacion-card {
+.filtro-habitaciones {
     display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.filtro-form {
+    display: inline-flex;
+    gap: 15px;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filtro-form select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-width: 150px;
+}
+
+.filtro-form button {
+    padding: 10px 30px;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.filtro-form button:hover {
+    background-color: #005fa3;
+}
+
+.listado-habitaciones .habitaciones-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+/* Estructura de matriz 2x2 usando CSS Grid */
+.habitacion-card {
+    width: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    padding: 10px;
-    width: 100%;       /* ocupa todo el ancho del contenedor */
-    max-width: 700px;  /* limita la card al mismo ancho que el contenedor */
+    padding: 20px;
     background-color: #f9f9f9;
-    margin: 0 auto;    /* centra la card dentro del contenedor */
+    margin-bottom: 20px;
 }
 
-.habitacion-card img {
-    width: 200px;
-    height: 150px;
+/* Posición 1.1: Imagen (arriba izquierda) */
+.habitacion-imagen {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+}
+
+.habitacion-imagen img {
+    width: 100%;
+    height: 250px;
     object-fit: cover;
     border-radius: 8px;
 }
 
-/* Columna de info */
+.badge-agotado-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff4444;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Posición 1.2: Info (abajo izquierda) */
 .habitacion-info {
-    flex: 2;
+    grid-column: 1;
+    grid-row: 2;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    gap: 3px;
+    text-align: left;
 }
 
-/* Columna de precio/botones */
+.habitacion-info h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.habitacion-info p {
+    margin: 2px 0;
+    color: #555;
+    font-size: 0.85rem;
+}
+
+.habitacion-info .descripcion {
+    margin-top: 8px;
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.85rem;
+}
+
+/* Posición 2.1: Precio (arriba derecha) */
 .habitacion-precio {
-    flex: 1;
+    grid-column: 2;
+    grid-row: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
+    gap: 8px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    padding-bottom: 0px;
 }
 
-/* Botones en columna 3 */
-.habitacion-botones {
+.precio-principal {
+    text-align: center;
+    padding: 15px;
+    background-color: #0077cc;
+    color: white;
+    border-radius: 8px;
+}
+
+.precio-principal .label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.precio-principal .valor {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.precio-desglose {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    margin-top: 10px;
+}
+
+.precio-desglose p {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.disponibilidad {
+    text-align: center;
+    padding: 5px 0;
+}
+
+.badge-disponible {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.badge-no-disponible {
+    display: inline-block;
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+
+/* Posición 2.2: Botones (abajo derecha) */
+.habitacion-botones {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    padding: 15px;
 }
 
 .btn-reservar-negro, .btn-detalles-negro {
     display: inline-block;
-    padding: 8px 12px;
+    padding: 12px 20px;
     background-color: #333;
     color: white;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 8px;
     text-align: center;
     width: 100%;
-    font-weight: 500;
-    transition: 0.3s;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
 }
 
 .btn-reservar-negro:hover, .btn-detalles-negro:hover {
     background-color: #555;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+.btn-reservar-negro.disabled {
+    background-color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-reservar-negro.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.sin-resultados {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Responsive para tablets */
 @@media (max-width: 768px) {
     .habitacion-card {
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
     }
-    .habitacion-precio, .habitacion-info {
-        width: 100%;
-        align-items: flex-start;
+    
+    .habitacion-imagen {
+        grid-column: 1;
+        grid-row: 1;
     }
-    .habitacion-card img {
-        width: 100%;
-        max-width: 300px;
-        height: auto;
+    
+    .habitacion-precio {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    .habitacion-info {
+        grid-column: 1;
+        grid-row: 3;
+    }
+    
+    .habitacion-botones {
+        grid-column: 1;
+        grid-row: 4;
     }
 }
 
+/* Responsive para móviles */
+@@media (max-width: 480px) {
+    .filtro-form {
+        flex-direction: column;
+        width: 90%;
+    }
+    
+    .filtro-form select {
+        width: 100%;
+    } 
+    
+    .habitacion-imagen img {
+        height: 200px;
+    }
+    
+    .precio-principal .valor {
+        font-size: 1.5rem;
+    }
+} 
 </style>
-<header>
+    <header>
         <nav class="navbar">
             <div class="logo">Costa Dorada</div>
             <button class="menu-toggle" aria-label="Abrir menú">
@@ -106,18 +322,13 @@
             </button>
             <div class="nav-derecha">
                 <ul class="nav-links">
-                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Home" asp-action="Index";">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a style="color: #0077cc";>Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-                {
-                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-                }
-                else
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
                 {
                     <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
                 }
@@ -125,9 +336,8 @@
         </nav>
     </header>
 
-<h2>Habitaciones de @hotel?.Nombre</h2>
-
-<!-- Filtro -->
+<h2 class="titulo-hotel">@hotel?.Nombre</h2>
+ 
 <section class="filtro-habitaciones">
     <form method="get" class="filtro-form">
         <input type="hidden" name="hotelId" value="@hotel?.HotelId" />
@@ -157,79 +367,146 @@
         {
             foreach (var hab in Model)
             {
-                 var amenidades = ViewBag.AmenidadesPorHabitacion?[hab.HabitacionId] as IEnumerable<Hotel_chain.Models.Entities.HabitacionAmenidad>;
+                var amenidades = ViewBag.AmenidadesPorHabitacion?[hab.HabitacionId] as IEnumerable<Hotel_chain.Models.Entities.HabitacionAmenidad>;
                 <div class="habitacion-card">
-                    <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" 
-                         alt="@hab.NumeroHabitacion"
-                         class="habitacion-img" />
+                    
+                    <!-- DIV 1.1: IMAGEN -->
+                    <div class="habitacion-imagen">
+                        <img src="~/client/imagenes/@hab.Imagenes.FirstOrDefault()?.NombreArchivo" 
+                             alt="Habitación @hab.NumeroHabitacion"
+                             class="habitacion-img" />
+                        @if (!hab.Disponible)
+                        {
+                            <div class="badge-agotado-overlay">¡Agotado!</div>
+                        }
+                    </div>
+                    
+                    <!-- DIV 1.2: INFO DE LA HABITACIÓN -->
+                    <div class="habitacion-info">
+                        <h3>Habitación @hab.NumeroHabitacion</h3>
+                        
+                        @if (!string.IsNullOrEmpty(hab.Nombre))
+                        {
+                            <p><strong>Nombre:</strong> @hab.Nombre</p>
+                        }
+                        
+                        <p><strong>Tipo:</strong> @hab.Tipo</p>
+                        <p><strong>Capacidad:</strong> @hab.Capacidad personas</p>
+                        
+                        @if (hab.CapacidadAdultos.HasValue || hab.CapacidadNinos.HasValue)
+                        {
+                            <p>
+                                <strong>Adultos:</strong> @(hab.CapacidadAdultos ?? 0), 
+                                <strong>Niños:</strong> @(hab.CapacidadNinos ?? 0)
+                            </p>
+                        }
+                        
+                        @if (hab.CantidadCamas.HasValue)
+                        {
+                            <p><strong>Camas:</strong> @hab.CantidadCamas @hab.TipoCama</p>
+                        }
+                        
+                        @if (hab.TamanoM2.HasValue)
+                        {
+                            <p><strong>Tamaño:</strong> @hab.TamanoM2 m²</p>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(hab.Descripcion))
+                        {
+                            <p class="descripcion">
+                                <strong>Descripción:</strong> @hab.Descripcion
+                            </p>
+                        }
+                        
+                        @if (amenidades != null && amenidades.Any())
+                        {
+                            <p><strong>Amenidades:</strong> @string.Join(", ", amenidades.Select(a => a.Amenidad))</p>
+                        }
+                    </div>
+                    
+                    <!-- DIV 2.1: PRECIO -->
+                    <div class="habitacion-precio">
+                        <div class="precio-principal">
+                            <span class="label">PRECIO/NOCHE</span>
+                            <span class="valor">S/ @hab.PrecioBase.GetValueOrDefault().ToString("N2")</span>
+                        </div>
+                        
+                        <div class="precio-desglose">
+                            <p><strong>Precio Base:</strong> <span>S/ @hab.PrecioBase.GetValueOrDefault().ToString("N2")</span></p>
+                            <p><strong>Impuestos:</strong> <span>S/ @hab.PrecioImpuestos.GetValueOrDefault().ToString("N2")</span></p>
+                        </div>
+                        
+                        <div class="disponibilidad">
+                            @if (hab.Disponible)
+                            {
+                                <span class="badge-disponible">✓ Disponible</span>
+                            }
+                            else
+                            {
+                                <span class="badge-no-disponible">✗ No Disponible</span>
+                            }
+                        </div>
+                    </div>
 
-                        <div class="habitacion-info">
-        <h3>Habitación @hab.NumeroHabitacion</h3>
-        @if (!string.IsNullOrEmpty(hab.Nombre))
-        {
-            <p><strong>Nombre:</strong> @hab.Nombre</p>
-        }
-        <p><strong>Tipo:</strong> @hab.Tipo</p>
-        <p><strong>Capacidad:</strong> @hab.Capacidad personas</p>
-        @if (hab.CapacidadAdultos.HasValue || hab.CapacidadNinos.HasValue)
-        {
-            <p><strong>Adultos:</strong> @hab.CapacidadAdultos ?? 0, 
-               <strong>Niños:</strong> @hab.CapacidadNinos ?? 0
-            </p>
-        }
-        @if (hab.CantidadCamas.HasValue)
-        {
-            <p><strong>Camas:</strong> @hab.CantidadCamas @hab.TipoCama</p>
-        }
-        @if (hab.TamanoM2.HasValue)
-        {
-            <p><strong>Tamaño:</strong> @hab.TamanoM2 m²</p>
-        }
-        <p style="font-size: 0.9rem; color: var(--text-light);">
-            <strong>Descripción:</strong> @hab.Descripcion
-        </p>
-        
-       <p><strong>Amenidades:</strong> @string.Join(", ", amenidades.Select(a => a.Amenidad))</p>
-    </div>
+                    <!-- DIV 2.2: BOTONES DE ACCIÓN -->
+                    <div class="habitacion-botones">
+                        @if (hab.Disponible)
+                        {
+                            <a asp-controller="Reservas" 
+                               asp-action="IniciarReserva" 
+                               asp-route-habitacionId="@hab.HabitacionId"
+                               class="btn-reservar-negro">
+                                🛏️ Reservar
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn-reservar-negro disabled" disabled>
+                                🛏️ No Disponible
+                            </button>
+                        }
 
-      <div class="habitacion-precio">
-        <p><strong>Precio/noche:</strong> S/ @hab.PrecioBase.GetValueOrDefault().ToString("N2")</p>
-        <p><strong>Disponible:</strong> @(hab.Disponible ? "Sí" : "No")</p>
+                        <a asp-controller="Habitacion" 
+                           asp-action="Detalles" 
+                           asp-route-id="@hab.HabitacionId" 
+                           class="btn-detalles-negro">
+                            📋 Detalles
+                        </a>
+                    </div>
 
-<p><strong>Precio Base:</strong> S/ @hab.PrecioBase.GetValueOrDefault().ToString("N2")</p>
-<p><strong>Impuestos:</strong> S/ @hab.PrecioImpuestos.GetValueOrDefault().ToString("N2")</p>
-
-        <div class="habitacion-botones">
-            <a asp-controller="Reservas" 
-               asp-action="IniciarReserva" 
-               asp-route-habitacionId="@hab.HabitacionId"
-               class="btn-reservar-negro">
-                🛏️ Reservar
-            </a>
-
-            <a asp-controller="Habitacion" 
-               asp-action="Detalles" 
-               asp-route-id="@hab.HabitacionId" 
-               class="btn-detalles-negro">
-                📋 Detalles
-            </a>
-        </div>
-    </div>
-</div>
-                
-
-                    @if (!hab.Disponible)
-                    {
-                        <p style="color: red; font-weight: bold; margin-top: 10px;">¡Agotado!</p>
-                    }
+                </div>
             }
         }
         else
         {
-            <p>No hay habitaciones disponibles para este hotel.</p>
+            <p class="sin-resultados">No hay habitaciones disponibles para este hotel.</p>
         }
     </div>
 </section>
+
+    <!-- Menú Flotante (solo si hay sesión) -->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+    {
+        <div class="menu-flotante" id="menuFlotante">
+            <!-- Opciones del menú (ocultas inicialmente) -->
+            <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                <div class="menu-icon">📅</div>
+                <span>Mis Reservas</span>
+            </a>
+
+            <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                <div class="menu-icon">🚪</div>
+                <span>Cerrar Sesión</span>
+            </a>
+
+            <!-- Botón Principal (Perfil) -->
+            <button class="menu-principal" id="btnMenuPrincipal">
+                <div class="user-avatar">👤</div>
+            </button>
+        </div>
+    }
+
+<script src="~/client/js/menu-flotante.js"></script>
 <script src="~/client/js/responsive-navbar.js"></script>
 <link rel="stylesheet" href="~/client/css/chatbot.css">
 <script src="~/client/js/chatbot.js"></script>
