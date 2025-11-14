@@ -7,9 +7,11 @@
 }
 
 <link rel="stylesheet" href="~/client/css/main.css">
-<header>
-        <nav class="navbar">
-            <div class="logo">Costa Dorada</div>
+    <header>
+        <nav class="navbar">    
+            <div class="logo">
+                <span class="logo-text">Costa<span class="resaltado">Dorada</span></span>
+            </div>
             <button class="menu-toggle" aria-label="Abrir menú">
                 <span></span>
                 <span></span>
@@ -17,18 +19,13 @@
             </button>
             <div class="nav-derecha">
                 <ul class="nav-links">
-                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Home" asp-action="Index" style="color: #0077cc;">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a>Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
-                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
-                {
-                    <span>Bienvenido, @HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
-                }
-                else
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
                 {
                     <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
                 }
@@ -154,8 +151,29 @@
         <p>No se han registrado amenidades para esta habitación.</p>
     }
 </div>
-</main>
+<!-- Menú Flotante (solo si hay sesión) -->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+    {
+        <div class="menu-flotante" id="menuFlotante">
+            <!-- Opciones del menú (ocultas inicialmente) -->
+            <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                <div class="menu-icon">📅</div>
+                <span>Mis Reservas</span>
+            </a>
 
+            <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                <div class="menu-icon">🚪</div>
+                <span>Cerrar Sesión</span>
+            </a>
+
+            <!-- Botón Principal (Perfil) -->
+            <button class="menu-principal" id="btnMenuPrincipal">
+                <div class="user-avatar">👤</div>
+            </button>
+        </div>
+    }
+</main>
+<script src="~/client/js/menu-flotante.js"></script>
 <style>
 .card-amenidades {
     margin-top: 25px;

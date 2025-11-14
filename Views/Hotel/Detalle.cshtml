@@ -16,9 +16,9 @@
     <link rel="stylesheet" href="~/client/css/main.css?v=9">
     <style>
         
-.detalle-hotel-container {
+        .detalle-hotel-container {
             max-width: 1200px;
-            margin: 100px auto 40px;
+            margin: 20px auto 40px;
             padding: 0 20px;
         }
 
@@ -290,8 +290,7 @@
     </style>
 </head>
 <body>
-    <header>
-       <header>
+    <header> 
         <nav class="navbar">
             <div class="logo">Costa Dorada</div>
             <button class="menu-toggle" aria-label="Abrir menú">
@@ -302,8 +301,8 @@
             <div class="nav-derecha">
                 <ul class="nav-links">
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                    <li><a asp-controller="Habitacion" asp-action="Index">Habitaciones</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index" style="color: #0077cc;">Hoteles</a></li>
+                    <li><a>Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
@@ -313,9 +312,7 @@
                 }
             </div>
         </nav>
-    </header>
-
-    </header>
+    </header> 
 
     <div class="detalle-hotel-container">
         <a asp-controller="Hotel" asp-action="Index" class="btn-volver">
@@ -330,13 +327,11 @@
                     <i class="fas fa-star"></i> @Model.Calificacion.Value.ToString("0.0")
                 </div>
             }
-
-            <h1 class="hotel-nombre">@Model.Nombre</h1>
-
-            <p class="hotel-ubicacion">
-    <i class="fas fa-map-marker-alt"></i>
-    @Model.Direccion, @Model.Ciudad@if(!string.IsNullOrEmpty(Model.Pais)){<text>, @Model.Pais</text>}
-</p>
+            <h1 class="hotel-nombre">@Model.Nombre</h1> 
+            <p class="hotel-ubicacion"> 
+                <i class="fas fa-map-marker-alt"></i>
+                @Model.Direccion, @Model.Ciudad@if(!string.IsNullOrEmpty(Model.Pais)){<text>, @Model.Pais</text>}
+            </p>
         </div>
 
         @if (Model.Imagenes != null && Model.Imagenes.Any())
@@ -407,35 +402,31 @@
                 </div>
 
                 @if(ViewBag.Amenidades != null && ((List<Hotel_chain.Models.Entities.HotelAmenidad>)ViewBag.Amenidades).Any())
-{
-    <div class="politicas-hotel">
-        <h4>🏖️ Amenidades</h4>
-        <div class="cards-container">
-            @foreach(var amenidad in (List<Hotel_chain.Models.Entities.HotelAmenidad>)ViewBag.Amenidades)
-            {
-                <div class="card-item">@amenidad.Amenidad</div>
-            }
-        </div>
-    </div>
-}
+                {
+                <div class="politicas-hotel">
+                    <h4>🏖️ Amenidades</h4>
+                    <div class="cards-container">
+                        @foreach(var amenidad in (List<Hotel_chain.Models.Entities.HotelAmenidad>)ViewBag.Amenidades)
+                        {
+                            <div class="card-item">@amenidad.Amenidad</div>
+                        }
+                    </div>
+                </div>
+                }
 
-@if(ViewBag.Caracteristicas != null && ((List<Hotel_chain.Models.Entities.HotelCaracteristica>)ViewBag.Caracteristicas).Any())
-{
-    <div class="politicas-hotel">
-        <h4>✨ Características</h4>
-        <div class="cards-container">
-            @foreach(var caracteristica in (List<Hotel_chain.Models.Entities.HotelCaracteristica>)ViewBag.Caracteristicas)
-            {
-                <div class="card-item">@caracteristica.Caracteristica</div>
-            }
-        </div>
-    </div>
-}
-            </div>
-
-
-
-
+                @if(ViewBag.Caracteristicas != null && ((List<Hotel_chain.Models.Entities.HotelCaracteristica>)ViewBag.Caracteristicas).Any())
+                {
+                    <div class="politicas-hotel">
+                        <h4>✨ Características</h4>
+                        <div class="cards-container">
+                            @foreach(var caracteristica in (List<Hotel_chain.Models.Entities.HotelCaracteristica>)ViewBag.Caracteristicas)
+                            {
+                                <div class="card-item">@caracteristica.Caracteristica</div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div> 
             <div>
                 <div class="reserva-card">
                     <div class="precio-desde">Desde</div>
