@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Pago Exitoso";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 text-center" style="border-radius: 20px;">
+        <div class="mb-4">
+            <img src="https://cdn-icons-png.flaticon.com/512/845/845646.png" alt="Pago Exitoso" width="120" />
+        </div>
+
+        <h2 class="text-success fw-bold mb-3">¡Pago realizado con éxito! 🎉</h2>
+        <p class="fs-5 text-secondary">Tu reserva ha sido registrada correctamente en nuestro sistema.</p>
+
+        <div class="mt-4 text-start p-3 bg-light rounded-3">
+            <h5 class="fw-bold text-dark mb-2">🧾 Detalles del pago:</h5>
+            <ul class="list-unstyled">
+                <li><strong>Código de pago:</strong> @ViewBag.CodigoPago</li>
+                <li><strong>ID de preferencia:</strong> @ViewBag.Preferencia</li>
+                <li><strong>Fecha de registro:</strong> @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</li>
+            </ul>
+        </div>
+
+        <div class="mt-5">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-success btn-lg px-5" style="border-radius: 10px;">
+                🏨 Volver al inicio
+            </a>
+            <a href="@Url.Action("MisReservas", "Reservas")" class="btn btn-outline-primary btn-lg ms-2 px-4" style="border-radius: 10px;">
+                📘 Ver mis reservas
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .card {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: white;
+    }
+
+    h2 {
+        color: #2e7d32;
+    }
+
+    .btn-lg {
+        transition: all 0.3s ease;
+    }
+
+    .btn-lg:hover {
+        transform: scale(1.05);
+    }
+</style>

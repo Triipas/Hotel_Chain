@@ -237,15 +237,39 @@ namespace Hotel_chain.Controllers.Client
 
             try
             {
-                // Obtener usuario y habitación para llenar los datos extra
-                var usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
-                var habitacion = await _habitacionService.GetByIdAsync((int)TempData["HabitacionId"]);
+                // 🔹 Obtener datos desde Session (si existen)
+                var habitacionId = HttpContext.Session.GetInt32("HabitacionId") 
+                                ?? (int?)TempData["HabitacionId"];
+                var fechaInicioStr = HttpContext.Session.GetString("FechaInicio") 
+                                    ?? TempData["FechaInicio"]?.ToString();
+                var fechaFinStr = HttpContext.Session.GetString("FechaFin") 
+                                ?? TempData["FechaFin"]?.ToString();
 
-                var fechaInicio = DateTime.Parse(TempData["FechaInicio"].ToString());
-                var fechaFin = DateTime.Parse(TempData["FechaFin"].ToString());
+                if (habitacionId == null || fechaInicioStr == null || fechaFinStr == null)
+                {
+                    TempData["Error"] = "Datos de reserva incompletos. Intenta nuevamente.";
+                    return RedirectToAction("Paso4");
+                }
+
+                var fechaInicio = DateTime.Parse(fechaInicioStr);
+                var fechaFin = DateTime.Parse(fechaFinStr);
                 var numeroNoches = (fechaFin - fechaInicio).Days;
+
+                var numeroHuespedes = HttpContext.Session.GetInt32("NumeroHuespedes") 
+                                    ?? (int?)TempData["NumeroHuespedes"] ?? 1;
+                var adultos = HttpContext.Session.GetInt32("Adultos") 
+                            ?? (int?)TempData["Adultos"] ?? 1;
+                var ninos = HttpContext.Session.GetInt32("Ninos") 
+                            ?? (int?)TempData["Ninos"] ?? 0;
+                var solicitudes = HttpContext.Session.GetString("SolicitudesEspeciales") 
+                                ?? TempData["SolicitudesEspeciales"]?.ToString();
+
+                // Obtener usuario y habitación
+                var usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
+                var habitacion = await _habitacionService.GetByIdAsync(habitacionId.Value);
                 var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacion.HabitacionId, fechaInicio, fechaFin);
 
+                // Crear DTO
                 var reservaDto = new ReservaCreateDto
                 {
                     UsuarioId = usuario.UsuarioId,
@@ -254,9 +278,9 @@ namespace Hotel_chain.Controllers.Client
                     FechaInicio = fechaInicio,
                     FechaFin = fechaFin,
                     NumeroNoches = numeroNoches,
-                    NumeroHuespedes = (int)TempData["NumeroHuespedes"],
-                    GuestsAdults = (int)TempData["Adultos"],
-                    GuestsChildren = (int)TempData["Ninos"],
+                    NumeroHuespedes = numeroHuespedes,
+                    GuestsAdults = adultos,
+                    GuestsChildren = ninos,
                     GuestFirstName = usuario.Nombre,
                     GuestLastName = usuario.Apellido,
                     GuestEmail = usuario.Email,
@@ -264,98 +288,231 @@ namespace Hotel_chain.Controllers.Client
                     RoomRate = habitacion.PrecioNoche,
                     Subtotal = habitacion.PrecioBase,
                     Taxes = habitacion.PrecioImpuestos,
-                    Currency = habitacion.Moneda,
+                    Currency = habitacion.Moneda ?? "PEN",
                     PrecioTotal = precioTotal,
-                    PaymentMethod = PaymentMethod,
-                    SolicitudesEspeciales = TempData["SolicitudesEspeciales"]?.ToString()
+                    PaymentMethod = PaymentMethod ?? "Mercado Pago",
+                    SolicitudesEspeciales = solicitudes
                 };
 
+                // Guardar reserva
                 var reserva = await _reservaService.CreateAsync(reservaDto);
 
+                // Limpiar los datos usados
                 TempData.Clear();
+                HttpContext.Session.Remove("HabitacionId");
+                HttpContext.Session.Remove("FechaInicio");
+                HttpContext.Session.Remove("FechaFin");
+                HttpContext.Session.Remove("NumeroHuespedes");
+                HttpContext.Session.Remove("Adultos");
+                HttpContext.Session.Remove("Ninos");
+                HttpContext.Session.Remove("SolicitudesEspeciales");
+
                 TempData["Success"] = $"¡Reserva creada exitosamente! Número de reserva: {reserva.NumeroReserva}";
                 return RedirectToAction("MisReservas");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al confirmar reserva");
-                TempData["Error"] = ex.Message;
+                TempData["Error"] = "Ocurrió un error al confirmar la reserva: " + ex.Message;
                 TempData.Keep();
                 return RedirectToAction("Paso4");
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> PagarConMercadoPago(int reservaId)
+
+               [HttpPost]
+public async Task<IActionResult> PagarConMercadoPago()
+{
+    try
+    {
+        // Verificar que existan datos en TempData
+        if (TempData["HabitacionId"] == null || TempData["FechaInicio"] == null)
         {
-            try
+            TempData["Error"] = "Datos de sesión incompletos";
+            return RedirectToAction("Paso4");
+        }
+
+        // Mantener los TempData por si se necesitan en la siguiente vista
+        TempData.Keep();
+
+        // Configurar Access Token de Mercado Pago
+        MercadoPagoConfig.AccessToken = "APP_USR-7414149299049294-101023-a6c8228e7ab8480545ec141f3615d304-2914738092";
+
+        // Extraer valores de TempData
+        var habitacionId = (int)TempData["HabitacionId"];
+        var fechaInicio = DateTime.Parse(TempData["FechaInicio"].ToString());
+        var fechaFin = DateTime.Parse(TempData["FechaFin"].ToString());
+
+        // Guardar valores importantes en Session
+        HttpContext.Session.SetInt32("HabitacionId", habitacionId);
+        HttpContext.Session.SetString("FechaInicio", fechaInicio.ToString("yyyy-MM-dd"));
+        HttpContext.Session.SetString("FechaFin", fechaFin.ToString("yyyy-MM-dd"));
+
+        if (TempData["NumeroHuespedes"] != null)
+            HttpContext.Session.SetInt32("NumeroHuespedes", (int)TempData["NumeroHuespedes"]);
+        if (TempData["Adultos"] != null)
+            HttpContext.Session.SetInt32("Adultos", (int)TempData["Adultos"]);
+        if (TempData["Ninos"] != null)
+            HttpContext.Session.SetInt32("Ninos", (int)TempData["Ninos"]);
+        if (TempData["SolicitudesEspeciales"] != null)
+            HttpContext.Session.SetString("SolicitudesEspeciales", TempData["SolicitudesEspeciales"].ToString());
+
+        // Verificar usuario logueado
+        var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+        if (string.IsNullOrEmpty(usuarioIdStr))
+        {
+            TempData["Error"] = "Debes iniciar sesión para continuar con el pago.";
+            return RedirectToAction("Index", "Login");
+        }
+
+        // Obtener datos relacionados
+        var habitacion = await _habitacionService.GetByIdAsync(habitacionId);
+        var hotel = await _hotelService.GetByIdAsync(habitacion.HotelId);
+        var usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
+        var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacionId, fechaInicio, fechaFin);
+
+        var nombreHabitacion = $"{hotel.Nombre} - Habitación {habitacion.NumeroHabitacion}";
+
+        // ✅ URL base fija al puerto HTTPS correcto
+        var baseUrl = "https://localhost:7194"; // Usa siempre este puerto en tu app local HTTPS
+
+        // Crear la preferencia de pago
+        var request = new PreferenceRequest
+        {
+            Items = new List<PreferenceItemRequest>
             {
-                // 1️⃣ Configurar tu Access Token de Mercado Pago
-                MercadoPagoConfig.AccessToken = "APP_USR-7414149299049294-101023-a6c8228e7ab8480545ec141f3615d304-2914738092";
-
-                // 2️⃣ Obtener la reserva completa desde el servicio
-                var reserva = await _reservaService.GetByIdAsync(reservaId);
-                if (reserva == null)
-                    return NotFound("Reserva no encontrada.");
-
-                // 3️⃣ Obtener la habitación y hotel relacionados
-                var habitacion = await _habitacionService.GetByIdAsync(reserva.HabitacionId);
-                var hotel = await _hotelService.GetByIdAsync(habitacion.HotelId);
-                var usuario = await _usuarioService.GetByIdAsync(reserva.UsuarioId);
-
-                // 4️⃣ Preparar los datos del pago
-                var precioTotal = reserva.PrecioTotal;
-                var nombreHabitacion = $"{hotel.Nombre} - Habitación {habitacion.NumeroHabitacion}";
-
-                // 5️⃣ Crear la preferencia de pago
-                var request = new PreferenceRequest
+                new PreferenceItemRequest
                 {
-                    Items = new List<PreferenceItemRequest>
-                    {
-                        new PreferenceItemRequest
-                        {
-                            Title = nombreHabitacion,
-                            Quantity = 1,
-                            CurrencyId = "PEN",
-                            UnitPrice = (decimal)precioTotal
-                        }
-                    },
-                    Payer = new PreferencePayerRequest
-                    {
-                        Name = usuario.Nombre,
-                        Email = usuario.Email
-                    },
-                    BackUrls = new PreferenceBackUrlsRequest
-                    {
-                        Success = Url.Action("PagoExitoso", "Reservas", null, Request.Scheme),
-                        Failure = Url.Action("PagoFallido", "Reservas", null, Request.Scheme),
-                        Pending = Url.Action("PagoPendiente", "Reservas", null, Request.Scheme)
-                    },
-                    AutoReturn = "approved"
-                };
-
-                var client = new PreferenceClient();
-                var preference = await client.CreateAsync(request);
-
-                // 6️⃣ Redirigir al checkout de Mercado Pago
-                return Redirect(preference.InitPoint);
-            }
-            catch (Exception ex)
+                    Title = nombreHabitacion,
+                    Quantity = 1,
+                    CurrencyId = "PEN",
+                    UnitPrice = (decimal)precioTotal
+                }
+            },
+            Payer = new PreferencePayerRequest
             {
-                _logger.LogError(ex, "Error en el pago con Mercado Pago");
-                TempData["Error"] = "Ocurrió un error al iniciar el pago. Intenta nuevamente.";
-                return RedirectToAction("Paso4");
-            }
-        }
+                Name = usuario.Nombre,
+                Email = usuario.Email
+            },
+            BackUrls = new PreferenceBackUrlsRequest
+            {
+                Success = $"{baseUrl}/Reservas/Exito",
+                Failure = $"{baseUrl}/Reservas/Error",
+                Pending = $"{baseUrl}/Reservas/Pendiente"
+            },
+            AutoReturn = "approved",
+            NotificationUrl = $"{baseUrl}/api/pagos/notificacion" // opcional si usas notificación IPN
+        };
 
-        // ========== MÉTODOS EXISTENTES ==========
+        var client = new PreferenceClient();
+        var preference = await client.CreateAsync(request);
 
-        // GET: /Reservas/BuscarDisponibilidad
-        public async Task<IActionResult> BuscarDisponibilidad()
+        // 🔍 Logs informativos
+        _logger.LogInformation("✅ Preferencia creada correctamente");
+        _logger.LogInformation($"🆔 preference_id: {preference.Id}");
+        _logger.LogInformation($"🔗 URL de pago: {preference.InitPoint}");
+        _logger.LogInformation($"🔙 Success URL: {request.BackUrls.Success}");
+
+        // Redirigir al checkout de Mercado Pago
+        return Redirect(preference.InitPoint);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error al generar el pago con Mercado Pago");
+        TempData["Error"] = "Ocurrió un error al iniciar el pago. Intenta nuevamente.";
+        TempData.Keep();
+        return RedirectToAction("Paso4");
+    }
+}
+
+
+        // Método alternativo para manejar la ruta /Exito (por si Mercado Pago usa esta)
+
+          [HttpGet]
+public async Task<IActionResult> Exito(string collection_id, string collection_status, string payment_id, string status, string preference_id)
+{
+    try
+    {
+        // 🔍 1. Verificar que el pago fue aprobado
+        if (status != "approved" && collection_status != "approved")
         {
-            ViewBag.Hoteles = await _hotelService.GetAllAsync();
-            return View();
+            TempData["Error"] = "El pago no fue aprobado.";
+            return RedirectToAction("Error");
         }
 
+        // 🧠 2. Recuperar los datos de la reserva desde la sesión
+        int? habitacionId = HttpContext.Session.GetInt32("HabitacionId");
+        string fechaInicioStr = HttpContext.Session.GetString("FechaInicio");
+        string fechaFinStr = HttpContext.Session.GetString("FechaFin");
+        int? usuarioId = int.Parse(HttpContext.Session.GetString("UsuarioId") ?? "0");
+
+        if (habitacionId == null || string.IsNullOrEmpty(fechaInicioStr) || string.IsNullOrEmpty(fechaFinStr) || usuarioId == 0)
+        {
+            TempData["Error"] = "No se pudieron recuperar los datos de la reserva.";
+            return RedirectToAction("Error");
+        }
+
+        DateTime fechaInicio = DateTime.Parse(fechaInicioStr);
+        DateTime fechaFin = DateTime.Parse(fechaFinStr);
+        var numeroNoches = (fechaFin - fechaInicio).Days;
+
+        // Obtener datos adicionales desde la sesión
+        int numeroHuespedes = HttpContext.Session.GetInt32("NumeroHuespedes") ?? 1;
+        int adultos = HttpContext.Session.GetInt32("Adultos") ?? 1;
+        int ninos = HttpContext.Session.GetInt32("Ninos") ?? 0;
+        string solicitudes = HttpContext.Session.GetString("SolicitudesEspeciales");
+
+        // Obtener datos desde servicios
+        var usuario = await _usuarioService.GetByIdAsync(usuarioId.Value);
+        var habitacion = await _habitacionService.GetByIdAsync(habitacionId.Value);
+        var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacion.HabitacionId, fechaInicio, fechaFin);
+
+        // 💾 3. Registrar la reserva en la base de datos usando ReservaCreateDto
+        var reservaDto = new ReservaCreateDto
+        {
+            UsuarioId = usuario.UsuarioId,
+            HabitacionId = habitacion.HabitacionId,
+            HotelId = habitacion.HotelId,
+            FechaInicio = fechaInicio,
+            FechaFin = fechaFin,
+            NumeroNoches = numeroNoches,
+            NumeroHuespedes = numeroHuespedes,
+            GuestsAdults = adultos,
+            GuestsChildren = ninos,
+            GuestFirstName = usuario.Nombre,
+            GuestLastName = usuario.Apellido,
+            GuestEmail = usuario.Email,
+            GuestPhone = usuario.Telefono,
+            RoomRate = habitacion.PrecioNoche,
+            Subtotal = habitacion.PrecioBase,
+            Taxes = habitacion.PrecioImpuestos,
+            Currency = habitacion.Moneda ?? "PEN",
+            PrecioTotal = precioTotal,
+            PaymentMethod = "Mercado Pago",
+            SolicitudesEspeciales = solicitudes
+        };
+
+        var reserva = await _reservaService.CreateAsync(reservaDto);
+
+        // 🔔 4. Limpia la sesión después del registro
+        HttpContext.Session.Remove("HabitacionId");
+        HttpContext.Session.Remove("FechaInicio");
+        HttpContext.Session.Remove("FechaFin");
+        HttpContext.Session.Remove("NumeroHuespedes");
+        HttpContext.Session.Remove("Adultos");
+        HttpContext.Session.Remove("Ninos");
+        HttpContext.Session.Remove("SolicitudesEspeciales");
+
+        // ✅ 5. Redirigir a la página de confirmación
+        _logger.LogInformation($"✅ Reserva creada exitosamente: {reserva.NumeroReserva}");
+        return RedirectToAction("Confirmacion", new { reservaId = reserva.ReservaId });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error al procesar el pago exitoso");
+        TempData["Error"] = "Ocurrió un error al procesar el pago exitoso.";
+        return RedirectToAction("PagoFallido");
+    }
+}
         // POST: /Reservas/BuscarDisponibilidad
         [HttpPost]
         public async Task<IActionResult> BuscarDisponibilidad(DisponibilidadSearchDto searchDto)
@@ -482,48 +639,186 @@ namespace Hotel_chain.Controllers.Client
         }
 
 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> CalificarEstancia([FromBody] CalificarRequest request)
-{
-    var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
-    if (string.IsNullOrEmpty(usuarioIdStr)) return Unauthorized();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CalificarEstancia([FromBody] CalificarRequest request)
+        {
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            if (string.IsNullOrEmpty(usuarioIdStr)) return Unauthorized();
 
-    int usuarioId = int.Parse(usuarioIdStr);
+            int usuarioId = int.Parse(usuarioIdStr);
 
-    // 1️⃣ Verificar que la reserva existe y está completada
-    var reserva = await _reservaService.GetByIdAsync(request.ReservaId);
-    if (reserva == null) return NotFound("Reserva no encontrada");
-    if (reserva.Estado.ToLower() != "completada") 
-        return BadRequest("Solo se puede calificar reservas completadas");
+            // 1️⃣ Verificar que la reserva existe y está completada
+            var reserva = await _reservaService.GetByIdAsync(request.ReservaId);
+            if (reserva == null) return NotFound("Reserva no encontrada");
+            if (reserva.Estado.ToLower() != "completada")
+                return BadRequest("Solo se puede calificar reservas completadas");
 
-    // 2️⃣ Verificar que el usuario no haya calificado esta reserva
-    var existeResena = await _resenaService.ExisteResenaAsync(request.ReservaId, usuarioId);
-    if (existeResena)
-        return BadRequest("Ya has calificado esta reserva");
+            // 2️⃣ Verificar que el usuario no haya calificado esta reserva
+            var existeResena = await _resenaService.ExisteResenaAsync(request.ReservaId, usuarioId);
+            if (existeResena)
+                return BadRequest("Ya has calificado esta reserva");
 
-    // 3️⃣ Crear reseña
-    await _resenaService.CreateAsync(new Reseña
-    {
-        ReservaId = request.ReservaId,
-        HotelId = request.HotelId,
-        UsuarioId = usuarioId,
-        Calificacion = request.Calificacion,
-        Comentario = request.Comentario,
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow
-    });
+            // 3️⃣ Crear reseña
+            await _resenaService.CreateAsync(new Reseña
+            {
+                ReservaId = request.ReservaId,
+                HotelId = request.HotelId,
+                UsuarioId = usuarioId,
+                Calificacion = request.Calificacion,
+                Comentario = request.Comentario,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
 
-    // 4️⃣ Actualizar promedio del hotel
-    var hotel = await _hotelService.GetByIdAsync(request.HotelId);
-    if (hotel != null)
-    {
-        hotel.Calificacion = await _resenaService.GetPromedioCalificacionAsync(request.HotelId);
-        await _hotelService.UpdateAsync(hotel.HotelId, hotel);
-    }
+            // 4️⃣ Actualizar promedio del hotel
+            var hotel = await _hotelService.GetByIdAsync(request.HotelId);
+            if (hotel != null)
+            {
+                hotel.Calificacion = await _resenaService.GetPromedioCalificacionAsync(request.HotelId);
+                await _hotelService.UpdateAsync(hotel.HotelId, hotel);
+            }
 
-    return Ok();
-}
+            return Ok();
+        }
+        [HttpGet]
+        public async Task<IActionResult> PagoExitoso(string payment_id, string status, string preference_id)
+        {
+            try
+            {
+                _logger.LogInformation($"PagoExitoso llamado - PaymentID: {payment_id}, Status: {status}");
+
+                // Verificar que el pago fue aprobado
+                if (status != "approved")
+                {
+                    TempData["Error"] = "El pago no fue aprobado. Estado: " + status;
+                    return RedirectToAction("Paso4");
+                }
+
+                // Recuperar datos de TempData
+                var habitacionId = TempData["HabitacionId"] as int?;
+                var fechaInicioStr = TempData["FechaInicio"] as string;
+                var fechaFinStr = TempData["FechaFin"] as string;
+                var numeroHuespedes = TempData["NumeroHuespedes"] as int?;
+                var adultos = TempData["Adultos"] as int?;
+                var ninos = TempData["Ninos"] as int?;
+                var solicitudes = TempData["SolicitudesEspeciales"] as string;
+
+                var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+
+                // Validar datos esenciales
+                if (!habitacionId.HasValue || string.IsNullOrEmpty(fechaInicioStr) ||
+                    string.IsNullOrEmpty(fechaFinStr) || string.IsNullOrEmpty(usuarioIdStr))
+                {
+                    TempData["Error"] = "Datos de sesión incompletos. Por favor, inicia el proceso nuevamente.";
+                    return RedirectToAction("Index", "Hotel");
+                }
+
+                // Convertir fechas
+                var fechaInicio = DateTime.Parse(fechaInicioStr);
+                var fechaFin = DateTime.Parse(fechaFinStr);
+                var numeroNoches = (fechaFin - fechaInicio).Days;
+
+                // Obtener datos desde servicios
+                var usuario = await _usuarioService.GetByIdAsync(int.Parse(usuarioIdStr));
+                var habitacion = await _habitacionService.GetByIdAsync(habitacionId.Value);
+                var precioTotal = await _reservaService.CalcularPrecioTotalAsync(habitacion.HabitacionId, fechaInicio, fechaFin);
+
+                // Crear DTO de reserva
+                var reservaDto = new ReservaCreateDto
+                {
+                    UsuarioId = usuario.UsuarioId,
+                    HabitacionId = habitacion.HabitacionId,
+                    HotelId = habitacion.HotelId,
+                    FechaInicio = fechaInicio,
+                    FechaFin = fechaFin,
+                    NumeroNoches = numeroNoches,
+                    NumeroHuespedes = numeroHuespedes ?? 1,
+                    GuestsAdults = adultos ?? 1,
+                    GuestsChildren = ninos ?? 0,
+                    GuestFirstName = usuario.Nombre,
+                    GuestLastName = usuario.Apellido,
+                    GuestEmail = usuario.Email,
+                    GuestPhone = usuario.Telefono,
+                    RoomRate = habitacion.PrecioNoche,
+                    Subtotal = habitacion.PrecioBase,
+                    Taxes = habitacion.PrecioImpuestos,
+                    Currency = habitacion.Moneda ?? "PEN",
+                    PrecioTotal = precioTotal,
+                    PaymentMethod = "Mercado Pago",
+                    SolicitudesEspeciales = solicitudes
+                };
+
+                // Crear la reserva
+                var reserva = await _reservaService.CreateAsync(reservaDto);
+
+                // Limpiar datos temporales
+                TempData.Clear();
+
+                _logger.LogInformation($"✅ Reserva creada exitosamente tras pago: {reserva.NumeroReserva}");
+
+                // Redirigir a la página de confirmación
+                return RedirectToAction("Confirmacion", new { reservaId = reserva.ReservaId });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al procesar PagoExitoso");
+                TempData["Error"] = "Error al procesar la reserva: " + ex.Message;
+                TempData.Keep();
+                return RedirectToAction("Paso4");
+            }
+        }
+
+
+
+        // Página de confirmación de reserva exitosa
+        [HttpGet]
+        public async Task<IActionResult> Confirmacion(int reservaId)
+        {
+            var usuarioIdStr = HttpContext.Session.GetString("UsuarioId");
+            if (string.IsNullOrEmpty(usuarioIdStr))
+            {
+                TempData["Error"] = "Debes iniciar sesión";
+                return RedirectToAction("Index", "Login");
+            }
+
+            var reserva = await _reservaService.GetByIdAsync(reservaId);
+            
+            if (reserva == null)
+            {
+                TempData["Error"] = "No se encontró la reserva";
+                return RedirectToAction("Index", "Hotel");
+            }
+
+            // Verificar que la reserva pertenezca al usuario
+            if (reserva.UsuarioId != int.Parse(usuarioIdStr))
+            {
+                TempData["Error"] = "No tienes permiso para ver esta reserva";
+                return RedirectToAction("MisReservas");
+            }
+
+            return View(reserva);
+        }
+
+        // Manejo de pagos fallidos
+        [HttpGet]
+        public IActionResult PagoFallido(string payment_id, string status)
+        {
+            _logger.LogWarning($"Pago fallido - PaymentID: {payment_id}, Status: {status}");
+            TempData["Error"] = "El pago no pudo ser procesado. Por favor, intenta nuevamente.";
+            TempData.Keep();
+            return RedirectToAction("Paso4");
+        }
+
+        // Manejo de pagos pendientes
+        [HttpGet]
+        public IActionResult PagoPendiente(string payment_id, string status)
+        {
+            _logger.LogInformation($"Pago pendiente - PaymentID: {payment_id}, Status: {status}");
+            TempData["Info"] = "Tu pago está pendiente de confirmación. Te notificaremos cuando se procese.";
+            return RedirectToAction("MisReservas");
+        }    
+
 
 // DTO para recibir JSON
 public class CalificarRequest

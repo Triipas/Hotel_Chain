@@ -524,17 +524,16 @@
                         </p>
                     </div>
 
-                    <form asp-action="ConfirmarReserva" method="post">
+                    <form asp-action="PagarConMercadoPago" asp-controller="Reservas" method="post">
                         @Html.AntiForgeryToken()
-
                         <div class="botones-navegacion">
                             <a asp-action="Paso3" class="btn-paso btn-cancelar">← Anterior</a>
-                            <button type="button" id="btnPagar" class="btn-paso btn-pagar">
-                                💳 Confirmar reserva
+                            <button type="submit" class="btn-paso btn-pagar">
+                                💳 Pagar con Mercado Pago
                             </button>
                         </div>
                     </form>
-                }
+                                    }
                 else
                 {
                     <div class="alerta-warning">
@@ -602,6 +601,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="~/client/js/responsive-navbar.js"></script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>

@@ -1,0 +1,375 @@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Hotel_chain.Models.Entities.Reserva
+
+@{
+    ViewData["Title"] = "Reserva Confirmada";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - StayGo</title>
+    <link rel="stylesheet" href="~/client/css/main.css?v=9">
+
+    <style>
+        body {
+            background: #1a1a1a;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar oscuro */
+        header .navbar {
+            background: #252525;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        header .navbar .logo {
+            color: #ffffff;
+        }
+
+        header .navbar .nav-links a {
+            color: #cccccc;
+        }
+
+        header .navbar .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        header .navbar span {
+            color: #cccccc;
+        }
+
+        .confirmacion-container {
+            max-width: 900px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+
+        .confirmacion-card {
+            background: #252525;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+        }
+
+        @@keyframes scaleIn {
+            from { 
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #4caf50;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #999;
+            font-size: 1rem;
+            margin-bottom: 40px;
+        }
+
+        .numero-confirmacion {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 2px solid #4caf50;
+        }
+
+        .numero-confirmacion h3 {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .numero-confirmacion p {
+            color: #4caf50;
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .detalles-reserva {
+            background: #1a1a1a;
+            padding: 35px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: left;
+            border: 1px solid #3a3a3a;
+        }
+
+        .detalles-reserva h3 {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .detalle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .detalle-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .detalle-item:nth-child(even):last-child,
+        .detalle-item:nth-child(odd):last-child {
+            border-bottom: none;
+        }
+
+        .detalle-label {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .detalle-value {
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .precio-total {
+            grid-column: 1 / -1;
+            background: #4caf50;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .precio-total .label {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .precio-total .value {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .info-adicional {
+            background: #1e3a5f;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .info-adicional h4 {
+            color: #64b5f6;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .info-adicional ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #90caf9;
+        }
+
+        .info-adicional li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .botones {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-secondary {
+            background: #3a3a3a;
+            color: #ccc;
+        }
+
+        .btn-secondary:hover {
+            background: #4a4a4a;
+        }
+
+        @@media (max-width: 768px) {
+            .confirmacion-card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .detalle-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .numero-confirmacion p {
+                font-size: 1.8rem;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">StayGo</div>
+            <button class="menu-toggle" aria-label="Abrir menú">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-derecha">
+                <ul class="nav-links">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
+                </ul>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+                {
+                    <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
+                    <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="confirmacion-container">
+        <div class="confirmacion-card">
+            <div class="success-icon">✓</div>
+            
+            <h1>¡Reserva Confirmada!</h1>
+            <p class="subtitle">Tu pago ha sido procesado exitosamente</p>
+
+            <div class="numero-confirmacion">
+                <h3>Número de Confirmación</h3>
+                <p>@Model.NumeroReserva</p>
+            </div>
+
+            <div class="detalles-reserva">
+                <h3>📋 Detalles de tu Reserva</h3>
+                
+                <div class="detalle-grid">
+                    <div class="detalle-item">
+                        <span class="detalle-label">🏨 Hotel</span>
+                        <span class="detalle-value">@Model.Habitacion.Hotel.Nombre</span>
+                    </div>
+
+                    <div class="detalle-item">
+                        <span class="detalle-label">🚪 Habitación</span>
+                        <span class="detalle-value">@Model.Habitacion.NumeroHabitacion - @Model.Habitacion.Tipo</span>
+                    </div>
+
+                    <div class="detalle-item">
+                        <span class="detalle-label">📅 Check-in</span>
+                        <span class="detalle-value">@Model.FechaInicio.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                    </div>
+
+                    <div class="detalle-item">
+                        <span class="detalle-label">📅 Check-out</span>
+                        <span class="detalle-value">@Model.FechaFin.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))</span>
+                    </div>
+
+                    <div class="detalle-item">
+                        <span class="detalle-label">🌙 Noches</span>
+                        <span class="detalle-value">@Model.NumeroNoches noche@(Model.NumeroNoches > 1 ? "s" : "")</span>
+                    </div>
+
+                    <div class="detalle-item">
+                        <span class="detalle-label">👥 Huéspedes</span>
+                        <span class="detalle-value">@Model.NumeroHuespedes persona@(Model.NumeroHuespedes > 1 ? "s" : "")</span>
+                    </div>
+
+                    <div class="precio-total">
+                        <span class="label">💳 Total Pagado</span>
+                        <span class="value">S/ @Model.PrecioTotal.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-adicional">
+                <h4>ℹ️ Información Importante</h4>
+                <ul>
+                    <li><strong>Check-in:</strong> 15:00 hrs</li>
+                    <li><strong>Check-out:</strong> 12:00 hrs</li>
+                    <li>Se requiere presentar identificación válida al momento del check-in</li>
+                    <li>Hemos enviado un correo de confirmación a tu email registrado</li>
+                    <li>Puedes ver y gestionar tus reservas en "Mis Reservas"</li>
+                </ul>
+            </div>
+
+            <div class="botones">
+                <a asp-action="MisReservas" class="btn btn-primary">📋 Ver Mis Reservas</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">🏠 Ir al Inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/client/js/responsive-navbar.js"></script>
+</body>
+</html>
