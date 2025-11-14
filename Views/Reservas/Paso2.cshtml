@@ -396,8 +396,7 @@
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
                     <li><a style="color: #0077cc;">Habitaciones</a></li>
-                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
-                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
                 @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
                 {

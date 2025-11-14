@@ -219,8 +219,7 @@
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
                     <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad" style="color: #0077cc;">Reservar</a></li>
-                    <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
-                    <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
+                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
                 <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
                 <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
