@@ -264,53 +264,176 @@
     color: #666;
 }
 
-/* Responsive para tablets */
-@@media (max-width: 768px) {
-    .habitacion-card {
+/* Responsive para pantallas grandes (vuelve a 1 columna en el contenedor) */
+@@media (max-width: 1200px) {
+    .listado-habitaciones .habitaciones-container {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto;
-    }
-    
-    .habitacion-imagen {
-        grid-column: 1;
-        grid-row: 1;
-    }
-    
-    .habitacion-precio {
-        grid-column: 1;
-        grid-row: 2;
-    }
-    
-    .habitacion-info {
-        grid-column: 1;
-        grid-row: 3;
-    }
-    
-    .habitacion-botones {
-        grid-column: 1;
-        grid-row: 4;
+        max-width: 900px;
     }
 }
 
-/* Responsive para móviles */
-@@media (max-width: 480px) {
-    .filtro-form {
-        flex-direction: column;
-        width: 90%;
+/* Responsive para tablets (mantiene 2x2 en cada tarjeta) */
+@@media (max-width: 992px) {
+    .titulo-hotel {
+        font-size: 2rem;
+        margin: 40px 0 30px 0;
     }
     
-    .filtro-form select {
-        width: 100%;
-    } 
+    .habitacion-card {
+        padding: 15px;
+        gap: 12px;
+    }
     
     .habitacion-imagen img {
         height: 200px;
     }
     
+    .habitacion-info h3 {
+        font-size: 1.1rem;
+    }
+    
+    .habitacion-info p {
+        font-size: 0.8rem;
+    }
+    
     .precio-principal .valor {
         font-size: 1.5rem;
     }
-} 
+    
+    .habitacion-botones {
+        padding: 10px;
+    }
+    
+    .btn-reservar-negro, .btn-detalles-negro {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Responsive para tablets pequeñas y móviles grandes (convierte a 1 columna vertical) */
+@@media (max-width: 768px) {
+    .filtro-form {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .filtro-form select {
+        min-width: 120px;
+    }
+    
+    .habitacion-card {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        gap: 15px;
+    }
+    
+    /* Orden vertical: Imagen -> Info -> Precio -> Botones */
+    .habitacion-imagen {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    
+    .habitacion-info {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    .habitacion-precio {
+        grid-column: 1;
+        grid-row: 3;
+        padding: 15px;
+    }
+    
+    .habitacion-botones {
+        grid-column: 1;
+        grid-row: 4;
+        padding: 0;
+    }
+}
+
+/* Responsive para móviles */
+@@media (max-width: 480px) {
+    .titulo-hotel {
+        font-size: 1.5rem;
+        margin: 30px 0 20px 0;
+    }
+    
+    .filtro-form {
+        flex-direction: column;
+        width: 90%;
+        padding: 15px 20px;
+    }
+    
+    .filtro-form select {
+        width: 100%;
+    }
+    
+    .listado-habitaciones .habitaciones-container {
+        padding: 10px;
+        gap: 20px;
+    }
+    
+    .habitacion-card {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .habitacion-imagen img {
+        height: 180px;
+    }
+    
+    .habitacion-info h3 {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    
+    .habitacion-info p,
+    .habitacion-info .descripcion {
+        font-size: 0.75rem;
+    }
+    
+    .precio-principal {
+        padding: 12px;
+    }
+    
+    .precio-principal .label {
+        font-size: 0.75rem;
+    }
+    
+    .precio-principal .valor {
+        font-size: 1.3rem;
+    }
+    
+    .precio-desglose p {
+        font-size: 0.8rem;
+    }
+    
+    .badge-disponible,
+    .badge-no-disponible {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+    
+    .btn-reservar-negro, .btn-detalles-negro {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Responsive para móviles muy pequeños */
+@@media (max-width: 360px) {
+    .habitacion-imagen img {
+        height: 150px;
+    }
+    
+    .habitacion-info h3 {
+        font-size: 0.9rem;
+    }
+    
+    .precio-principal .valor {
+        font-size: 1.2rem;
+    }
+}
 </style>
     <header>
         <nav class="navbar">
