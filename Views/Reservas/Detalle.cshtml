@@ -362,7 +362,7 @@
 <body>
     <header>
         <nav class="navbar">
-            <div class="logo">StayGo</div>
+            <div class="logo">Costa Dorada</div>
             <button class="menu-toggle" aria-label="Abrir menú">
                 <span></span>
                 <span></span>
@@ -370,15 +370,16 @@
             </button>
             <div class="nav-derecha">
                 <ul class="nav-links">
-                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Home" asp-action="Index";">Home</a></li>
                     <li><a asp-controller="Hotel" asp-action="Index">Hoteles</a></li>
-                    <li><a asp-controller="Reservas" asp-action="BuscarDisponibilidad" style="color: #0077cc;">Reservar</a></li>
+                    <li><a>Habitaciones</a></li>
                     <li><a asp-controller="Servicios" asp-action="Index">Servicios</a></li>
                     <li><a asp-controller="SobreNosotros" asp-action="Index">Sobre Nosotros</a></li>
                 </ul>
-                <span>@HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre")</span>
-                <a asp-controller="Reservas" asp-action="MisReservas"><button>Mis Reservas</button></a>
-                <a asp-controller="Login" asp-action="Logout"><button>Cerrar Sesión</button></a>
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") == null)
+                {
+                    <a asp-controller="Login" asp-action="Index"><button class="login-btn">Ingresar</button></a>
+                }
             </div>
         </nav>
     </header>
@@ -656,56 +657,80 @@
         </div>
     </div>
 
+    <!-- Menú Flotante (solo si hay sesión) -->
+    @if (HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre") != null)
+    {
+        <div class="menu-flotante" id="menuFlotante">
+            <!-- Opciones del menú (ocultas inicialmente) -->
+            <a asp-controller="Reservas" asp-action="MisReservas" class="menu-option" id="opcionReservas">
+                <div class="menu-icon">📅</div>
+                <span>Mis Reservas</span>
+            </a>
+
+            <a asp-controller="Login" asp-action="Logout" class="menu-option" id="opcionCerrar">
+                <div class="menu-icon">🚪</div>
+                <span>Cerrar Sesión</span>
+            </a>
+
+            <!-- Botón Principal (Perfil) -->
+            <button class="menu-principal" id="btnMenuPrincipal">
+                <div class="user-avatar">👤</div>
+            </button>
+        </div>
+    }
+
+    <script src="~/client/js/menu-flotante.js"></script>
+
     <script src="~/client/js/responsive-navbar.js"></script>
 
     <script>
-function abrirModalCalificacion() {
-    document.getElementById('modalCalificacion').style.display = 'block';
-}
-
-function cerrarModal() {
-    document.getElementById('modalCalificacion').style.display = 'none';
-}
-
-async function enviarCalificacion(reservaId, hotelId) {
-    const ratingInput = document.querySelector('input[name="rating"]:checked');
-    if (!ratingInput) { 
-        alert('Selecciona una calificación'); 
-        return; 
-    }
-
-    const calificacion = parseFloat(ratingInput.value);
-    const comentario = document.getElementById('comentario').value.trim();
-
-    if (!comentario) { 
-        alert('Debes agregar un comentario'); 
-        return; 
-    }
-
-    const token = document.querySelector('#formCalificacion input[name="__RequestVerificationToken"]').value;
-
-    try {
-        const res = await fetch('/Reservas/CalificarEstancia', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': token
-            },
-            body: JSON.stringify({ reservaId, hotelId, calificacion, comentario })
-        });
-
-        if (res.ok) {
-            alert('¡Gracias por tu calificación!');
-            window.location.reload();
-        } else {
-            const errorText = await res.text();
-            alert('Error al enviar calificación: ' + errorText);
+        function abrirModalCalificacion() {
+            document.getElementById('modalCalificacion').style.display = 'block';
         }
-    } catch (err) {
-        console.error(err);
-        alert('Error al enviar calificación (problema de conexión)');
-    }
-}
+
+        function cerrarModal() {
+            document.getElementById('modalCalificacion').style.display = 'none';
+        }
+
+        async function enviarCalificacion(reservaId, hotelId) {
+            const ratingInput = document.querySelector('input[name="rating"]:checked');
+            if (!ratingInput) { 
+                alert('Selecciona una calificación'); 
+                return; 
+            }
+
+            const calificacion = parseFloat(ratingInput.value);
+            const comentario = document.getElementById('comentario').value.trim();
+
+            if (!comentario) { 
+                alert('Debes agregar un comentario'); 
+                return; 
+            }
+
+            const token = document.querySelector('#formCalificacion input[name="__RequestVerificationToken"]').value;
+
+            try {
+                const res = await fetch('/Reservas/CalificarEstancia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ reservaId, hotelId, calificacion, comentario })
+                });
+
+                if (res.ok) {
+                    alert('¡Gracias por tu calificación!');
+                    window.location.reload();
+                } else {
+                    const errorText = await res.text();
+                    alert('Error al enviar calificación: ' + errorText);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error al enviar calificación (problema de conexión)');
+            }
+        }
     </script>
     <script>
         function confirmarCancelacion(reservaId, numeroReserva) {
