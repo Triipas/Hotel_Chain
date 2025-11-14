@@ -333,17 +333,13 @@
             </p>
         </div>
 
-        @if (Model.Imagenes != null && Model.Imagenes.Any())
-        {
+       
             <div class="hotel-galeria">
-                @foreach(var imagen in Model.Imagenes.Take(6))
-                {
-                    <img src="~/client/imagenes/@imagen.NombreArchivo" 
-                         alt="@Model.Nombre" 
-                         class="hotel-imagen" />
-                }
+            
+                  <img src="~/client/imagenes/hotel1.jpg" alt="Hotel" class="hotel-img" />
+  
             </div>
-        }
+      
 
         <div class="hotel-info-grid">
             <div class="info-principal">

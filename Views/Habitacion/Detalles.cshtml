@@ -37,15 +37,7 @@
         <!-- COLUMNA IZQUIERDA -->
         <div class="columna-izquierda">
             <div class="imagen-principal">
-                @if (Model.Imagenes != null && Model.Imagenes.Any())
-                {
-                    <img src="~/client/imagenes/@Model.Imagenes.FirstOrDefault()?.NombreArchivo" 
-                         alt="@Model.Nombre" class="img-habitacion" />
-                }
-                else
-                {
-                    <p>No hay imágenes disponibles.</p>
-                }
+             
             </div>
 
             <h2>@Model.Nombre</h2>
