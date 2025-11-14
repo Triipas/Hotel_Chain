@@ -580,18 +580,18 @@
                     </div>
                 </div>
 
-                <div>
+               <div>
                     <div class="precio-row">
                         <span>Subtotal:</span>
-                        <span>S/@subtotal.ToString("N0")</span>
+                        <span>S/@((habitacion?.PrecioNoche ?? 160) * numeroNoches)</span>
                     </div>
                     <div class="precio-row">
                         <span>Impuestos y tasas:</span>
-                        <span>S/@taxes.ToString("N0")</span>
+                        <span>S/@(20 * numeroNoches)</span>
                     </div>
                     <div class="precio-row total">
                         <span>Total:</span>
-                        <span>S/@precioTotal.ToString("N0")</span>
+                        <span>S/@((habitacion?.PrecioNoche ?? 160) * numeroNoches+(20 * numeroNoches))</span>
                     </div>
                 </div>
             </div>

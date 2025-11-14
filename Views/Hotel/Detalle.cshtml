@@ -287,7 +287,87 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     font-size: 0.95rem;
 }
+
+
+
+
+
+
+/* Galería de imágenes mejorada */
+.hotel-galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.imagen-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.imagen-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.imagen-card .hotel-imagen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.imagen-card:hover .hotel-imagen {
+    transform: scale(1.1);
+}
+
+.imagen-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.imagen-card:hover .imagen-overlay {
+    opacity: 1;
+}
+
+.imagen-overlay i {
+    color: white;
+    font-size: 2rem;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .hotel-galeria-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+
+@@media (max-width: 480px) {
+    .hotel-galeria-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
     </style>
+
+
+    
 </head>
 <body>
     <header> 
@@ -333,17 +413,14 @@
             </p>
         </div>
 
-        @if (Model.Imagenes != null && Model.Imagenes.Any())
-        {
-            <div class="hotel-galeria">
-                @foreach(var imagen in Model.Imagenes.Take(6))
-                {
-                    <img src="~/client/imagenes/@imagen.NombreArchivo" 
-                         alt="@Model.Nombre" 
-                         class="hotel-imagen" />
-                }
+      
+            <div class="imagen-card">
+                <img src="~/client/imagenes/hotel1.jpg" alt="Hotel" class="hotel-img" />
+                <div class="imagen-overlay">
+                    <i class="fas fa-search-plus"></i>
+                </div>
             </div>
-        }
+
 
         <div class="hotel-info-grid">
             <div class="info-principal">
